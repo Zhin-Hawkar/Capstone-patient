@@ -2,7 +2,6 @@ import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Pages/LogIn/Controller/sign_in_controller.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
-import 'package:capstone/Pages/Register/View/sign_up.dart';
 import 'package:capstone/Reusables/Buttons/my_button.dart';
 import 'package:capstone/Reusables/TextFields/my_textfield.dart';
 import 'package:flutter/material.dart';
@@ -283,13 +282,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             Center(
                               child: TextButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType.fade,
-                                      child: SignUp(),
-                                    ),
-                                  );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   PageTransition(
+                                  //     type: PageTransitionType.fade,
+                                  //     child: SignUp(),
+                                  //   ),
+                                  // );
                                 },
                                 child: const Text(
                                   'Sign Up Here',
