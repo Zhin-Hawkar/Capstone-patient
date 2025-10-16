@@ -24,7 +24,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
   List<PlatformFile> filesSaved = [];
   late TabController _tab_controller;
   final PageController _pageController = PageController();
-  late Timer time;
+  Timer time = Timer(Duration.zero, () {});
   @override
   void initState() {
     super.initState();
