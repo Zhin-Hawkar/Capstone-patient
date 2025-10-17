@@ -2,13 +2,17 @@ import 'dart:async';
 
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
+import 'package:capstone/Pages/EditProfile/View/edit_profile.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
+import 'package:ultimate_flutter_icons/flutter_icons.dart';
 
 class UserProfile extends ConsumerStatefulWidget {
   const UserProfile({super.key});
@@ -20,8 +24,8 @@ class UserProfile extends ConsumerStatefulWidget {
 class _UserProfileState extends ConsumerState<UserProfile>
     with SingleTickerProviderStateMixin {
   bool isUploaded = false;
-
   List<PlatformFile> filesSaved = [];
+  // ignore: non_constant_identifier_names
   late TabController _tab_controller;
   final PageController _pageController = PageController();
   Timer time = Timer(Duration.zero, () {});
@@ -47,11 +51,62 @@ class _UserProfileState extends ConsumerState<UserProfile>
       appBar: AppBar(title: Text("Profile"), centerTitle: true),
       body: Column(
         children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: EditProfile(),
+                ),
+              );
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 4.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.DARK_GREEN,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+
+                    width: 22.w,
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadiusGeometry.circular(25),
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            color: const Color.fromARGB(255, 159, 230, 161),
+                            width: 10.w,
+                            child: Transform.scale(
+                              scale: 2.5,
+                              child: Lottie.asset("assets/json/Crop.json"),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 2.w),
+                        Text(
+                          "edit",
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 0, 0, 0),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                margin: EdgeInsets.only(top: 4.h),
+                margin: EdgeInsets.only(top: 0.h),
                 child: ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(25),
                   child: profileState.profile!.image == null
@@ -82,9 +137,109 @@ class _UserProfileState extends ConsumerState<UserProfile>
               ],
             ),
           ),
-
+          SizedBox(height: 2.h),
           Container(
-            margin: EdgeInsets.only(top: 5.h),
+            margin: EdgeInsets.only(right: 10.w, left: 8.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.DARK_GREEN,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 150, 237, 153),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: SizedBox(
+                          width: 20.w,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [Text("age: "), Text("24")],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 2.w),
+                    Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.DARK_GREEN,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 150, 237, 153),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: SizedBox(
+                          width: 20.w,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [Icon(Icons.location_on), Text("Iraq")],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 1.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: AppColors.DARK_GREEN,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 150, 237, 153),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: SizedBox(
+                          width: 50.w,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.description),
+                              Text("Description"),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.h),
+                ReadMoreText(
+                  "Daniel Reyes is a resilient patient who continues to face his health challenges with remarkable strength and optimism. He maintains a positive outlook, believing that recovery is as much about mindset as it is about treatment. Daniel actively follows his medical plan and stays informed about his condition. He finds comfort in journaling and spending time outdoors, which help him stay grounded. His determination and calm spirit inspire those around him to stay hopeful, no matter the circumstance.",
+                  trimMode: TrimMode.Line,
+                  trimLines: 2,
+                  colorClickableText: AppColors.DARK_GREEN,
+                  trimCollapsedText: "show more",
+                  trimExpandedText: "show less",
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 3.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

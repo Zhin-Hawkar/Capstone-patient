@@ -52,6 +52,7 @@ dependencies:
   flutter_pdfview: ^1.2.1
   page_transition: ^2.2.1
   pretty_animated_text: ^2.0.0
+  readmore: ^3.0.0
 
 
 
