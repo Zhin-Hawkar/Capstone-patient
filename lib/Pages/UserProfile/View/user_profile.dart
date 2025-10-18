@@ -12,7 +12,6 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:readmore/readmore.dart';
 import 'package:sizer/sizer.dart';
-import 'package:ultimate_flutter_icons/flutter_icons.dart';
 
 class UserProfile extends ConsumerStatefulWidget {
   const UserProfile({super.key});
@@ -91,7 +90,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
                         Text(
                           "edit",
                           style: TextStyle(
-                            color: const Color.fromARGB(255, 0, 0, 0),
+                            color: const Color.fromARGB(255, 255, 255, 255),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -109,7 +108,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
                 margin: EdgeInsets.only(top: 0.h),
                 child: ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(25),
-                  child: profileState.profile!.image == null
+                  child: profileState.profile!.image == "null"
                       ? Icon(Icons.person, size: 80)
                       : ClipRRect(
                           borderRadius: BorderRadiusGeometry.circular(25),
@@ -163,7 +162,12 @@ class _UserProfileState extends ConsumerState<UserProfile>
                           width: 20.w,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text("age: "), Text("24")],
+                            children: [
+                              Text("age: "),
+                              profileState.profile!.age != 0
+                                  ? Text("${profileState.profile!.age}")
+                                  : Text("___"),
+                            ],
                           ),
                         ),
                       ),
@@ -187,7 +191,12 @@ class _UserProfileState extends ConsumerState<UserProfile>
                           width: 20.w,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Icon(Icons.location_on), Text("Iraq")],
+                            children: [
+                              Icon(Icons.location_on),
+                              profileState.profile!.location != "null"
+                                  ? Text("${profileState.profile!.location}")
+                                  : Text("___"),
+                            ],
                           ),
                         ),
                       ),
@@ -227,14 +236,16 @@ class _UserProfileState extends ConsumerState<UserProfile>
                   ],
                 ),
                 SizedBox(height: 1.h),
-                ReadMoreText(
-                  "Daniel Reyes is a resilient patient who continues to face his health challenges with remarkable strength and optimism. He maintains a positive outlook, believing that recovery is as much about mindset as it is about treatment. Daniel actively follows his medical plan and stays informed about his condition. He finds comfort in journaling and spending time outdoors, which help him stay grounded. His determination and calm spirit inspire those around him to stay hopeful, no matter the circumstance.",
-                  trimMode: TrimMode.Line,
-                  trimLines: 2,
-                  colorClickableText: AppColors.DARK_GREEN,
-                  trimCollapsedText: "show more",
-                  trimExpandedText: "show less",
-                ),
+                profileState.profile!.description != "null"
+                    ? ReadMoreText(
+                        "${profileState.profile!.description}",
+                        trimMode: TrimMode.Line,
+                        trimLines: 2,
+                        colorClickableText: AppColors.DARK_GREEN,
+                        trimCollapsedText: "show more",
+                        trimExpandedText: "show less",
+                      )
+                    : Text("___"),
               ],
             ),
           ),

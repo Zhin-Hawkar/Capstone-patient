@@ -1,20 +1,272 @@
-import 'package:capstone/Constants/colors.dart';
-import 'package:capstone/Reusables/AppBar/app_bar.dart';
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class EditProfile extends StatefulWidget {
+import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
+import 'package:capstone/Pages/EditProfile/Controller/edit_controller.dart';
+import 'package:capstone/Pages/EditProfile/Notifier/edit_notifier.dart';
+import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
+import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
+import 'package:capstone/Reusables/AppBar/app_bar.dart';
+import 'package:capstone/Reusables/Buttons/buttons.dart';
+import 'package:capstone/Reusables/TextFields/sign_up_textfield.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:sizer/sizer.dart';
+
+class EditProfile extends ConsumerStatefulWidget {
   const EditProfile({super.key});
 
   @override
-  State<EditProfile> createState() => _EditProfileState();
+  ConsumerState<EditProfile> createState() => _EditProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
+class _EditProfileState extends ConsumerState<EditProfile> {
+  List<PlatformFile> filesSaved = [];
+  File? _imageFile;
+  bool? isEditBtnClicked = false;
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    ageController.dispose();
+    locationController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profileState = ref.watch(signInNotifierProvider);
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
-      appBar: CustomAppBar(title: "Edit"),
+      appBar: CustomAppBarNoButton(title: "Edit"),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.only(left: 10.w, right: 10.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 5.w),
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 213, 213, 213),
+                  borderRadius: BorderRadius.circular(70),
+                ),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadiusGeometry.circular(70),
+                      child: _imageFile == null
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  size: 100,
+                                  color: const Color.fromARGB(
+                                    255,
+                                    125,
+                                    125,
+                                    125,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : SizedBox(
+                              width: 120,
+                              height: 120,
+                              child: Image.file(_imageFile!, fit: BoxFit.cover),
+                            ),
+                    ),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  showDragHandle: true,
+                                  backgroundColor: AppColors.WHITE_BACKGROUND,
+                                  context: context,
+                                  builder: (context) {
+                                    return SizedBox(
+                                      height: 10.h,
+                                      child: ListTile(
+                                        title: Text("Upload image"),
+                                        onTap: () async {
+                                          List<PlatformFile>? files =
+                                              await UploadFiles.pickAndUploadFiles();
+                                          if (files != null) {
+                                            for (
+                                              int i = 0;
+                                              i < files.length;
+                                              i++
+                                            ) {
+                                              setState(() {
+                                                _imageFile = File(
+                                                  files.single.path!,
+                                                );
+                                                filesSaved.add(files[i]);
+                                              });
+                                            }
+                                          }
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Container(
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  color: const Color.fromARGB(
+                                    108,
+                                    213,
+                                    213,
+                                    213,
+                                  ),
+                                  borderRadius: BorderRadius.circular(70),
+                                ),
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  size: 40,
+                                  color: const Color.fromARGB(111, 0, 0, 0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 4.h),
+              EditTextField(
+                hintText: "${profileState.profile!.firstName}",
+                fieldIcon: Icons.person,
+                textFieldController: firstNameController,
+              ),
+              SizedBox(height: 3.h),
+              EditTextField(
+                hintText: "${profileState.profile!.lastName}",
+                fieldIcon: Icons.person,
+                textFieldController: lastNameController,
+              ),
+              SizedBox(height: 3.h),
+              EditTextField(
+                hintText: profileState.profile!.age.toString() == "0"
+                    ? "age"
+                    : profileState.profile!.age.toString(),
+                fieldIcon: Icons.numbers,
+                textFieldController: ageController,
+              ),
+              SizedBox(height: 3.h),
+              EditTextField(
+                hintText: profileState.profile!.location == "null"
+                    ? "location"
+                    : profileState.profile!.location,
+                fieldIcon: Icons.location_on,
+                textFieldController: locationController,
+              ),
+              SizedBox(height: 3.h),
+              DescriptionTextField(
+                hintText: profileState.profile!.description == "null"
+                    ? "description"
+                    : profileState.profile!.description,
+                fieldIcon: Icons.description,
+                textFieldController: descriptionController,
+              ),
+              SizedBox(height: 3.h),
+              isEditBtnClicked == true
+                  ? Transform.scale(
+                      scale: 1.6,
+                      child: Lottie.asset(
+                        "assets/json/Material wave loading.json",
+                        width: 100,
+                        height: 100,
+                      ),
+                    )
+                  : CustomButton(
+                      buttonText: "Upload",
+                      function: () async {
+                        setState(() {
+                          isEditBtnClicked = true;
+                        });
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setFirstName(firstNameController.text);
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setLastName(lastNameController.text);
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setLocation(locationController.text);
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setAge(int.parse(ageController.text));
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setDescription(descriptionController.text);
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setImage(descriptionController.text);
+                        ref
+                            .watch(editProfileProvider.notifier)
+                            .setEmail(profileState.profile!.email.toString());
+                        var result = await EditProfileController()
+                            .handleProfileEdit(context, ref);
+                        print(result.age);
+                        print(result.code);
+                        print(result.description);
+                        print(result.email);
+                        print(result.firstName);
+                        print(result.lastName);
+                        print(result.image);
+                        print(result.location);
+                        if (result.code != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: const Color.fromARGB(
+                                120,
+                                0,
+                                0,
+                                0,
+                              ),
+                              content: Text(
+                                "User Logged in Successfully!",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        } else {
+                          setState(() {
+                            isEditBtnClicked = false;
+                          });
+                        }
+                      },
+                    ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

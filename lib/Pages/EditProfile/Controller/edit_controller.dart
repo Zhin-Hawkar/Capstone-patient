@@ -1,30 +1,26 @@
 import 'package:capstone/Backend/Model/user.dart';
 import 'package:capstone/Backend/Util/http_util.dart';
-import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Pages/EditProfile/Notifier/edit_notifier.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
-import 'package:capstone/SharedResources/global_storage_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignInController {
-  Future<UserLoginResponseEntity> handleSignIn(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    var state = ref.watch(signInNotifierProvider);
+class EditProfileController {
+  Future<Profile> handleProfileEdit(BuildContext context, WidgetRef ref) async {
+    var state = ref.watch(editProfileProvider);
 
-    LoginRequestEntity loginRequestEntity = LoginRequestEntity();
-    loginRequestEntity.email = state.email;
-    loginRequestEntity.password = state.password;
+    Profile profile = Profile();
+    profile.firstName = state.firstName;
+    profile.lastName = state.lastName;
+    profile.age = state.age;
+    profile.location = state.location;
+    profile.description = state.description;
+    profile.email = state.email;
 
     try {
-      var result = await _logIn(params: loginRequestEntity);
-      if (result['code'] == 200 && result['token'] != null) {
-        GlobalStorageService.storageService.setString(
-          EnumValues.ACCESS_TOKEN,
-          result['token'],
-        );
+      var result = await _editProfile(params: profile);
+      print(result);
+      if (result['code'] == 200) {
         Profile profile = Profile();
         profile.firstName = result['user']['first_name'];
         profile.lastName = result['user']['last_name'];
@@ -33,7 +29,8 @@ class SignInController {
         profile.age = result['user']['age'];
         profile.description = result['user']['description'];
         profile.image = result['user']['image'];
-        ref.watch(signInNotifierProvider.notifier).setProfile(profile);
+        profile.code = result['code'];
+        ref.watch(editProfileProvider.notifier).setProfile(profile);
       } else if (result['code'] != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -45,15 +42,15 @@ class SignInController {
           ),
         );
       }
-      return UserLoginResponseEntity.fromJson(result);
+      return Profile.fromJson(result);
     } catch (e) {
-      return UserLoginResponseEntity();
+      return Profile();
     }
   }
 
-  static _logIn({LoginRequestEntity? params}) async {
+  static _editProfile({Profile? params}) async {
     var result = await HttpUtil().post(
-      "api/login",
+      "api/edituserprofile",
       queryParameters: params!.toJson(),
     );
     return result;

@@ -76,21 +76,65 @@ class UserLoginResponseEntity {
 class Profile {
   String? firstName;
   String? lastName;
+  int? age;
   String? image;
+  String? location;
+  String? description;
   String? email;
+  String? code;
 
-  Profile({this.firstName, this.lastName, this.image, this.email});
+  Profile({
+    this.firstName,
+    this.lastName,
+    this.image,
+    this.email,
+    this.age,
+    this.location,
+    this.description,
+    this.code
+  });
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
     firstName: json["first_name"],
     lastName: json["last_name"],
-    image: json["image"],
     email: json["email"],
+    age: json["age"],
+    location: json["location"],
+    description: json["description"],
+    image: json["image"],
+    code: json['code']
   );
 
   Map<String, dynamic> toJson() => {
     "first_name": firstName,
     "last_name": lastName,
     "email": email,
+    "age": age,
+    "location": location,
+    "description": description,
+    "image": image,
+    'code':code
   };
+
+  Profile copyWith({
+    String? firstName,
+    String? lastName,
+    String? image,
+    String? email,
+    int? age,
+    String? location,
+    String? description,
+    String? code,
+  }) {
+    return Profile(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      age: age ?? this.age,
+      location: location ?? this.location,
+      description: description ?? this.description,
+      image: image ?? this.image,
+      code: code ?? this.code
+    );
+  }
 }

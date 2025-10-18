@@ -1,24 +1,41 @@
 import 'dart:convert';
-
 import 'package:capstone/Backend/Model/user.dart';
 import 'package:capstone/Constants/enum.dart';
-import 'package:capstone/Pages/LogIn/Model/sign_in_model.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 @Riverpod(keepAlive: true)
-class SignInNotifier extends StateNotifier<SignInState> {
-  SignInNotifier() : super(SignInState()) {
+class EditProfileNotifier extends StateNotifier<Profile> {
+  EditProfileNotifier() : super(Profile()) {
     _loadFromStorage();
+  }
+  void setFirstName(String firstName) {
+    state = state.copyWith(firstName: firstName);
+  }
+
+  void setLastName(String lastName) {
+    state = state.copyWith(lastName: lastName);
   }
 
   void setEmail(String email) {
     state = state.copyWith(email: email);
   }
 
-  void setPassword(String password) {
-    state = state.copyWith(password: password);
+  void setLocation(String location) {
+    state = state.copyWith(location: location);
+  }
+
+  void setAge(int age) {
+    state = state.copyWith(age: age);
+  }
+
+  void setDescription(String description) {
+    state = state.copyWith(description: description);
+  }
+
+  void setImage(String image) {
+    state = state.copyWith(image: image);
   }
 
   void setProfile(Profile user) {
@@ -30,8 +47,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
     profile.age = user.age;
     profile.description = user.description;
     profile.image = user.image;
-    state = state.copyWith(profile: profile);
-
+    
     GlobalStorageService.storageService.setString(
       EnumValues.USER_PROFILE,
       jsonEncode({
@@ -60,11 +76,10 @@ class SignInNotifier extends StateNotifier<SignInState> {
       profile.location = data["location"];
       profile.description = data["description"];
       profile.image = data["image"];
-      state = state.copyWith(profile: profile);
     }
   }
 }
 
-var signInNotifierProvider = StateNotifierProvider<SignInNotifier, SignInState>(
-  (ref) => SignInNotifier(),
+var editProfileProvider = StateNotifierProvider<EditProfileNotifier, Profile>(
+  (ref) => EditProfileNotifier(),
 );

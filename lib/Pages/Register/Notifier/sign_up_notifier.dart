@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 @riverpod
-class SignInNotifier extends StateNotifier<SignUpState> {
-  SignInNotifier() : super(SignUpState());
+class SignUpNotifier extends StateNotifier<SignUpState> {
+  SignUpNotifier() : super(SignUpState());
 
   void setFirstName(String firstName) {
     state = state.copyWith(firstName: firstName);
@@ -28,6 +28,6 @@ class SignInNotifier extends StateNotifier<SignUpState> {
 }
 
 final signUpNotifierProvider =
-    StateNotifierProvider<SignInNotifier, SignUpState>(
-      (ref) => SignInNotifier(),
+    StateNotifierProvider<SignUpNotifier, SignUpState>(
+      (ref) => SignUpNotifier(),
     );

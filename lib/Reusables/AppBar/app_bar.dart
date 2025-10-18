@@ -20,7 +20,6 @@ class CustomAppBar extends ConsumerStatefulWidget
     implements PreferredSizeWidget {
   String? title;
 
-
   CustomAppBar({super.key, this.title});
 
   @override
@@ -31,8 +30,6 @@ class CustomAppBar extends ConsumerStatefulWidget
 }
 
 class _CustomAppBarState extends ConsumerState<CustomAppBar> {
-
-
   @override
   Widget build(BuildContext context) {
     final profileState = ref.watch(signInNotifierProvider);
@@ -40,43 +37,64 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> {
       title: Text(widget.title.toString()),
       centerTitle: true,
       actions: [
-     
-             IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.fade,
-                      child: SearchPage(),
-                    ),
-                  );
-                },
-                icon: Icon(Icons.search),
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.fade,
+                child: SearchPage(),
               ),
-         IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.fade,
-                      child: UserProfile(),
-                    ),
-                  );
-                },
-                icon: profileState.profile!.image == null
-                    ? Icon(Icons.person)
-                    : ClipRRect(
-                        borderRadius: BorderRadiusGeometry.circular(25),
-                        child: Image.asset(
-                          UserModel.user['image'],
-                          width: 40,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+            );
+          },
+          icon: Icon(Icons.search),
+        ),
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.fade,
+                child: UserProfile(),
               ),
+            );
+          },
+          icon: profileState.profile!.image == "null"
+              ? Icon(Icons.person)
+              : ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(25),
+                  child: Image.asset(
+                    UserModel.user['image'],
+                    width: 40,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+        ),
       ],
     );
+  }
+}
+
+// ignore: must_be_immutable
+class CustomAppBarNoButton extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
+  String? title;
+
+  CustomAppBarNoButton({super.key, this.title});
+
+  @override
+  ConsumerState<CustomAppBarNoButton> createState() =>
+      _CustomAppBarNoButtonState();
+
+  @override
+  Size get preferredSize => Size(100.w, 7.h);
+}
+
+class _CustomAppBarNoButtonState extends ConsumerState<CustomAppBarNoButton> {
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(title: Text(widget.title.toString()), centerTitle: true);
   }
 }
 

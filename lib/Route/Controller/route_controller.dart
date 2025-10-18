@@ -3,6 +3,7 @@ import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Pages/Home/View/home.dart';
 import 'package:capstone/Pages/LogIn/View/login_page.dart';
 import 'package:capstone/Pages/OnBoarding/View/onboarding_view.dart';
+import 'package:capstone/Pages/Register/View/signup_page.dart';
 import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';
 import 'package:capstone/Route/Model/route_entity.dart';
 import 'package:capstone/Route/Model/routes_name.dart';
@@ -16,7 +17,7 @@ class RouteController {
       RouteEntity(path: RoutesName.fileUpload, page: FilesUpload()),
       RouteEntity(path: RoutesName.home, page: Home()),
       RouteEntity(path: RoutesName.signIn, page: LoginPage()),
-      // RouteEntity(path: RoutesName.signUp, page: SignUp()),
+      RouteEntity(path: RoutesName.signUp, page: SignUpPage()),
     ];
   }
 
