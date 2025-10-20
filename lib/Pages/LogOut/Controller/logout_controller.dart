@@ -1,11 +1,15 @@
 import 'package:capstone/Backend/Util/http_util.dart';
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Pages/EditProfile/Notifier/edit_notifier.dart';
+import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LogoutController {
   static Future<void> handleLogOut(WidgetRef ref) async {
     await _logOut();
+    ref.invalidate(signInNotifierProvider);
+    ref.invalidate(editProfileProvider);
     GlobalStorageService.storageService.remove(EnumValues.ACCESS_TOKEN);
   }
 

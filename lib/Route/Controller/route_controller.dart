@@ -14,10 +14,10 @@ class RouteController {
   static List<RouteEntity> routes() {
     return [
       RouteEntity(path: RoutesName.onboarding, page: OnboardingPages()),
-      RouteEntity(path: RoutesName.fileUpload, page: FilesUpload()),
       RouteEntity(path: RoutesName.home, page: Home()),
       RouteEntity(path: RoutesName.signIn, page: LoginPage()),
       RouteEntity(path: RoutesName.signUp, page: SignUpPage()),
+      RouteEntity(path: RoutesName.fileUpload, page: FilesUpload()),
     ];
   }
 

@@ -59,15 +59,21 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> {
               ),
             );
           },
-          icon: profileState.profile!.image == "null"
+          icon:
+              profileState.profile!.image == null ||
+                  profileState.profile!.image == "null"
               ? Icon(Icons.person)
               : ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(25),
-                  child: Image.asset(
-                    UserModel.user['image'],
+                  child: SizedBox(
                     width: 40,
                     height: 50,
-                    fit: BoxFit.cover,
+                    child: Image.network(
+                      "${profileState.profile!.image}",
+                      width: 40,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
         ),

@@ -2,36 +2,34 @@ import 'package:capstone/Backend/Model/user.dart';
 import 'package:capstone/Backend/Util/http_util.dart';
 import 'package:capstone/Pages/EditProfile/Notifier/edit_notifier.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditProfileController {
-  Future<Profile> handleProfileEdit(BuildContext context, WidgetRef ref) async {
-    var state = ref.watch(editProfileProvider);
+  Future<Map<String, dynamic>> handleProfileEdit(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final state = ref.watch(editProfileProvider);
 
-    Profile profile = Profile();
-    profile.firstName = state.firstName;
-    profile.lastName = state.lastName;
-    profile.age = state.age;
-    profile.location = state.location;
-    profile.description = state.description;
-    profile.email = state.email;
+    final profileRequest = Profile()
+      ..firstName = state.firstName
+      ..lastName = state.lastName
+      ..age = state.age
+      ..location = state.location
+      ..description = state.description
+      ..image = state.image
+      ..email = state.email;
 
     try {
-      var result = await _editProfile(params: profile);
-      print(result);
-      if (result['code'] == 200) {
-        Profile profile = Profile();
-        profile.firstName = result['user']['first_name'];
-        profile.lastName = result['user']['last_name'];
-        profile.email = result['user']['email'];
-        profile.location = result['user']['location'];
-        profile.age = result['user']['age'];
-        profile.description = result['user']['description'];
-        profile.image = result['user']['image'];
-        profile.code = result['code'];
-        ref.watch(editProfileProvider.notifier).setProfile(profile);
-      } else if (result['code'] != 200) {
+      final result = await _editProfile(params: profileRequest);
+      print(result['user']['image']);
+      if (result == null || result['code'] == null) {
+        throw Exception("Invalid response from server");
+      }
+
+      if (result['code'] != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: const Color.fromARGB(120, 0, 0, 0),
@@ -41,17 +39,41 @@ class EditProfileController {
             ),
           ),
         );
+        return result;
       }
-      return Profile.fromJson(result);
+
+      final updatedProfile = Profile.fromJson(result);
+      ref.read(signInNotifierProvider.notifier).setProfile(updatedProfile);
+
+      return result;
     } catch (e) {
-      return Profile();
+      return {"code": 500, "error": e.toString()};
     }
   }
 
-  static _editProfile({Profile? params}) async {
-    var result = await HttpUtil().post(
+  static Future<dynamic> _editProfile({Profile? params}) async {
+    FormData formData = FormData.fromMap({
+      "first_name": params!.firstName,
+      "last_name": params.lastName,
+      "email": params.email,
+      "age": params.age,
+      "location": params.location,
+      "description": params.description,
+      if (params.image != null && params.image!.isNotEmpty)
+        "image": await MultipartFile.fromFile(
+          params.image!,
+          filename: params.image!.split('/').last,
+        ),
+    });
+    final result = await HttpUtil().post(
       "api/edituserprofile",
-      queryParameters: params!.toJson(),
+      data: formData,
+      options: Options(
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
     );
     return result;
   }

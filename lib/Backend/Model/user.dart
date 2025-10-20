@@ -81,7 +81,7 @@ class Profile {
   String? location;
   String? description;
   String? email;
-  String? code;
+  int? code;
 
   Profile({
     this.firstName,
@@ -91,19 +91,26 @@ class Profile {
     this.age,
     this.location,
     this.description,
-    this.code
+    this.code,
   });
 
-  factory Profile.fromJson(Map<String, dynamic> json) => Profile(
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    email: json["email"],
-    age: json["age"],
-    location: json["location"],
-    description: json["description"],
-    image: json["image"],
-    code: json['code']
-  );
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    final user = json['user'] ?? json;
+    return Profile(
+      code: json['code'],
+      firstName: user['first_name']?.toString(),
+      lastName: user['last_name']?.toString(),
+      email: user['email']?.toString(),
+      location: user['location']?.toString(),
+      description: user['description']?.toString(),
+      image: user['image']?.toString(),
+      age: user['age'] == null
+          ? null
+          : (user['age'] is int
+                ? user['age']
+                : int.tryParse(user['age'].toString())),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "first_name": firstName,
@@ -113,7 +120,6 @@ class Profile {
     "location": location,
     "description": description,
     "image": image,
-    'code':code
   };
 
   Profile copyWith({
@@ -124,7 +130,7 @@ class Profile {
     int? age,
     String? location,
     String? description,
-    String? code,
+    int? code,
   }) {
     return Profile(
       firstName: firstName ?? this.firstName,
@@ -134,7 +140,7 @@ class Profile {
       location: location ?? this.location,
       description: description ?? this.description,
       image: image ?? this.image,
-      code: code ?? this.code
+      code: code ?? this.code,
     );
   }
 }

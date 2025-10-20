@@ -14,9 +14,9 @@ class SignInController {
   ) async {
     var state = ref.watch(signInNotifierProvider);
 
-    LoginRequestEntity loginRequestEntity = LoginRequestEntity();
-    loginRequestEntity.email = state.email;
-    loginRequestEntity.password = state.password;
+    LoginRequestEntity loginRequestEntity = LoginRequestEntity()
+      ..email = state.email
+      ..password = state.password;
 
     try {
       var result = await _logIn(params: loginRequestEntity);
@@ -25,14 +25,14 @@ class SignInController {
           EnumValues.ACCESS_TOKEN,
           result['token'],
         );
-        Profile profile = Profile();
-        profile.firstName = result['user']['first_name'];
-        profile.lastName = result['user']['last_name'];
-        profile.email = result['user']['email'];
-        profile.location = result['user']['location'];
-        profile.age = result['user']['age'];
-        profile.description = result['user']['description'];
-        profile.image = result['user']['image'];
+        Profile profile = Profile()
+          ..firstName = result['user']['first_name']
+          ..lastName = result['user']['last_name']
+          ..email = result['user']['email']
+          ..location = result['user']['location']
+          ..age = result['user']['age']
+          ..description = result['user']['description']
+          ..image = result['user']['image'];
         ref.watch(signInNotifierProvider.notifier).setProfile(profile);
       } else if (result['code'] != 200) {
         ScaffoldMessenger.of(context).showSnackBar(

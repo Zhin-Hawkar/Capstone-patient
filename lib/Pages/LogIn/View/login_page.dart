@@ -1,6 +1,7 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
+import 'package:capstone/Pages/Home/View/home.dart';
 import 'package:capstone/Pages/LogIn/Controller/sign_in_controller.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Pages/Register/View/signup_page.dart';
@@ -83,7 +84,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         .watch(signInNotifierProvider.notifier)
         .setPassword(passwordController.text);
     var result = await SignInController().handleSignIn(context, ref);
-
+    print("${result.token} from log in page");
     if (result.code == 200 &&
         GlobalStorageService.storageService
             .getString(EnumValues.ACCESS_TOKEN)
@@ -97,10 +98,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
         ),
       );
-      Navigator.pushReplacement(
-        context,
-        PageTransition(type: PageTransitionType.fade, child: FilesUpload()),
-      );
+      bool isFirstFileUploadShowed = GlobalStorageService.storageService
+          .getBool(EnumValues.DEVICE_FIRST_OPEN);
+      if (isFirstFileUploadShowed) {
+        Navigator.pushReplacement(
+          context,
+          PageTransition(type: PageTransitionType.fade, child: Home()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          PageTransition(type: PageTransitionType.fade, child: FilesUpload()),
+        );
+      }
     } else {
       setState(() {
         isSignInBtnClicked = false;

@@ -1,10 +1,9 @@
 import 'dart:io';
-
+import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/Pages/EditProfile/Controller/edit_controller.dart';
 import 'package:capstone/Pages/EditProfile/Notifier/edit_notifier.dart';
-import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
@@ -13,7 +12,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 class EditProfile extends ConsumerStatefulWidget {
@@ -120,7 +118,6 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                                 _imageFile = File(
                                                   files.single.path!,
                                                 );
-                                                filesSaved.add(files[i]);
                                               });
                                             }
                                           }
@@ -171,9 +168,11 @@ class _EditProfileState extends ConsumerState<EditProfile> {
               ),
               SizedBox(height: 3.h),
               EditTextField(
-                hintText: profileState.profile!.age.toString() == "0"
+                hintText:
+                    profileState.profile!.age == 0 ||
+                        profileState.profile!.age == null
                     ? "age"
-                    : profileState.profile!.age.toString(),
+                    : "${profileState.profile!.age}",
                 fieldIcon: Icons.numbers,
                 textFieldController: ageController,
               ),
@@ -211,36 +210,52 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         });
                         ref
                             .watch(editProfileProvider.notifier)
-                            .setFirstName(firstNameController.text);
+                            .setFirstName(
+                              firstNameController.text == ""
+                                  ? profileState.profile!.firstName.toString()
+                                  : firstNameController.text,
+                            );
                         ref
                             .watch(editProfileProvider.notifier)
-                            .setLastName(lastNameController.text);
+                            .setLastName(
+                              lastNameController.text == ""
+                                  ? profileState.profile!.lastName.toString()
+                                  : lastNameController.text,
+                            );
                         ref
                             .watch(editProfileProvider.notifier)
-                            .setLocation(locationController.text);
+                            .setLocation(
+                              locationController.text == ""
+                                  ? profileState.profile!.location.toString()
+                                  : locationController.text,
+                            );
                         ref
                             .watch(editProfileProvider.notifier)
-                            .setAge(int.parse(ageController.text));
+                            .setAge(
+                              ageController.text == ""
+                                  ? int.parse(
+                                      profileState.profile!.age.toString(),
+                                    )
+                                  : int.parse(ageController.text),
+                            );
                         ref
                             .watch(editProfileProvider.notifier)
-                            .setDescription(descriptionController.text);
+                            .setDescription(
+                              descriptionController.text == ""
+                                  ? profileState.profile!.description.toString()
+                                  : descriptionController.text,
+                            );
                         ref
                             .watch(editProfileProvider.notifier)
-                            .setImage(descriptionController.text);
+                            .setImage(_imageFile?.path ?? 'null');
+
                         ref
                             .watch(editProfileProvider.notifier)
                             .setEmail(profileState.profile!.email.toString());
                         var result = await EditProfileController()
                             .handleProfileEdit(context, ref);
-                        print(result.age);
-                        print(result.code);
-                        print(result.description);
-                        print(result.email);
-                        print(result.firstName);
-                        print(result.lastName);
-                        print(result.image);
-                        print(result.location);
-                        if (result.code != null) {
+
+                        if (result['code'] == 200) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: const Color.fromARGB(
@@ -250,7 +265,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                                 0,
                               ),
                               content: Text(
-                                "User Logged in Successfully!",
+                                "Profile updated successfully!",
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),

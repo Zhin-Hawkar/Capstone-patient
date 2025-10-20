@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/Pages/EditProfile/View/edit_profile.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
@@ -28,6 +30,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
   late TabController _tab_controller;
   final PageController _pageController = PageController();
   Timer time = Timer(Duration.zero, () {});
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +48,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
   @override
   Widget build(BuildContext context) {
     final profileState = ref.watch(signInNotifierProvider);
+
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
       appBar: AppBar(title: Text("Profile"), centerTitle: true),
@@ -108,14 +112,16 @@ class _UserProfileState extends ConsumerState<UserProfile>
                 margin: EdgeInsets.only(top: 0.h),
                 child: ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(25),
-                  child: profileState.profile!.image == "null"
+                  child:
+                      profileState.profile!.image == null ||
+                          profileState.profile!.image == "null"
                       ? Icon(Icons.person, size: 80)
                       : ClipRRect(
                           borderRadius: BorderRadiusGeometry.circular(25),
-                          child: Image.asset(
-                            profileState.profile!.image.toString(),
-                            width: 40,
-                            height: 50,
+                          child: Image.network(
+                            "${profileState.profile!.image}",
+                            width: 120,
+                            height: 120,
                             fit: BoxFit.cover,
                           ),
                         ),

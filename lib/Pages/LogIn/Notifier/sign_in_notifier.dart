@@ -30,6 +30,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
     profile.age = user.age;
     profile.description = user.description;
     profile.image = user.image;
+    profile.code = user.code;
     state = state.copyWith(profile: profile);
 
     GlobalStorageService.storageService.setString(

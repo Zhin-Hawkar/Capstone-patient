@@ -16,13 +16,17 @@ class HttpUtil {
       connectTimeout: const Duration(seconds: 60),
       receiveTimeout: const Duration(seconds: 100),
       headers: {},
-      contentType: "Application/json: charset=utf-8",
       responseType: ResponseType.json,
     );
     dio = Dio(options);
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
+          if (options.data is FormData) {
+            options.contentType = 'multipart/form-data';
+          } else {
+            options.contentType = 'application/json; charset=utf-8';
+          }
           return handler.next(options);
         },
         onResponse: (response, handler) {
@@ -38,7 +42,9 @@ class HttpUtil {
 
   Map<String, dynamic>? getAuthorizationHeader() {
     var headers = <String, dynamic>{};
-    var accessToken = GlobalStorageService.storageService.getString(EnumValues.ACCESS_TOKEN);
+    var accessToken = GlobalStorageService.storageService.getString(
+      EnumValues.ACCESS_TOKEN,
+    );
     if (accessToken.isNotEmpty) {
       headers['Authorization'] = 'Bearer $accessToken';
     }
