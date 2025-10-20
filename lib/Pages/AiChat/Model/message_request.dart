@@ -1,12 +1,20 @@
-class MessageRequestEntity {
-   String? message;
+class AiChatModel {
+  final String prompt;
+  final String response;
+  final String createdAt;
 
-  MessageRequestEntity({this.message});
-  
-  
-  MessageRequestEntity copyWith({String? message}) {
-    return MessageRequestEntity(message: this.message ?? message);
+  AiChatModel({
+    required this.prompt,
+    required this.response,
+    required this.createdAt,
+  });
+
+  factory AiChatModel.fromJson(Map<String, dynamic> json) {
+    final log = json['result']['log'];
+    return AiChatModel(
+      prompt: log['prompt'],
+      response: log['response'],
+      createdAt: log['created_at'],
+    );
   }
-
-  Map<String, dynamic> toJson() => {"prompt": message};
 }

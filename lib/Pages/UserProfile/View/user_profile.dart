@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
