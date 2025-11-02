@@ -29,19 +29,7 @@ class RouteController {
           EnumValues.DEVICE_FIRST_OPEN,
         );
         if (result.first.path == RoutesName.onboarding && isFirstDeviceOpen) {
-          String isUserAuthorized = GlobalStorageService.storageService
-              .getString(EnumValues.ACCESS_TOKEN);
-          if (isUserAuthorized.isNotEmpty) {
-            bool isFirstFileUploadShowed = GlobalStorageService.storageService
-                .getBool(EnumValues.DEVICE_FIRST_UPLOAD);
-            if (isFirstFileUploadShowed) {
-              return MaterialPageRoute(builder: (_) => Home());
-            } else {
-              return MaterialPageRoute(builder: (_) => FilesUpload());
-            }
-          } else {
-            return MaterialPageRoute(builder: (_) => LoginPage());
-          }
+          return MaterialPageRoute(builder: (_) => Home());
         } else {
           return MaterialPageRoute(builder: (_) => OnBoardingPage());
         }

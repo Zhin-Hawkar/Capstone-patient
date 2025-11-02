@@ -55,12 +55,17 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> {
               context,
               PageTransition(
                 type: PageTransitionType.fade,
-                child: UserProfile(),
+                child:
+                    GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty
+                    ? LoginPage()
+                    : UserProfile(),
               ),
             );
           },
           icon:
-              profileState.profile!.image == null ||
+              profileState.profile?.image == null ||
                   profileState.profile!.image == "null"
               ? Icon(Icons.person)
               : ClipRRect(
@@ -115,7 +120,7 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: AppColors.DARK_GREEN,
+      backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       width: 200,
       child: Container(
         margin: EdgeInsets.only(top: 20.h, bottom: 3.h),
@@ -125,10 +130,13 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
             Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.home, color: AppColors.WHITE_BACKGROUND),
+                  leading: Icon(Icons.home, color: AppColors.DARK_GREEN),
                   title: Text(
                     "Home",
-                    style: TextStyle(color: AppColors.WHITE_BACKGROUND),
+                    style: TextStyle(
+                      color: AppColors.DARK_GREEN,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   onTap: () => {
                     Navigator.pushReplacement(
@@ -152,11 +160,14 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                   },
                   leading: Icon(
                     Icons.notifications,
-                    color: AppColors.WHITE_BACKGROUND,
+                    color: AppColors.DARK_GREEN,
                   ),
                   title: Text(
                     "Notifications",
-                    style: TextStyle(color: AppColors.WHITE_BACKGROUND),
+                    style: TextStyle(
+                      color: AppColors.DARK_GREEN,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 ListTile(
@@ -171,47 +182,74 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                   },
                   leading: Icon(
                     Icons.calendar_month,
-                    color: AppColors.WHITE_BACKGROUND,
+                    color: AppColors.DARK_GREEN,
                   ),
                   title: Text(
                     "Appointments",
-                    style: TextStyle(color: AppColors.WHITE_BACKGROUND),
+                    style: TextStyle(
+                      color: AppColors.DARK_GREEN,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
 
-            ListTile(
-              leading: Icon(Icons.logout, color: AppColors.WHITE_BACKGROUND),
-              title: Text(
-                "LogOut",
-                style: TextStyle(color: AppColors.WHITE_BACKGROUND),
-              ),
-              onTap: () async {
-                await LogoutController.handleLogOut(ref);
-                if (GlobalStorageService.storageService.getString(
-                      EnumValues.ACCESS_TOKEN,
-                    ) ==
-                    "") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: const Color.fromARGB(120, 0, 0, 0),
-                      content: Text(
-                        "User Logged out Successfully!",
-                        style: TextStyle(color: Colors.white),
+            GlobalStorageService.storageService
+                    .getString(EnumValues.ACCESS_TOKEN)
+                    .isEmpty
+                ? ListTile(
+                    leading: Icon(Icons.login, color: AppColors.DARK_GREEN),
+                    title: Text(
+                      "Login",
+                      style: TextStyle(
+                        color: AppColors.DARK_GREEN,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  );
-                  Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.fade,
-                      child: LoginPage(),
+                    onTap: () async {
+                      Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.fade,
+                          child: LoginPage(),
+                        ),
+                      );
+                    },
+                  )
+                : ListTile(
+                    leading: Icon(Icons.logout, color: AppColors.DARK_GREEN),
+                    title: Text(
+                      "LogOut",
+                      style: TextStyle(
+                        color: AppColors.DARK_GREEN,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  );
-                }
-              },
-            ),
+                    onTap: () async {
+                      await LogoutController.handleLogOut(ref);
+                      if (GlobalStorageService.storageService
+                          .getString(EnumValues.ACCESS_TOKEN)
+                          .isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: const Color.fromARGB(120, 0, 0, 0),
+                            content: Text(
+                              "User Logged out Successfully!",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        );
+                        Navigator.pushReplacement(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.fade,
+                            child: LoginPage(),
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ],
         ),
       ),

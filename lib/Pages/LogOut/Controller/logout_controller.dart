@@ -11,6 +11,7 @@ class LogoutController {
     ref.invalidate(signInNotifierProvider);
     ref.invalidate(editProfileProvider);
     GlobalStorageService.storageService.remove(EnumValues.ACCESS_TOKEN);
+    GlobalStorageService.storageService.remove(EnumValues.USER_PROFILE);
   }
 
   static _logOut() async {

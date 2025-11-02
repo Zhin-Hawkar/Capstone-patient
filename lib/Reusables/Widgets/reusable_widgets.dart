@@ -1,5 +1,7 @@
+import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating/flutter_rating.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 
@@ -42,6 +44,103 @@ class OnboardingPages extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class FeedbackPages extends StatefulWidget {
+  double? rating;
+  String? name;
+  String? quote;
+
+  LottieBuilder? lottie;
+
+  FeedbackPages({super.key, this.rating, this.name, this.quote, this.lottie});
+
+  @override
+  State<FeedbackPages> createState() => _FeedbackPagesState();
+}
+
+class _FeedbackPagesState extends State<FeedbackPages> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(left: 2.w, right: 2.w),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(172, 236, 236, 236),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 6.w),
+                child: StarRating(
+                  rating: widget.rating ?? 0.0,
+                  onRatingChanged: (rating) {
+                    setState(() {
+                      widget.rating = rating;
+                    });
+                  },
+                  starCount: 5,
+                  size: 25,
+                  color: Colors.amber,
+                  emptyIcon: Icons.star_border,
+                  filledIcon: Icons.star,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 6.w),
+                child: Icon(
+                  Icons.format_quote_sharp,
+                  color: AppColors.DARK_GREEN,
+                  size: 60,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 2.h),
+          Container(
+            margin: EdgeInsets.only(left: 6.w, right: 6.w),
+            child: Text(
+              "In this hospital I recieved what I needed, it was a great choice for cardiatic illnesses.",
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 6.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Hussien, patient",
+                  style: TextStyle(
+                    color: const Color.fromARGB(146, 35, 35, 35),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 2.h),
+          ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadiusGeometry.circular(45),
+              child: Image.asset(
+                "assets/img/doctor/${UserModel.doctors[0]['image']}",
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),
+            ),
+            title: Text("Charité – Universitätsmedizin Berlin"),
+            subtitle: Text("Germany - Berlin"),
           ),
         ],
       ),

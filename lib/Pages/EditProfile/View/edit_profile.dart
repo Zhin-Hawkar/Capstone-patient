@@ -23,13 +23,32 @@ class EditProfile extends ConsumerStatefulWidget {
 
 class _EditProfileState extends ConsumerState<EditProfile> {
   List<PlatformFile> filesSaved = [];
-  File? _imageFile;
+  File _imageFile = File("");
   bool? isEditBtnClicked = false;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController ageController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  void _onChanged() => setState(() {});
+  @override
+  void initState() {
+    super.initState();
+    firstNameController.addListener(_onChanged);
+    lastNameController.addListener(_onChanged);
+    ageController.addListener(_onChanged);
+    locationController.addListener(_onChanged);
+    descriptionController.addListener(_onChanged);
+  }
+
+  bool get isVerified =>
+      _imageFile.path != "" ||
+      firstNameController.text.isNotEmpty ||
+      lastNameController.text.isNotEmpty ||
+      ageController.text.isNotEmpty ||
+      locationController.text.isNotEmpty ||
+      descriptionController.text.isNotEmpty;
+
   @override
   void dispose() {
     firstNameController.dispose();
@@ -64,7 +83,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadiusGeometry.circular(70),
-                      child: _imageFile == null
+                      child: _imageFile.path.isEmpty
                           ? Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -202,7 +221,10 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                         height: 100,
                       ),
                     )
-                  : CustomButton(
+                  : isVerified
+                  ? CustomButton(
+                      textColor: Colors.white,
+                      backgroundColor: AppColors.DARK_GREEN,
                       buttonText: "Upload",
                       function: () async {
                         setState(() {
@@ -276,6 +298,21 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                             isEditBtnClicked = false;
                           });
                         }
+                      },
+                    )
+                  : CustomButton(
+                      buttonText: "Upload",
+                      backgroundColor: const Color.fromARGB(255, 167, 230, 170),
+                      textColor: Colors.white,
+                      function: () => {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "At least one field should be changed to continue.",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
                       },
                     ),
             ],

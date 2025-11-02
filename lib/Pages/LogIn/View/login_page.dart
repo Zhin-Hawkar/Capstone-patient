@@ -128,6 +128,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final double circleBottom = -diameter * 0.55;
 
     return Scaffold(
+      backgroundColor: AppColors.WHITE_BACKGROUND,
       body: SafeArea(
         child: Stack(
           children: [
@@ -163,6 +164,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            Row(
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType.fade,
+                                        child: Home(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Home",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: AppColors.DARK_GREEN,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Transform.scale(

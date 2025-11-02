@@ -201,17 +201,28 @@ class _AiChatState extends ConsumerState<AiChat> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(),
-                        child: BlurText(
-                          text:
-                              "Hello ${profileState.profile!.firstName}, How Can I Help You Today?",
-                          mode: AnimationMode.repeatNoReverse,
-                          duration: Duration(milliseconds: 1300),
-                          type: AnimationType.word,
-                          textStyle: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: profileState.profile?.firstName == null
+                            ? BlurText(
+                                text: "Hello, How Can I Help You Today?",
+                                mode: AnimationMode.repeatNoReverse,
+                                duration: Duration(milliseconds: 1300),
+                                type: AnimationType.word,
+                                textStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : BlurText(
+                                text:
+                                    "Hello ${profileState.profile?.firstName}, How Can I Help You Today?",
+                                mode: AnimationMode.repeatNoReverse,
+                                duration: Duration(milliseconds: 1300),
+                                type: AnimationType.word,
+                                textStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ],
                   ),

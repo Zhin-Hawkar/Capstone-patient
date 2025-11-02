@@ -1,5 +1,6 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Pages/Home/View/home.dart';
 import 'package:capstone/Pages/LogIn/View/login_page.dart';
 import 'package:capstone/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
@@ -120,7 +121,7 @@ class _OnBoardingPageState extends ConsumerState<OnBoardingPage> {
                                     Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                        builder: (context) => LoginPage(),
+                                        builder: (context) => Home(),
                                       ),
                                     );
                                     GlobalStorageService.storageService.setBool(

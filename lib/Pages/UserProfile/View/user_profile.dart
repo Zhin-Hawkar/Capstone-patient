@@ -33,7 +33,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
   @override
   void initState() {
     super.initState();
-    _tab_controller = TabController(length: 2, vsync: this);
+    _tab_controller = TabController(length: 1, vsync: this);
   }
 
   @override
@@ -53,56 +53,28 @@ class _UserProfileState extends ConsumerState<UserProfile>
       appBar: AppBar(title: Text("Profile"), centerTitle: true),
       body: Column(
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                PageTransition(
-                  type: PageTransitionType.fade,
-                  child: EditProfile(),
-                ),
-              );
-            },
-            child: Container(
-              margin: EdgeInsets.only(right: 4.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.DARK_GREEN,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-
-                    width: 22.w,
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadiusGeometry.circular(25),
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            color: const Color.fromARGB(255, 159, 230, 161),
-                            width: 10.w,
-                            child: Transform.scale(
-                              scale: 2.5,
-                              child: Lottie.asset("assets/json/Crop.json"),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 2.w),
-                        Text(
-                          "edit",
-                          style: TextStyle(
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 5.w),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: EditProfile(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "edit",
+                    style: TextStyle(fontSize: 18, color: AppColors.DARK_GREEN),
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +84,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
                 child: ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(25),
                   child:
-                      profileState.profile!.image == null ||
+                      profileState.profile?.image == null ||
                           profileState.profile!.image == "null"
                       ? Icon(Icons.person, size: 80)
                       : ClipRRect(
@@ -134,113 +106,79 @@ class _UserProfileState extends ConsumerState<UserProfile>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "${profileState.profile!.firstName} ${profileState.profile!.lastName}",
+                  "${profileState.profile?.firstName} ${profileState.profile?.lastName}",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-                Text("${profileState.profile!.email}"),
+                Text("${profileState.profile?.email}"),
               ],
             ),
           ),
           SizedBox(height: 2.h),
           Container(
-            margin: EdgeInsets.only(right: 10.w, left: 8.w),
+            margin: EdgeInsets.only(left: 4.w, right: 4.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.DARK_GREEN,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 150, 237, 153),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: SizedBox(
-                          width: 20.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("age: "),
-                              profileState.profile!.age != 0
-                                  ? Text("${profileState.profile!.age}")
-                                  : Text("___"),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 2.w),
-                    Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.DARK_GREEN,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 150, 237, 153),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: SizedBox(
-                          width: 20.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.location_on),
-                              profileState.profile!.location != "null"
-                                  ? Text("${profileState.profile!.location}")
-                                  : Text("___"),
-                            ],
-                          ),
+                Container(
+                  height: 100,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: AppColors.DARK_GREEN,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 10.w),
+                        child: Row(
+                          children: [
+                            Text(
+                              "age: ",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                            profileState.profile!.age != 0
+                                ? Text(
+                                    "${profileState.profile!.age}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  )
+                                : Text("___"),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+                      VerticalDivider(color: Colors.white, thickness: 1),
+                      Container(
+                        margin: EdgeInsets.only(right: 10.w),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                            profileState.profile!.location != "null"
+                                ? Text(
+                                    "${profileState.profile!.location}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  )
+                                : Text("___"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
-                SizedBox(height: 1.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: AppColors.DARK_GREEN,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 150, 237, 153),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: SizedBox(
-                          width: 50.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.description),
-                              Text("Description"),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.h),
+                SizedBox(height: 5.h),
                 profileState.profile!.description != "null"
                     ? ReadMoreText(
                         "${profileState.profile!.description}",
@@ -254,39 +192,40 @@ class _UserProfileState extends ConsumerState<UserProfile>
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 3.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TabBarViewButtonOne(
-                  tabController: _tab_controller,
-                  buttonText: "Medical Records",
-                  function: () {
-                    setState(() {
-                      _tab_controller.animateTo(0);
-                    });
-                  },
-                ),
-                TabBarViewButtonTwo(
-                  tabController: _tab_controller,
-                  buttonText: "Doctor's Documents",
-                  function: () {
-                    setState(() {
-                      _tab_controller.animateTo(1);
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
+          Divider(),
           Expanded(
             child: TabBarView(
               physics: NeverScrollableScrollPhysics(),
               controller: _tab_controller,
               children: [
-                Center(child: Text("Medical Records")),
-                Center(child: Text("Doctor's Documents")),
+                filesSaved.isEmpty
+                    ? Center(child: Text("No files uploaded"))
+                    : GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                        ),
+                        scrollDirection: Axis.vertical,
+                        itemCount: filesSaved.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: EdgeInsets.all(20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  width: 120,
+                                  height: 120,
+                                  child: Icon(Icons.file_copy, size: 80),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
               ],
             ),
           ),
@@ -332,6 +271,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
                                           filesSaved.add(files[i]);
                                         });
                                       }
+                                      setState(() => {});
                                     }
                                   },
                                   child: Column(

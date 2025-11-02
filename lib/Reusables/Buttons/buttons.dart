@@ -31,8 +31,10 @@ class OnboardingButton extends StatelessWidget {
 // ignore: must_be_immutable
 class CustomButton extends StatelessWidget {
   String? buttonText;
+  Color? textColor;
+  Color? backgroundColor;
   Function()? function;
-  CustomButton({super.key, this.buttonText, this.function});
+  CustomButton({super.key, this.buttonText, this.function, this.textColor, this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +42,13 @@ class CustomButton extends StatelessWidget {
       onPressed: function,
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(
-          AppColors.GREEN_BUTTON_BACKGROUND,
+          backgroundColor,
         ),
       ),
       child: Text(
         buttonText.toString(),
         style: TextStyle(
-          color: AppColors.WHITE_TEXT,
+          color: textColor,
           fontWeight: FontWeight.bold,
         ),
       ),

@@ -1,9 +1,15 @@
+import 'dart:async';
+
 import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Pages/AiChat/View/ai_chat.dart';
+import 'package:capstone/Pages/Home/Notifier/feedback_dot.dart';
 import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
+import 'package:capstone/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
 import 'package:capstone/Pages/Search/View/search.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
+import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -18,9 +24,41 @@ class Home extends ConsumerStatefulWidget {
 }
 
 class _HomeState extends ConsumerState<Home> {
+  PageController controller = PageController(initialPage: 0);
+  late Timer _timer;
+  int _currentPage = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (_currentPage < 4) {
+        _currentPage++;
+        ref.watch(feedbackDotProvider.notifier).incrementIndex(_currentPage);
+      } else {
+        _currentPage = 0;
+        ref.watch(feedbackDotProvider.notifier).incrementIndex(_currentPage);
+      }
+
+      controller.animateToPage(
+        ref.watch(feedbackDotProvider),
+        duration: Duration(milliseconds: 1500),
+        curve: Curves.easeOutSine,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileState = ref.watch(signInNotifierProvider);
+    final feedbackDot = ref.watch(feedbackDotProvider);
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
       appBar: CustomAppBar(title: ""),
@@ -53,27 +91,61 @@ class _HomeState extends ConsumerState<Home> {
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 10.w, top: 5.h),
-                  child: Text(
-                    "Hello, ${profileState.profile!.firstName}!",
-                    style: TextStyle(
-                      color: AppColors.DARK_GREEN,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
-                  ),
+                  child: profileState.profile?.firstName == null
+                      ? Text(
+                          "Hello, Welcome!",
+                          style: TextStyle(
+                            color: AppColors.DARK_GREEN,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        )
+                      : Text(
+                          "Hello ${profileState.profile?.firstName}, Welcome!",
+                          style: TextStyle(
+                            color: AppColors.DARK_GREEN,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
                 ),
               ],
             ),
             SizedBox(height: 5.h),
-            ClipRRect(
-              borderRadius: BorderRadiusGeometry.circular(25),
-              child: Image.asset(
-                "assets/img/poster/good-health-message-board-with-green-apple-stethoscope-white-background.jpg",
-                width: 80.w,
-                height: 20.h,
-                fit: BoxFit.cover,
-              ),
+            Column(
+              children: [
+                SizedBox(
+                  height: 250,
+                  child: PageView(
+                    physics: NeverScrollableScrollPhysics(),
+                    onPageChanged: (value) {
+                      ref
+                          .watch(feedbackDotProvider.notifier)
+                          .incrementIndex(value);
+                    },
+                    controller: controller,
+                    children: [
+                      FeedbackPages(rating: 4),
+                      FeedbackPages(rating: 3),
+                      FeedbackPages(rating: 2),
+                      FeedbackPages(rating: 1),
+                      FeedbackPages(rating: 5),
+                    ],
+                  ),
+                ),
+
+                DotsIndicator(
+                  position: feedbackDot.toDouble(),
+                  dotsCount: 5,
+                  animate: true,
+                  animationDuration: Duration(seconds: 1),
+                  axis: Axis.horizontal,
+                  decorator: DotsDecorator(activeColor: AppColors.DARK_GREEN),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                ),
+              ],
             ),
+
             SizedBox(height: 10.h),
             Column(
               children: [
