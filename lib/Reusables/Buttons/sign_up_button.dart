@@ -1,5 +1,5 @@
-import 'package:capstone/Pages/Register/Controller/sign_up_controller.dart';
-import 'package:capstone/Pages/Register/Notifier/sign_up_notifier.dart';
+import 'package:capstone/Patient/Pages/Register/Controller/sign_up_controller.dart';
+import 'package:capstone/Patient/Pages/Register/Notifier/sign_up_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

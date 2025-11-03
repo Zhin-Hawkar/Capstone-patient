@@ -1,9 +1,10 @@
 import 'package:capstone/Constants/enum.dart';
-import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
-import 'package:capstone/Pages/Home/View/home.dart';
-import 'package:capstone/Pages/LogIn/View/login_page.dart';
-import 'package:capstone/Pages/OnBoarding/View/onboarding_view.dart';
-import 'package:capstone/Pages/Register/View/signup_page.dart';
+import 'package:capstone/Doctor/test.dart';
+import 'package:capstone/Patient/Pages/FileUpload/View/file_upload.dart';
+import 'package:capstone/Patient/Pages/Home/View/home.dart';
+import 'package:capstone/Patient/Pages/LogIn/View/login_page.dart';
+import 'package:capstone/Patient/Pages/OnBoarding/View/onboarding_view.dart';
+import 'package:capstone/Patient/Pages/Register/View/signup_page.dart';
 import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';
 import 'package:capstone/Route/Model/route_entity.dart';
 import 'package:capstone/Route/Model/routes_name.dart';
@@ -29,7 +30,15 @@ class RouteController {
           EnumValues.DEVICE_FIRST_OPEN,
         );
         if (result.first.path == RoutesName.onboarding && isFirstDeviceOpen) {
-          return MaterialPageRoute(builder: (_) => Home());
+          if (GlobalStorageService.storageService.getString(EnumValues.ROLE) ==
+              EnumValues.USER) {
+            return MaterialPageRoute(builder: (_) => Home());
+          } else if (GlobalStorageService.storageService.getString(
+                EnumValues.ROLE,
+              ) ==
+              EnumValues.DOCTOR) {
+            return MaterialPageRoute(builder: (_) => Test());
+          }
         } else {
           return MaterialPageRoute(builder: (_) => OnBoardingPage());
         }

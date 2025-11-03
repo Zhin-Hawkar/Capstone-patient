@@ -78,6 +78,7 @@ class Profile {
   String? lastName;
   int? age;
   String? image;
+  String? role;
   String? location;
   String? description;
   String? email;
@@ -87,6 +88,7 @@ class Profile {
     this.firstName,
     this.lastName,
     this.image,
+    this.role,
     this.email,
     this.age,
     this.location,
@@ -101,6 +103,7 @@ class Profile {
       firstName: user['first_name']?.toString(),
       lastName: user['last_name']?.toString(),
       email: user['email']?.toString(),
+      role: user['role']?.toString(),
       location: user['location']?.toString(),
       description: user['description']?.toString(),
       image: user['image']?.toString(),

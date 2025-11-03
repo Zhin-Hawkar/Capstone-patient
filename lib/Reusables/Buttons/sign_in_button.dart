@@ -1,6 +1,6 @@
-import 'package:capstone/Pages/FileUpload/View/file_upload.dart';
-import 'package:capstone/Pages/LogIn/Controller/sign_in_controller.dart';
-import 'package:capstone/Pages/LogIn/Notifier/sign_in_notifier.dart';
+import 'package:capstone/Patient/Pages/FileUpload/View/file_upload.dart';
+import 'package:capstone/Patient/Pages/LogIn/Controller/sign_in_controller.dart';
+import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:page_transition/page_transition.dart';
