@@ -67,6 +67,9 @@ class SignInController {
             ..role = result['user']['role'];
           ref.watch(signInNotifierProvider.notifier).setProfile(profile);
         }
+        print(
+          "from local cache: ${GlobalStorageService.storageService.getString(EnumValues.USER_PROFILE)}",
+        );
       } else if (result['code'] != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

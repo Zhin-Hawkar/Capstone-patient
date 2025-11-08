@@ -30,9 +30,9 @@ class SignInNotifier extends StateNotifier<SignInState> {
     profile.age = user.age;
     profile.description = user.description;
     profile.image = user.image;
-    profile.code = user.code;
+    profile.role = user.role;
     state = state.copyWith(profile: profile);
-
+    print(profile.firstName);
     GlobalStorageService.storageService.setString(
       EnumValues.USER_PROFILE,
       jsonEncode({
@@ -43,6 +43,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
         "location": user.location,
         "description": user.description,
         "image": user.image,
+        'role': user.role,
       }),
     );
   }
@@ -61,7 +62,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
     profile.age = user.age;
     profile.description = user.description;
     profile.image = user.image;
-    profile.code = user.code;
+    profile.role = user.role;
     state = state.copyWith(doctor: profile);
 
     GlobalStorageService.storageService.setString(
@@ -79,6 +80,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
         "location": user.location,
         "description": user.description,
         "image": user.image,
+        'role': user.role,
       }),
     );
   }
@@ -105,6 +107,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
         profile.image = data["image"];
         profile.code = data["code"];
         profile.role = data["role"];
+        state = state.copyWith(doctor: profile);
       } else if (data['role'] == EnumValues.USER) {
         Profile profile = Profile();
         profile.firstName = data["first_name"];
