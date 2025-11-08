@@ -108,7 +108,7 @@ class SignInNotifier extends StateNotifier<SignInState> {
         profile.code = data["code"];
         profile.role = data["role"];
         state = state.copyWith(doctor: profile);
-      } else if (data['role'] == EnumValues.USER) {
+      } else if (data['role'] == EnumValues.PATIENT) {
         Profile profile = Profile();
         profile.firstName = data["first_name"];
         profile.lastName = data["last_name"];

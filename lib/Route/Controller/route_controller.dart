@@ -32,7 +32,7 @@ class RouteController {
         );
         if (result.first.path == RoutesName.onboarding && isFirstDeviceOpen) {
           if (GlobalStorageService.storageService.getString(EnumValues.ROLE) ==
-              EnumValues.USER) {
+              EnumValues.PATIENT) {
             return MaterialPageRoute(builder: (_) => Home());
           } else if (GlobalStorageService.storageService.getString(
                 EnumValues.ROLE,

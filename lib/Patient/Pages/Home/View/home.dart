@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:capstone/Backend/Model/user_model.dart';
+import 'package:capstone/Backend/PusherSocket/pusher_notification.dart';
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
 import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
@@ -9,6 +11,7 @@ import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifi
 import 'package:capstone/Patient/Pages/Search/View/search.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';
+import 'package:capstone/SharedResources/global_storage_service.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +33,9 @@ class _HomeState extends ConsumerState<Home> {
   @override
   void initState() {
     super.initState();
-
+    if(GlobalStorageService.storageService.getString(EnumValues.ACCESS_TOKEN).isNotEmpty){
+    setupSocket();
+    }
     _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
       if (_currentPage < 4) {
         _currentPage++;
@@ -48,8 +53,13 @@ class _HomeState extends ConsumerState<Home> {
     });
   }
 
+  void setupSocket() {
+    NotificationService.init(context, channelName: "doctor-notification");
+  }
+
   @override
   void dispose() {
+    NotificationService.disconnect(channelName: "doctor-notification");
     _timer.cancel();
     controller.dispose();
     super.dispose();

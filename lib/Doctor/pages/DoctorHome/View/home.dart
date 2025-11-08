@@ -37,12 +37,12 @@ class _HomePageState extends State<DoctorHome> {
   }
 
   void setupSocket() {
-    NotificationService.init(context);
+    NotificationService.init(context, channelName: "doctor");
   }
 
   @override
   void dispose() {
-    NotificationService.disconnect();
+    NotificationService.disconnect(channelName: "doctor");
     super.dispose();
   }
 

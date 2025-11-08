@@ -103,7 +103,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       );
 
       if (GlobalStorageService.storageService.getString(EnumValues.ROLE) ==
-          EnumValues.USER) {
+          EnumValues.PATIENT) {
         Navigator.pushReplacement(
           context,
           PageTransition(type: PageTransitionType.fade, child: Home()),

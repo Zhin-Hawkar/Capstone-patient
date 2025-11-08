@@ -30,6 +30,14 @@ class SignInController {
           print(
             "Doctor Id: ${GlobalStorageService.storageService.getInt(EnumValues.DOCTORID)}",
           );
+        } else if (result['user']['role'] == EnumValues.PATIENT) {
+          GlobalStorageService.storageService.setPatientId(
+            EnumValues.PATIENTID,
+            result['user']['id'],
+          );
+          print(
+            "Patient Id: ${GlobalStorageService.storageService.getInt(EnumValues.PATIENTID)}",
+          );
         }
         GlobalStorageService.storageService.setString(
           EnumValues.ACCESS_TOKEN,
@@ -55,7 +63,7 @@ class SignInController {
             ..image = result['user']['image']
             ..role = result['user']['role'];
           ref.watch(signInNotifierProvider.notifier).setDoctor(doctor);
-        } else if (result['user']['role'] == EnumValues.USER) {
+        } else if (result['user']['role'] == EnumValues.PATIENT) {
           Profile profile = Profile()
             ..firstName = result['user']['first_name']
             ..lastName = result['user']['last_name']

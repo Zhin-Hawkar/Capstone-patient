@@ -7,7 +7,7 @@ class NotificationService {
   static final PusherChannelsFlutter _pusher =
       PusherChannelsFlutter.getInstance();
 
-  static Future<void> init(BuildContext context) async {
+  static Future<void> init(BuildContext context, {String? channelName}) async {
     await _pusher.init(
       apiKey: "116c3f6587071defa627",
       cluster: "mt1",
@@ -19,21 +19,20 @@ class NotificationService {
       },
       onEvent: (event) {
         print("Event received: ${event.eventName} Data: ${event.data}");
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(event.data.toString())));
+        if (event.data) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(event.data.toString())));
+        }
       },
     );
 
     await _pusher.connect();
-    await _pusher.subscribe(channelName: "doctor");
+    await _pusher.subscribe(channelName: channelName.toString());
   }
 
-  static Future<void> disconnect() async {
-    await _pusher.unsubscribe(
-      channelName:
-          "doctor",
-    );
+  static Future<void> disconnect({String? channelName}) async {
+    await _pusher.unsubscribe(channelName: channelName.toString());
     await _pusher.disconnect();
   }
 }
