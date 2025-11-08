@@ -15,8 +15,16 @@ class AppLocalStorage {
     await _pref.setString(key, value);
   }
 
+  Future<void> setDoctorId(String key, int value) async {
+    await _pref.setInt(key, value);
+  }
+
   String getString(String key) {
     return _pref.getString(key) ?? "";
+  }
+
+  int getInt(String key) {
+    return _pref.getInt(key) ?? 0;
   }
 
   bool getBool(String key) {

@@ -20,7 +20,17 @@ class SignInController {
 
     try {
       var result = await _logIn(params: loginRequestEntity);
+      print(result);
       if (result['code'] == 200 && result['token'] != null) {
+        if (result['user']['role'] == EnumValues.DOCTOR) {
+          GlobalStorageService.storageService.setDoctorId(
+            EnumValues.DOCTORID,
+            result['user']['id'],
+          );
+          print(
+            "Doctor Id: ${GlobalStorageService.storageService.getInt(EnumValues.DOCTORID)}",
+          );
+        }
         GlobalStorageService.storageService.setString(
           EnumValues.ACCESS_TOKEN,
           result['token'],
@@ -29,16 +39,34 @@ class SignInController {
           EnumValues.ROLE,
           result['user']['role'],
         );
-        Profile profile = Profile()
-          ..firstName = result['user']['first_name']
-          ..lastName = result['user']['last_name']
-          ..email = result['user']['email']
-          ..location = result['user']['location']
-          ..age = result['user']['age']
-          ..description = result['user']['description']
-          ..image = result['user']['image']
-          ..role = result['user']['role'];
-        ref.watch(signInNotifierProvider.notifier).setProfile(profile);
+        if (result['user']['role'] == EnumValues.DOCTOR) {
+          Doctor doctor = Doctor()
+            ..firstName = result['user']['first_name']
+            ..lastName = result['user']['last_name']
+            ..specialization = result['user']['specialization']
+            ..qualification = result['user']['qualification']
+            ..hospital = result['user']['hospital']
+            ..department = result['user']['department']
+            ..licenseId = result['user']['licenseId']
+            ..email = result['user']['email']
+            ..location = result['user']['location']
+            ..age = result['user']['age']
+            ..description = result['user']['description']
+            ..image = result['user']['image']
+            ..role = result['user']['role'];
+          ref.watch(signInNotifierProvider.notifier).setDoctor(doctor);
+        } else if (result['user']['role'] == EnumValues.USER) {
+          Profile profile = Profile()
+            ..firstName = result['user']['first_name']
+            ..lastName = result['user']['last_name']
+            ..email = result['user']['email']
+            ..location = result['user']['location']
+            ..age = result['user']['age']
+            ..description = result['user']['description']
+            ..image = result['user']['image']
+            ..role = result['user']['role'];
+          ref.watch(signInNotifierProvider.notifier).setProfile(profile);
+        }
       } else if (result['code'] != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

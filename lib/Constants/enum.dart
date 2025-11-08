@@ -11,5 +11,6 @@ class EnumValues {
   static final String EDITED_USER_PROFILE = "EDITED_USER_PROFILE";
   static final String USER = "user";
   static final String DOCTOR = "doctor";
+  static final String DOCTORID = "doctorId";
   static final String ROLE = "role";
 }
