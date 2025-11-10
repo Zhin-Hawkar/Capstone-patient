@@ -34,23 +34,24 @@ class CustomButton extends StatelessWidget {
   Color? textColor;
   Color? backgroundColor;
   Function()? function;
-  CustomButton({super.key, this.buttonText, this.function, this.textColor, this.backgroundColor});
+  CustomButton({
+    super.key,
+    this.buttonText,
+    this.function,
+    this.textColor,
+    this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: function,
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(
-          backgroundColor,
-        ),
+        backgroundColor: WidgetStatePropertyAll(backgroundColor),
       ),
       child: Text(
         buttonText.toString(),
-        style: TextStyle(
-          color: textColor,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -74,7 +75,7 @@ class TabBarViewButtonOne extends StatelessWidget {
       onTap: function,
       child: Container(
         height: 8.h,
-        width: 50.w,
+        width: 31.w,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.DARK_GREEN),
           color: tabController!.index.isEven
@@ -103,6 +104,7 @@ class TabBarViewButtonOne extends StatelessWidget {
 // ignore: must_be_immutable
 class TabBarViewButtonTwo extends StatelessWidget {
   String? buttonText;
+
   TabController? tabController;
   Function()? function;
   TabBarViewButtonTwo({
@@ -118,7 +120,7 @@ class TabBarViewButtonTwo extends StatelessWidget {
       onTap: function,
       child: Container(
         height: 8.h,
-        width: 50.w,
+        width: 31.w,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.DARK_GREEN),
           color: tabController!.index.isOdd
@@ -191,11 +193,13 @@ class TabBarNotificationsViewButtonOne extends StatelessWidget {
 // ignore: must_be_immutable
 class TabBarNotificationsViewButtonTwo extends StatelessWidget {
   String? buttonText;
+  double? containerWidth;
   TabController? tabController;
   Function()? function;
   TabBarNotificationsViewButtonTwo({
     super.key,
     this.buttonText,
+    this.containerWidth,
     this.function,
     this.tabController,
   });
@@ -233,13 +237,105 @@ class TabBarNotificationsViewButtonTwo extends StatelessWidget {
 }
 
 // ignore: must_be_immutable
+class TabBarAppointmentsViewButtonOne extends StatelessWidget {
+  String? buttonText;
+  TabController? tabController;
+  Function()? function;
+  TabBarAppointmentsViewButtonOne({
+    super.key,
+    this.buttonText,
+    this.function,
+    this.tabController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: function,
+      child: Container(
+        height: 8.h,
+        width: 48.w,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.DARK_GREEN),
+          color: tabController!.index == 0
+              ? AppColors.DARK_GREEN
+              : AppColors.WHITE_TEXT,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              buttonText.toString(),
+              style: TextStyle(
+                color: tabController!.index == 0
+                    ? AppColors.WHITE_TEXT
+                    : AppColors.DARK_GREEN,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class TabBarAppointmentsViewButtonTwo extends StatelessWidget {
+  String? buttonText;
+  double? containerWidth;
+  TabController? tabController;
+  Function()? function;
+  TabBarAppointmentsViewButtonTwo({
+    super.key,
+    this.buttonText,
+    this.containerWidth,
+    this.function,
+    this.tabController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: function,
+      child: Container(
+        height: 8.h,
+        width: 48.w,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.DARK_GREEN),
+          color: tabController!.index == 1
+              ? AppColors.DARK_GREEN
+              : AppColors.WHITE_TEXT,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              buttonText.toString(),
+              style: TextStyle(
+                color: tabController!.index == 1
+                    ? AppColors.WHITE_TEXT
+                    : AppColors.DARK_GREEN,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ignore: must_be_immutable
 class TabBarNotificationsViewButtonThree extends StatelessWidget {
   String? buttonText;
+  double? containerWidth;
   TabController? tabController;
   Function()? function;
   TabBarNotificationsViewButtonThree({
     super.key,
     this.buttonText,
+    this.containerWidth,
     this.function,
     this.tabController,
   });

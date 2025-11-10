@@ -19,11 +19,9 @@ class NotificationService {
       },
       onEvent: (event) {
         print("Event received: ${event.eventName} Data: ${event.data}");
-        if (event.data) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(event.data.toString())));
-        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("New notification")));
       },
     );
 

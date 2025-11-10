@@ -59,7 +59,9 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   void dispose() {
+    if(GlobalStorageService.storageService.getString(EnumValues.ACCESS_TOKEN).isNotEmpty){
     NotificationService.disconnect(channelName: "doctor-notification");
+    }
     _timer.cancel();
     controller.dispose();
     super.dispose();

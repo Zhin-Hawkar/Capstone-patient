@@ -1,7 +1,9 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patients.dart';
 import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/test.dart';
+import 'package:capstone/Patient/Pages/Appointments/View/appointments.dart';
 import 'package:capstone/Patient/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
 import 'package:capstone/Patient/Pages/LogIn/Controller/sign_in_controller.dart';
@@ -114,7 +116,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           EnumValues.DOCTOR) {
         Navigator.pushReplacement(
           context,
-          PageTransition(type: PageTransitionType.fade, child: DoctorHome()),
+          PageTransition(type: PageTransitionType.fade, child: AssignedPatients()),
         );
       }
     } else {
