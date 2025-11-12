@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:capstone/Backend/PusherSocket/pusher_notification.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
+import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class DoctorHome extends StatefulWidget {
 }
 
 class _HomePageState extends State<DoctorHome> {
-  List<dynamic> _notifications = [];
+  List<DoctorNotification> _notifications = [];
 
   @override
   void initState() {
@@ -25,9 +26,9 @@ class _HomePageState extends State<DoctorHome> {
   }
 
   Future<void> loadNotifications() async {
-    final result = await retrieveNotification();
+    List<DoctorNotification> result = await retrieveNotification();
     setState(() {
-      _notifications = result['notification'];
+      _notifications = result;
     });
   }
 
@@ -57,10 +58,10 @@ class _HomePageState extends State<DoctorHome> {
           return ListTile(
             leading: const Icon(Icons.notifications),
             title: Text(
-              "${_notifications[index]['firstName']} ${_notifications[index]['lastName']}",
+              "${_notifications[index].firstName} ${_notifications[index].lastName}",
             ),
-            subtitle: Text(_notifications[index]['department']),
-            trailing: Text(_notifications[index]['date_time']),
+            subtitle: Text(_notifications[index].department.toString()),
+            trailing: Text(_notifications[index].date_time.toString()),
           );
         },
       ),

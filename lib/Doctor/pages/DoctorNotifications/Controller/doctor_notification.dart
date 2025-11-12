@@ -14,7 +14,7 @@ class DoctorNotificationController {
   }
 
   static _sendDoctorNotifyRequest() async {
-    var result = await HttpUtil().get("api/senddoctornotification");
+    var result = await HttpUtil().get("api/sendpatientnotification");
     return result;
   }
 }

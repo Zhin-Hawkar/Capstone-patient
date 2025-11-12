@@ -58,9 +58,8 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^31.1.19
   laravel_echo: ^1.0.0-beta.1
   pusher_channels_flutter: ^2.5.0
-
-
-
+  fl_chart: 0.69.0
+  
 
 
 dev_dependencies:

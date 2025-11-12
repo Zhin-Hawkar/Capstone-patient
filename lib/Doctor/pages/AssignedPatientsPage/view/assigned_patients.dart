@@ -17,6 +17,7 @@ class AssignedPatients extends ConsumerStatefulWidget {
 
 class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
   List<AssignedPatientsModel> appointments = [];
+  bool isLoading = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -25,9 +26,13 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
   }
 
   Future<void> loadAppointments() async {
+    setState(() {
+      isLoading = true;
+    });
     final result = await showAppointments();
     setState(() {
       appointments = result;
+      isLoading = false;
     });
   }
 
@@ -97,164 +102,83 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
                             },
                           );
                         },
-                        child: ListTile(
-                          leading: ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(25),
-                            child: appointments[index].image == null
-                                ? Icon(Icons.person)
-                                : Image.network(
-                                    "${appointments[index].image}",
-                                    width: 50,
-                                    height: 50,
-                                    fit: BoxFit.cover,
-                                  ),
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 3.w,
+                            right: 3.w,
+                            bottom: 3.h,
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 1.h),
-                              Text(
-                                '${appointments[index].department}',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              SizedBox(width: 18.w, child: Divider()),
-                              Text(
-                                '${appointments[index].gender}',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(117, 166, 255, 222),
+                            borderRadius: BorderRadius.circular(25),
                           ),
-                          title: Text(
-                            "${appointments[index].doctorFirstName} ${appointments[index].doctorLastName}",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          trailing: Container(
-                            decoration: BoxDecoration(
-                              color:
-                                  "${appointments[index].status}" == 'pending'
-                                  ? Colors.amber
-                                  : "${appointments[index].status}" ==
-                                        'rejected'
-                                  ? Colors.red
-                                  : "${appointments[index].status}" ==
-                                        'accepted'
-                                  ? Colors.green
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(20),
+                          child: ListTile(
+                            leading: ClipRRect(
+                              borderRadius: BorderRadiusGeometry.circular(25),
+                              child: appointments[index].image == null
+                                  ? Icon(Icons.person)
+                                  : Image.network(
+                                      "${appointments[index].image}",
+                                      width: 50,
+                                      height: 50,
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
-
-                            width: 27.w,
-                            child: Row(
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadiusGeometry.circular(
-                                    25,
-                                  ),
-                                  child: Container(
-                                    color:
-                                        "${appointments[index].status}" ==
-                                            'pending'
-                                        ? const Color.fromARGB(
-                                            255,
-                                            255,
-                                            219,
-                                            111,
-                                          )
-                                        : "${appointments[index].status}" ==
-                                              'rejected'
-                                        ? const Color.fromARGB(
-                                            255,
-                                            255,
-                                            124,
-                                            114,
-                                          )
-                                        : "${appointments[index].status}" ==
-                                              'accepted'
-                                        ? const Color.fromARGB(
-                                            255,
-                                            100,
-                                            189,
-                                            103,
-                                          )
-                                        : Colors.white,
-                                    width: 10.w,
-                                    child:
-                                        "${appointments[index].status}" ==
-                                            'pending'
-                                        ? Transform.scale(
-                                            scale: 0.9,
-                                            child: Lottie.asset(
-                                              "assets/json/clock time.json",
-                                            ),
-                                          )
-                                        : "${appointments[index].status}" ==
-                                              'rejected'
-                                        ? Transform.scale(
-                                            scale: 0.5,
-                                            child: Lottie.asset(
-                                              "assets/json/OCL Canceled.json",
-                                            ),
-                                          )
-                                        : "${appointments[index].status}" ==
-                                              'accepted'
-                                        ? Transform.scale(
-                                            scale: 0.8,
-                                            child: Lottie.asset(
-                                              "assets/json/Tick Pop.json",
-                                            ),
-                                          )
-                                        : Container(),
-                                  ),
+                                SizedBox(height: 1.h),
+                                Text(
+                                  '${appointments[index].department}',
+                                  style: TextStyle(fontSize: 12),
                                 ),
-                                SizedBox(width: 2.w),
-                                "${appointments[index].status}" == 'pending'
-                                    ? Text(
-                                        "Pending",
-                                        style: TextStyle(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            0,
-                                            0,
-                                            0,
-                                          ),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    : "${appointments[index].status}" ==
-                                          'rejected'
-                                    ? Text(
-                                        "Rejected",
-                                        style: TextStyle(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            0,
-                                            0,
-                                            0,
-                                          ),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    : "${appointments[index].status}" ==
-                                          'accepted'
-                                    ? Text(
-                                        "Accepted",
-                                        style: TextStyle(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            0,
-                                            0,
-                                            0,
-                                          ),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )
-                                    : Container(),
+                                SizedBox(width: 18.w, child: Divider()),
+                                Text(
+                                  '${appointments[index].gender}',
+                                  style: TextStyle(fontSize: 12),
+                                ),
                               ],
+                            ),
+                            title: Text(
+                              "${appointments[index].firstName} ${appointments[index].lastName}",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            trailing: Container(
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(177, 233, 233, 233),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+
+                              width: 30.w,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Details",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Icon(Icons.arrow_circle_right, size: 35),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       );
                     },
+                  )
+                : isLoading
+                ? Center(
+                    child: Transform.scale(
+                      scale: 1.6,
+                      child: Lottie.asset(
+                        "assets/json/Material wave loading.json",
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
                   )
                 : Container(
                     margin: EdgeInsetsDirectional.only(bottom: 30.h),

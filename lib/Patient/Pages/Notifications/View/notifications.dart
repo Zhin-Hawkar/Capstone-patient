@@ -1,6 +1,7 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
+import 'package:capstone/Patient/Pages/Notifications/Controller/patient_notification.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _NotificationsState extends State<Notifications>
     with SingleTickerProviderStateMixin {
   late TabController _tab_controller;
   List<DoctorNotification> notifications = [];
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -26,15 +28,19 @@ class _NotificationsState extends State<Notifications>
   }
 
   Future<void> loadNotifications() async {
+    setState(() {
+      isLoading = true;
+    });
     List<DoctorNotification> result = await showNotifications();
     setState(() {
       notifications = result;
+      isLoading = false;
     });
   }
 
   Future<dynamic> showNotifications() async {
     List<DoctorNotification> result =
-        await DoctorNotificationController.notifyDoctor();
+        await PatientNotificationController.notifyPatient();
     return result;
   }
 
@@ -310,6 +316,15 @@ class _NotificationsState extends State<Notifications>
                                   ),
                                 );
                               },
+                            )
+                          : isLoading
+                          ? Transform.scale(
+                              scale: 1.6,
+                              child: Lottie.asset(
+                                "assets/json/Material wave loading.json",
+                                width: 100,
+                                height: 100,
+                              ),
                             )
                           : Container(
                               margin: EdgeInsetsDirectional.only(bottom: 30.h),

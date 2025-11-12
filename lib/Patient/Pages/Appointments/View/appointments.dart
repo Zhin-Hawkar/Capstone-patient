@@ -21,6 +21,7 @@ class _AppointmentsState extends State<Appointments>
   List<AssignedPatientsModel> appointments = [];
   List<AssignedPatientsModel> acceptedAppointments = [];
   late TabController _tab_controller;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -33,20 +34,28 @@ class _AppointmentsState extends State<Appointments>
   }
 
   void showAppointments() async {
+    setState(() {
+      isLoading = true;
+    });
     List<AssignedPatientsModel> result =
         await AppointmentController.handleAppointments();
 
     setState(() {
       appointments = result;
+      isLoading = false;
     });
   }
 
   void showPatientAcceptedAppointments() async {
+    setState(() {
+      isLoading = true;
+    });
     List<AssignedPatientsModel> result =
         await AppointmentController.handlePatientAcceptedAppointments();
 
     setState(() {
       acceptedAppointments = result;
+      isLoading = false;
     });
   }
 
@@ -315,6 +324,15 @@ class _AppointmentsState extends State<Appointments>
                                 );
                               },
                             )
+                          : isLoading
+                          ? Transform.scale(
+                              scale: 1.6,
+                              child: Lottie.asset(
+                                "assets/json/Material wave loading.json",
+                                width: 100,
+                                height: 100,
+                              ),
+                            )
                           : Container(
                               margin: EdgeInsetsDirectional.only(bottom: 30.h),
                               child: Transform.scale(
@@ -489,6 +507,15 @@ class _AppointmentsState extends State<Appointments>
                                   ),
                                 );
                               },
+                            )
+                          : isLoading
+                          ? Transform.scale(
+                              scale: 1.6,
+                              child: Lottie.asset(
+                                "assets/json/Material wave loading.json",
+                                width: 100,
+                                height: 100,
+                              ),
                             )
                           : Container(
                               margin: EdgeInsetsDirectional.only(bottom: 30.h),
