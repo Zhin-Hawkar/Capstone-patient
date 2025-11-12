@@ -1,4 +1,5 @@
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
@@ -43,7 +44,7 @@ class _NotificationsState extends State<DoctorNotifications>
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
       appBar: CustomAppBar(title: "Notifications"),
-      drawer: CustomDrawer(),
+      drawer: CustomDoctorDrawer(),
       body: Column(
         children: [
           Container(
@@ -147,127 +148,14 @@ class _NotificationsState extends State<DoctorNotifications>
                                       },
                                     );
                                   },
-                                  child: ListTile(
-                                    leading: ClipRRect(
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(25),
-                                      child: notifications[index].image == null
-                                          ? Icon(Icons.person)
-                                          : Image.network(
-                                              "${notifications[index].image}",
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                            ),
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      left: 2.w,
+                                      right: 2.w,
+                                      top: 2.h,
                                     ),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 1.h),
-                                        Text(
-                                          '${notifications[index].department}',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        SizedBox(width: 18.w, child: Divider()),
-                                        Text(
-                                          '${notifications[index].gender}',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                    title: Text(
-                                      "${notifications[index].firstName} ${notifications[index].lastName}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    trailing: Container(
-                                      decoration: BoxDecoration(
-                                        color:
-                                            "${notifications[index].status}" ==
-                                                'accepted'
-                                            ? Colors.green
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-
-                                      width: 27.w,
-                                      child: Row(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadiusGeometry.circular(
-                                                  25,
-                                                ),
-                                            child: Container(
-                                              color:
-                                                  "${notifications[index].status}" ==
-                                                      'accepted'
-                                                  ? const Color.fromARGB(
-                                                      255,
-                                                      100,
-                                                      189,
-                                                      103,
-                                                    )
-                                                  : Colors.white,
-                                              width: 10.w,
-                                              child:
-                                                  "${notifications[index].status}" ==
-                                                      'accepted'
-                                                  ? Transform.scale(
-                                                      scale: 0.8,
-                                                      child: Lottie.asset(
-                                                        "assets/json/Tick Pop.json",
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                            ),
-                                          ),
-                                          SizedBox(width: 2.w),
-                                          "${notifications[index].status}" ==
-                                                  'pending'
-                                              ? Text(
-                                                  "Pending",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                      255,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : "${notifications[index].status}" ==
-                                                    'rejected'
-                                              ? Text(
-                                                  "Rejected",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                      255,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : "${notifications[index].status}" ==
-                                                    'accepted'
-                                              ? Text(
-                                                  "Accepted",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                      255,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : Container(),
-                                        ],
-                                      ),
+                                    child: PatientCard(
+                                      patient: notifications[index],
                                     ),
                                   ),
                                 );
@@ -287,6 +175,111 @@ class _NotificationsState extends State<DoctorNotifications>
                 ),
                 Center(child: Text("this week")),
                 Center(child: Text("earlier")),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PatientCard extends StatelessWidget {
+  const PatientCard({required this.patient});
+
+  final DoctorNotification patient;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(20),
+            child: SizedBox(
+              width: 70,
+              height: 70,
+              child: Image.network(
+                "${patient.image}",
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${patient.firstName} ${patient.lastName}",
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 0.5.h),
+                Text(
+                  '${patient.age} years',
+                  style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 1.5.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.event_available,
+                      size: 16.sp,
+                      color: AppColors.DARK_GREEN,
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        'Last visit: -/-/-',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 0.8.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule,
+                      size: 16.sp,
+                      color: AppColors.DARK_GREEN,
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        'Next visit: ${patient.date_time}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.2.h),
               ],
             ),
           ),

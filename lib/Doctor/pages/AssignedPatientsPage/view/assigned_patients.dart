@@ -47,7 +47,7 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
       appBar: CustomAppBar(title: "Patients"),
-      drawer: CustomDrawer(),
+      drawer: CustomDoctorDrawer(),
       body: Column(
         children: [
           Expanded(
@@ -104,67 +104,11 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
                         },
                         child: Container(
                           margin: EdgeInsets.only(
-                            left: 3.w,
-                            right: 3.w,
-                            bottom: 3.h,
+                            left: 2.w,
+                            right: 2.w,
+                            top: 2.h,
                           ),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(117, 166, 255, 222),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          child: ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadiusGeometry.circular(25),
-                              child: appointments[index].image == null
-                                  ? Icon(Icons.person)
-                                  : Image.network(
-                                      "${appointments[index].image}",
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 1.h),
-                                Text(
-                                  '${appointments[index].department}',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                SizedBox(width: 18.w, child: Divider()),
-                                Text(
-                                  '${appointments[index].gender}',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                            title: Text(
-                              "${appointments[index].firstName} ${appointments[index].lastName}",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            trailing: Container(
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(177, 233, 233, 233),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-
-                              width: 30.w,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Details",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Icon(Icons.arrow_circle_right, size: 35),
-                                ],
-                              ),
-                            ),
-                          ),
+                          child: PatientCard(patient: appointments[index]),
                         ),
                       );
                     },
@@ -187,6 +131,111 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
                       child: Lottie.asset("assets/json/no data found.json"),
                     ),
                   ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PatientCard extends StatelessWidget {
+  const PatientCard({required this.patient});
+
+  final AssignedPatientsModel patient;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(20),
+            child: SizedBox(
+              width: 70,
+              height: 70,
+              child: Image.network(
+                "${patient.image}",
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${patient.firstName} ${patient.lastName}",
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 0.5.h),
+                Text(
+                  '${patient.age} years',
+                  style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 1.5.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.event_available,
+                      size: 16.sp,
+                      color: AppColors.DARK_GREEN,
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        'Last visit: -/-/-',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 0.8.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule,
+                      size: 16.sp,
+                      color: AppColors.DARK_GREEN,
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        'Next visit: ${patient.date_time}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.2.h),
+              ],
+            ),
           ),
         ],
       ),

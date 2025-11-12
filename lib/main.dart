@@ -1,4 +1,5 @@
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patients.dart';
+import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/pages/Statistics/View/statistics.dart';
 import 'package:capstone/Route/Controller/route_controller.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
@@ -27,6 +28,7 @@ class Capstone extends StatelessWidget {
           initialRoute: "/",
           onGenerateRoute: (settings) =>
               RouteController.generateRouteSettings(settings),
+          // home: DoctorHome(),
         );
       },
     );

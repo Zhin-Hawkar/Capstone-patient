@@ -116,7 +116,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           EnumValues.DOCTOR) {
         Navigator.pushReplacement(
           context,
-          PageTransition(type: PageTransitionType.fade, child: AssignedPatients()),
+          PageTransition(type: PageTransitionType.fade, child: DoctorHome()),
         );
       }
     } else {

@@ -27,6 +27,10 @@ class _NotificationsState extends State<Notifications>
     loadNotifications();
   }
 
+  Future<void> refresh() async {
+    await loadNotifications();
+  }
+
   Future<void> loadNotifications() async {
     setState(() {
       isLoading = true;
@@ -96,226 +100,247 @@ class _NotificationsState extends State<Notifications>
                   children: [
                     Expanded(
                       child: notifications.isNotEmpty
-                          ? ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: notifications.length,
-                              itemBuilder: (context, index) {
-                                return Dismissible(
-                                  key: Key("${notifications[index].firstName}"),
-                                  background: Container(
-                                    color: Colors.red,
-                                    alignment: Alignment.centerLeft,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20.0,
+                          ? RefreshIndicator(
+                              onRefresh: () {
+                                return refresh();
+                              },
+                              child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: notifications.length,
+                                itemBuilder: (context, index) {
+                                  return Dismissible(
+                                    key: Key(
+                                      "${notifications[index].firstName}",
                                     ),
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          '${notifications[index].firstName} dismissed',
-                                        ),
+                                    background: Container(
+                                      color: Colors.red,
+                                      alignment: Alignment.centerLeft,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20.0,
                                       ),
-                                    );
-                                    setState(() {
-                                      notifications.removeAt(index);
-                                    });
-                                  },
-                                  confirmDismiss: (direction) async {
-                                    return await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("Confirm Delete"),
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    direction: DismissDirection.endToStart,
+                                    onDismissed: (direction) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
                                           content: Text(
-                                            "Are you sure you want to delete ${notifications[index].firstName}?",
+                                            '${notifications[index].firstName} dismissed',
                                           ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () => Navigator.of(
-                                                context,
-                                              ).pop(false),
-                                              child: Text("CANCEL"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () => Navigator.of(
-                                                context,
-                                              ).pop(true),
-                                              child: Text("DELETE"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: ListTile(
-                                    leading: ClipRRect(
-                                      borderRadius:
-                                          BorderRadiusGeometry.circular(25),
-                                      child: notifications[index].image == null
-                                          ? Icon(Icons.person)
-                                          : Image.network(
-                                              "${notifications[index].image}",
-                                              width: 50,
-                                              height: 50,
-                                              fit: BoxFit.cover,
-                                            ),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 1.h),
-                                        Text(
-                                          '${notifications[index].department}',
-                                          style: TextStyle(fontSize: 12),
                                         ),
-                                        SizedBox(width: 18.w, child: Divider()),
-                                        Text(
-                                          '${notifications[index].gender}',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                    title: Text(
-                                      "${notifications[index].firstName} ${notifications[index].lastName}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    trailing: Container(
-                                      decoration: BoxDecoration(
-                                        color:
-                                            "${notifications[index].status}" ==
-                                                'pending'
-                                            ? Colors.amber
-                                            : "${notifications[index].status}" ==
-                                                  'rejected'
-                                            ? Colors.red
-                                            : "${notifications[index].status}" ==
-                                                  'accepted'
-                                            ? Colors.green
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
+                                      );
+                                      setState(() {
+                                        notifications.removeAt(index);
+                                      });
+                                    },
+                                    confirmDismiss: (direction) async {
+                                      return await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Confirm Delete"),
+                                            content: Text(
+                                              "Are you sure you want to delete ${notifications[index].firstName}?",
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.of(
+                                                  context,
+                                                ).pop(false),
+                                                child: Text("CANCEL"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.of(
+                                                  context,
+                                                ).pop(true),
+                                                child: Text("DELETE"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: ListTile(
+                                      leading: ClipRRect(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(25),
+                                        child:
+                                            notifications[index].image == null
+                                            ? Icon(Icons.person)
+                                            : Image.network(
+                                                "${notifications[index].image}",
+                                                width: 50,
+                                                height: 50,
+                                                fit: BoxFit.cover,
+                                              ),
                                       ),
-
-                                      width: 27.w,
-                                      child: Row(
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadiusGeometry.circular(
-                                                  25,
-                                                ),
-                                            child: Container(
-                                              color:
-                                                  "${notifications[index].status}" ==
-                                                      'pending'
-                                                  ? const Color.fromARGB(
-                                                      255,
-                                                      255,
-                                                      219,
-                                                      111,
-                                                    )
-                                                  : "${notifications[index].status}" ==
-                                                        'rejected'
-                                                  ? const Color.fromARGB(
-                                                      255,
-                                                      255,
-                                                      124,
-                                                      114,
-                                                    )
-                                                  : "${notifications[index].status}" ==
-                                                        'accepted'
-                                                  ? const Color.fromARGB(
-                                                      255,
-                                                      100,
-                                                      189,
-                                                      103,
-                                                    )
-                                                  : Colors.white,
-                                              width: 10.w,
-                                              child:
-                                                  "${notifications[index].status}" ==
-                                                      'pending'
-                                                  ? Transform.scale(
-                                                      scale: 0.9,
-                                                      child: Lottie.asset(
-                                                        "assets/json/clock time.json",
-                                                      ),
-                                                    )
-                                                  : "${notifications[index].status}" ==
-                                                        'rejected'
-                                                  ? Transform.scale(
-                                                      scale: 0.5,
-                                                      child: Lottie.asset(
-                                                        "assets/json/OCL Canceled.json",
-                                                      ),
-                                                    )
-                                                  : "${notifications[index].status}" ==
-                                                        'accepted'
-                                                  ? Transform.scale(
-                                                      scale: 0.8,
-                                                      child: Lottie.asset(
-                                                        "assets/json/Tick Pop.json",
-                                                      ),
-                                                    )
-                                                  : Container(),
-                                            ),
+                                          SizedBox(height: 1.h),
+                                          Text(
+                                            '${notifications[index].department}',
+                                            style: TextStyle(fontSize: 12),
                                           ),
-                                          SizedBox(width: 2.w),
-                                          "${notifications[index].status}" ==
-                                                  'pending'
-                                              ? Text(
-                                                  "Pending",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                      255,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : "${notifications[index].status}" ==
-                                                    'rejected'
-                                              ? Text(
-                                                  "Rejected",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                      255,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : "${notifications[index].status}" ==
-                                                    'accepted'
-                                              ? Text(
-                                                  "Accepted",
-                                                  style: TextStyle(
-                                                    color: const Color.fromARGB(
-                                                      255,
-                                                      0,
-                                                      0,
-                                                      0,
-                                                    ),
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )
-                                              : Container(),
+                                          SizedBox(
+                                            width: 18.w,
+                                            child: Divider(),
+                                          ),
+                                          Text(
+                                            '${notifications[index].gender}',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
                                         ],
                                       ),
+                                      title: Text(
+                                        "${notifications[index].firstName} ${notifications[index].lastName}",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      trailing: Container(
+                                        decoration: BoxDecoration(
+                                          color:
+                                              "${notifications[index].status}" ==
+                                                  'pending'
+                                              ? Colors.amber
+                                              : "${notifications[index].status}" ==
+                                                    'rejected'
+                                              ? Colors.red
+                                              : "${notifications[index].status}" ==
+                                                    'accepted'
+                                              ? Colors.green
+                                              : Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+
+                                        width: 27.w,
+                                        child: Row(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadiusGeometry.circular(
+                                                    25,
+                                                  ),
+                                              child: Container(
+                                                color:
+                                                    "${notifications[index].status}" ==
+                                                        'pending'
+                                                    ? const Color.fromARGB(
+                                                        255,
+                                                        255,
+                                                        219,
+                                                        111,
+                                                      )
+                                                    : "${notifications[index].status}" ==
+                                                          'rejected'
+                                                    ? const Color.fromARGB(
+                                                        255,
+                                                        255,
+                                                        124,
+                                                        114,
+                                                      )
+                                                    : "${notifications[index].status}" ==
+                                                          'accepted'
+                                                    ? const Color.fromARGB(
+                                                        255,
+                                                        100,
+                                                        189,
+                                                        103,
+                                                      )
+                                                    : Colors.white,
+                                                width: 10.w,
+                                                child:
+                                                    "${notifications[index].status}" ==
+                                                        'pending'
+                                                    ? Transform.scale(
+                                                        scale: 0.9,
+                                                        child: Lottie.asset(
+                                                          "assets/json/clock time.json",
+                                                        ),
+                                                      )
+                                                    : "${notifications[index].status}" ==
+                                                          'rejected'
+                                                    ? Transform.scale(
+                                                        scale: 0.5,
+                                                        child: Lottie.asset(
+                                                          "assets/json/OCL Canceled.json",
+                                                        ),
+                                                      )
+                                                    : "${notifications[index].status}" ==
+                                                          'accepted'
+                                                    ? Transform.scale(
+                                                        scale: 0.8,
+                                                        child: Lottie.asset(
+                                                          "assets/json/Tick Pop.json",
+                                                        ),
+                                                      )
+                                                    : Container(),
+                                              ),
+                                            ),
+                                            SizedBox(width: 2.w),
+                                            "${notifications[index].status}" ==
+                                                    'pending'
+                                                ? Text(
+                                                    "Pending",
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            0,
+                                                            0,
+                                                            0,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  )
+                                                : "${notifications[index].status}" ==
+                                                      'rejected'
+                                                ? Text(
+                                                    "Rejected",
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            0,
+                                                            0,
+                                                            0,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  )
+                                                : "${notifications[index].status}" ==
+                                                      'accepted'
+                                                ? Text(
+                                                    "Accepted",
+                                                    style: TextStyle(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                            255,
+                                                            0,
+                                                            0,
+                                                            0,
+                                                          ),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             )
                           : isLoading
                           ? Transform.scale(

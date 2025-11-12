@@ -1,4 +1,5 @@
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/pages/Statistics/Controller/statistics_controller.dart';
 import 'package:capstone/Doctor/pages/Statistics/Model/statistics_model.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
@@ -48,8 +49,8 @@ class _StatisticsState extends State<Statistics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
-      drawer: CustomDrawer(),
+      appBar: CustomAppBar(title: ""),
+      drawer: CustomDoctorDrawer(),
       backgroundColor: AppColors.WHITE_BACKGROUND,
       body: SingleChildScrollView(
         child: statistics?.patients != null || statistics?.patients != null
@@ -71,138 +72,126 @@ class _StatisticsState extends State<Statistics> {
                       ),
                     ],
                   ),
+                  SizedBox(height: 4.h),
                   Container(
-                    margin: EdgeInsets.only(top: 5.h, left: 2.w, right: 2.w),
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(117, 165, 254, 221),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                    margin: EdgeInsets.only(left: 2.w, right: 2.w),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 5.w),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Patients",
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${statistics?.patients}",
-                                style: TextStyle(fontSize: 25),
-                              ),
-                            ],
+                        Expanded(
+                          child: StatCard(
+                            title: 'Assigned Patients',
+                            value: "${statistics?.patients ?? 0}",
+                            icon: Icons.people_alt_rounded,
+                            color: AppColors.DARK_GREEN,
                           ),
                         ),
-                        VerticalDivider(),
-                        Container(
-                          margin: EdgeInsets.only(right: 5.w),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Requests",
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "${statistics?.requests}",
-                                style: TextStyle(fontSize: 25),
-                              ),
-                            ],
+                        SizedBox(width: 4.w),
+                        Expanded(
+                          child: StatCard(
+                            title: 'Pending Requests',
+                            value: "${statistics?.requests ?? 0}",
+                            icon: Icons.pending_actions_rounded,
+                            color: Colors.orange[600] ?? Colors.orange,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 5.h, right: 2.w, left: 2.w),
-                    height: 400,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(117, 165, 254, 221),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 35.h,
-                          width: double.infinity,
-                          child: PieChart(
-                            PieChartData(
-                              borderData: FlBorderData(show: false),
-                              centerSpaceRadius: 40,
-                              sectionsSpace: 2,
-                              sections: [
-                                PieChartSectionData(
-                                  showTitle: true,
-                                  value: statistics?.patients?.toDouble() ?? 0,
-                                  color: Colors.blueAccent,
-                                  title: "${statistics?.patients}",
-                                  radius: 70,
-                                  titleStyle: TextStyle(
-                                    fontSize: 17.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                PieChartSectionData(
-                                  value: statistics?.requests?.toDouble() ?? 0,
-                                  color: Colors.orangeAccent,
-                                  title: "${statistics?.requests}",
-                                  radius: 70,
-                                  titleStyle: TextStyle(
-                                    fontSize: 17.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
+
+                  statistics?.patients != 0 || statistics?.requests != 0
+                      ? Container(
+                          margin: EdgeInsets.only(
+                            top: 4.h,
+                            left: 2.w,
+                            right: 2.w,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 2.5.h,
+                            horizontal: 4.w,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.DARK_GREEN.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: AppColors.DARK_GREEN.withOpacity(0.3),
                             ),
                           ),
-                        ),
-                        Column(
-                          children: [
-                            Text("Number of patients and requests"),
-                            SizedBox(height: 2.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 10,
-                                  width: 10,
-                                  color: Colors.orangeAccent,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 35.h,
+                                width: double.infinity,
+                                child: PieChart(
+                                  PieChartData(
+                                    borderData: FlBorderData(show: false),
+                                    centerSpaceRadius: 40,
+                                    sectionsSpace: 2,
+                                    sections: [
+                                      PieChartSectionData(
+                                        showTitle: true,
+                                        value:
+                                            statistics?.patients?.toDouble() ??
+                                            0,
+                                        color: Colors.blueAccent,
+                                        title: "${statistics?.patients}",
+                                        radius: 70,
+                                        titleStyle: TextStyle(
+                                          fontSize: 17.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      PieChartSectionData(
+                                        value:
+                                            statistics?.requests?.toDouble() ??
+                                            0,
+                                        color: Colors.orangeAccent,
+                                        title: "${statistics?.requests}",
+                                        radius: 70,
+                                        titleStyle: TextStyle(
+                                          fontSize: 17.sp,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(width: 2.w),
-                                Text("Patients"),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 10,
-                                  width: 10,
-                                  color: Colors.blueAccent,
-                                ),
-                                SizedBox(width: 2.w),
-                                Text("Requests"),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                              ),
+                              Column(
+                                children: [
+                                  Text("Number of patients and requests"),
+                                  SizedBox(height: 2.h),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: 10,
+                                        width: 10,
+                                        color: Colors.orangeAccent,
+                                      ),
+                                      SizedBox(width: 2.w),
+                                      Text("Patients"),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: 10,
+                                        width: 10,
+                                        color: Colors.blueAccent,
+                                      ),
+                                      SizedBox(width: 2.w),
+                                      Text("Requests"),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      : Container(),
                 ],
               )
             : isLoading
