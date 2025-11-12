@@ -1,465 +1,378 @@
-import 'dart:async';
-
 import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
-import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
-import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
-import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
-import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
-import 'package:capstone/Patient/Pages/Search/View/search.dart';
-import 'package:capstone/Reusables/AppBar/app_bar.dart';
-import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
-class DoctorHome extends ConsumerStatefulWidget {
+class DoctorHome extends StatelessWidget {
   const DoctorHome({super.key});
 
   @override
-  ConsumerState<DoctorHome> createState() => _HomeState();
+  Widget build(BuildContext context) {
+    final patients = UserModel.doctorPatients;
+    final assignedPatients = patients
+        .where((patient) => patient['status'] == 'assigned')
+        .toList();
+    final pendingRequests = patients
+        .where((patient) => patient['status'] == 'pending')
+        .toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Doctor Dashboard'),
+        backgroundColor: AppColors.DARK_GREEN,
+        foregroundColor: Colors.white,
+      ),
+      backgroundColor: AppColors.WHITE_BACKGROUND,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Welcome back, Doctor',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.DARK_GREEN,
+              ),
+            ),
+            SizedBox(height: 1.h),
+            Text(
+              'Here is a quick overview of your patients.',
+              style: TextStyle(fontSize: 11.sp, color: Colors.grey[700]),
+            ),
+            SizedBox(height: 3.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _StatCard(
+                    title: 'Assigned Patients',
+                    value: assignedPatients.length.toString(),
+                    icon: Icons.people_alt_rounded,
+                    color: AppColors.DARK_GREEN,
+                  ),
+                ),
+                SizedBox(width: 4.w),
+                Expanded(
+                  child: _StatCard(
+                    title: 'Pending Requests',
+                    value: pendingRequests.length.toString(),
+                    icon: Icons.pending_actions_rounded,
+                    color: Colors.orange[600] ?? Colors.orange,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              'Assigned Patients',
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.DARK_GREEN,
+              ),
+            ),
+            SizedBox(height: 1.5.h),
+            if (assignedPatients.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.inbox_outlined,
+                        size: 32.sp, color: Colors.grey[600]),
+                    SizedBox(height: 1.5.h),
+                    Text(
+                      'No patients assigned yet.',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: assignedPatients.length,
+                separatorBuilder: (_, __) => SizedBox(height: 2.h),
+                itemBuilder: (context, index) {
+                  final patient = assignedPatients[index];
+                  return _PatientCard(patient: patient);
+                },
+              ),
+            SizedBox(height: 4.h),
+            Text(
+              'Pending Requests',
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.DARK_GREEN,
+              ),
+            ),
+            SizedBox(height: 1.5.h),
+            if (pendingRequests.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 3.h, horizontal: 4.w),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.task_alt_outlined,
+                        size: 28.sp, color: Colors.grey[600]),
+                    SizedBox(height: 1.h),
+                    Text(
+                      'No pending requests at the moment.',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Column(
+                children: pendingRequests.map((patient) {
+                  return _PendingCard(patient: patient);
+                }).toList(),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _HomeState extends ConsumerState<DoctorHome> {
-  PageController controller = PageController(initialPage: 0);
-  late Timer _timer;
-  int _currentPage = 0;
-  @override
-  void initState() {
-    super.initState();
+class _StatCard extends StatelessWidget {
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < 4) {
-        _currentPage++;
-        ref.watch(feedbackDotProvider.notifier).incrementIndex(_currentPage);
-      } else {
-        _currentPage = 0;
-        ref.watch(feedbackDotProvider.notifier).incrementIndex(_currentPage);
-      }
-
-      controller.animateToPage(
-        ref.watch(feedbackDotProvider),
-        duration: Duration(milliseconds: 1500),
-        curve: Curves.easeOutSine,
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    controller.dispose();
-    super.dispose();
-  }
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final profileState = ref.watch(signInNotifierProvider);
-    final feedbackDot = ref.watch(feedbackDotProvider);
-    return Scaffold(
-      backgroundColor: AppColors.WHITE_BACKGROUND,
-      appBar: CustomAppBar(title: ""),
-      drawer: CustomDrawer(),
-      floatingActionButton: SizedBox(
-        height: 70,
-        width: 70,
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.bottomToTop,
-                child: AiChat(),
-              ),
-            );
-          },
-          backgroundColor: AppColors.DARK_GREEN,
-          shape: CircleBorder(),
-          child: Transform.scale(
-            scale: 1.2,
-            child: Lottie.asset("assets/json/E V E.json"),
-          ),
-        ),
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 2.5.h, horizontal: 4.w),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 10.w, top: 5.h),
-                  child: profileState.profile?.firstName == null
-                      ? Text(
-                          "Hello, Welcome!",
-                          style: TextStyle(
-                            color: AppColors.DARK_GREEN,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          ),
-                        )
-                      : Text(
-                          "Hello ${profileState.profile?.firstName}, Welcome!",
-                          style: TextStyle(
-                            color: AppColors.DARK_GREEN,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25,
-                          ),
-                        ),
-                ),
-              ],
+      child: Row(
+        children: [
+          Container(
+            height: 6.h,
+            width: 6.h,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(14),
             ),
-            SizedBox(height: 5.h),
-            Column(
+            child: Icon(icon, color: Colors.white, size: 24.sp),
+          ),
+          SizedBox(width: 3.w),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 0.5.h),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PatientCard extends StatelessWidget {
+  const _PatientCard({required this.patient});
+
+  final Map<String, dynamic> patient;
+
+  @override
+  Widget build(BuildContext context) {
+    final initials = _initialsFromName(patient['name'] as String);
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 5.h,
+            backgroundColor: AppColors.DARK_GREEN.withOpacity(0.15),
+            child: Text(
+              initials,
+              style: TextStyle(
+                color: AppColors.DARK_GREEN,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: 250,
-                  child: PageView(
-                    physics: NeverScrollableScrollPhysics(),
-                    onPageChanged: (value) {
-                      ref
-                          .watch(feedbackDotProvider.notifier)
-                          .incrementIndex(value);
-                    },
-                    controller: controller,
-                    children: [
-                      FeedbackPages(rating: 4),
-                      FeedbackPages(rating: 3),
-                      FeedbackPages(rating: 2),
-                      FeedbackPages(rating: 1),
-                      FeedbackPages(rating: 5),
-                    ],
+                Text(
+                  patient['name'],
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
-
-                DotsIndicator(
-                  position: feedbackDot.toDouble(),
-                  dotsCount: 5,
-                  animate: true,
-                  animationDuration: Duration(seconds: 1),
-                  axis: Axis.horizontal,
-                  decorator: DotsDecorator(activeColor: AppColors.DARK_GREEN),
-                  mainAxisAlignment: MainAxisAlignment.center,
+                SizedBox(height: 0.5.h),
+                Text(
+                  '${patient['age']} years • ${patient['condition']}',
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey[700]),
                 ),
-              ],
-            ),
-
-            SizedBox(height: 10.h),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 7.w),
-                      child: Text(
-                        "Suggested Doctors",
-                        style: TextStyle(
-                          color: AppColors.DARK_GREEN,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 7.w),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.fade,
-                              child: SearchPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "see all",
-                          style: TextStyle(
-                            color: AppColors.DARK_GREEN,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                SizedBox(height: 1.5.h),
                 Row(
                   children: [
+                    Icon(Icons.event_available, size: 16.sp, color: AppColors.DARK_GREEN),
+                    SizedBox(width: 2.w),
                     Expanded(
-                      child: SizedBox(
-                        height: 25.h,
-                        width: 25.w,
-                        child: ListView.builder(
-                          itemCount: 5,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.all(20),
-                              height: 25.h,
-                              width: 60.w,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 238, 238, 238),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(25),
-                                        child: Image.asset(
-                                          "assets/img/doctor/${UserModel.doctors[index]['image']}",
-                                          width: 80,
-                                          height: 80,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              top: 1.h,
-                                              bottom: 1.h,
-                                              left: 2.w,
-                                            ),
-
-                                            child: Text(
-                                              UserModel.doctors[index]['name'],
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['specialty'],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['degree'],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: const Color.fromARGB(255, 0, 0, 0),
-                                    thickness: 1,
-                                    indent: 10,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.local_hospital),
-                                        Text(
-                                          UserModel.doctors[index]['hospital'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 1.h),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.pin_drop),
-                                        Text(
-                                          UserModel.doctors[index]['location'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 7.w),
                       child: Text(
-                        "Suggested Hospitals",
-                        style: TextStyle(
-                          color: AppColors.DARK_GREEN,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 7.w),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.fade,
-                              child: SearchPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "see all",
-                          style: TextStyle(
-                            color: AppColors.DARK_GREEN,
-                            fontSize: 15,
-                          ),
-                        ),
+                        'Last visit: ${patient['lastVisit']}',
+                        style: TextStyle(fontSize: 10.sp, color: Colors.grey[600]),
                       ),
                     ),
                   ],
                 ),
+                SizedBox(height: 0.8.h),
                 Row(
                   children: [
+                    Icon(Icons.schedule, size: 16.sp, color: AppColors.DARK_GREEN),
+                    SizedBox(width: 2.w),
                     Expanded(
-                      child: SizedBox(
-                        height: 25.h,
-                        width: 25.w,
-                        child: ListView.builder(
-                          itemCount: 5,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.all(20),
-                              height: 25.h,
-                              width: 60.w,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 238, 238, 238),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(25),
-                                        child: Image.asset(
-                                          "assets/img/doctor/${UserModel.doctors[index]['image']}",
-                                          width: 80,
-                                          height: 80,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              top: 1.h,
-                                              bottom: 1.h,
-                                              left: 2.w,
-                                            ),
-
-                                            child: Text(
-                                              UserModel.doctors[index]['name'],
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['specialty'],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['degree'],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: const Color.fromARGB(255, 0, 0, 0),
-                                    thickness: 1,
-                                    indent: 10,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.local_hospital),
-                                        Text(
-                                          UserModel.doctors[index]['hospital'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 1.h),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.pin_drop),
-                                        Text(
-                                          UserModel.doctors[index]['location'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                      child: Text(
+                        'Next visit: ${patient['nextVisit']}',
+                        style: TextStyle(fontSize: 10.sp, color: Colors.grey[600]),
                       ),
                     ),
                   ],
+                ),
+                SizedBox(height: 1.2.h),
+                Text(
+                  patient['notes'] ?? '',
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey[700]),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static String _initialsFromName(String name) {
+    final parts = name.trim().split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
+    if (parts.isEmpty) {
+      return '';
+    }
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    }
+    final firstInitial = parts.first.substring(0, 1).toUpperCase();
+    final lastInitial = parts.last.substring(0, 1).toUpperCase();
+    return '$firstInitial$lastInitial';
+  }
+}
+
+class _PendingCard extends StatelessWidget {
+  const _PendingCard({required this.patient});
+
+  final Map<String, dynamic> patient;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 2.h),
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: AppColors.DARK_GREEN.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.DARK_GREEN.withOpacity(0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 4.5.h,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.pending_actions, color: AppColors.DARK_GREEN, size: 20.sp),
+          ),
+          SizedBox(width: 3.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  patient['name'],
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 0.5.h),
+                Text(
+                  patient['condition'],
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 0.8.h),
+                Text(
+                  'Requested on: ${patient['requestedOn']}',
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 0.8.h),
+                Text(
+                  patient['notes'] ?? '',
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey[700]),
+                ),
+              ],
+            ),
+          ),
+          Icon(Icons.more_vert, color: Colors.grey[600]),
+        ],
       ),
     );
   }

@@ -147,3 +147,107 @@ class Profile {
     );
   }
 }
+
+class Doctor {
+  String? firstName;
+  String? lastName;
+  String? specialization;
+  String? qualification;
+  String? hospital;
+  String? department;
+  int? licenseId;
+  int? age;
+  String? image;
+  String? role;
+  String? location;
+  String? description;
+  String? email;
+  int? code;
+
+  Doctor({
+    this.firstName,
+    this.lastName,
+    this.specialization,
+    this.qualification,
+    this.hospital,
+    this.department,
+    this.licenseId,
+    this.image,
+    this.role,
+    this.email,
+    this.age,
+    this.location,
+    this.description,
+    this.code,
+  });
+
+  factory Doctor.fromJson(Map<String, dynamic> json) {
+    final user = json['doctor'] ?? json;
+    return Doctor(
+      code: json['code'],
+      firstName: user['first_name']?.toString(),
+      lastName: user['last_name']?.toString(),
+      specialization: user['specialization']?.toString(),
+      qualification: user['qualification']?.toString(),
+      hospital: user['hospital']?.toString(),
+      department: user['department']?.toString(),
+      licenseId: user['licenseId'] == null
+          ? null
+          : (user['licenseId'] is int
+                ? user['licenseId']
+                : int.tryParse(user['licenseId'].toString())),
+      email: user['email']?.toString(),
+      role: user['role']?.toString(),
+      location: user['location']?.toString(),
+      description: user['description']?.toString(),
+      image: user['image']?.toString(),
+      age: user['age'] == null
+          ? null
+          : (user['age'] is int
+                ? user['age']
+                : int.tryParse(user['age'].toString())),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "first_name": firstName,
+    "last_name": lastName,
+    "email": email,
+    "age": age,
+    "location": location,
+    "description": description,
+    "image": image,
+  };
+
+  Doctor copyWith({
+    String? firstName,
+    String? lastName,
+    String? specialization,
+    String? qualification,
+    String? hospital,
+    String? department,
+    int? licenseId,
+    String? image,
+    String? email,
+    int? age,
+    String? location,
+    String? description,
+    int? code,
+  }) {
+    return Doctor(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      specialization: specialization ?? this.specialization,
+      qualification: qualification ?? this.qualification,
+      hospital: hospital ?? this.hospital,
+      department: department ?? this.department,
+      licenseId: licenseId ?? this.licenseId,
+      email: email ?? this.email,
+      age: age ?? this.age,
+      location: location ?? this.location,
+      description: description ?? this.description,
+      image: image ?? this.image,
+      code: code ?? this.code,
+    );
+  }
+}

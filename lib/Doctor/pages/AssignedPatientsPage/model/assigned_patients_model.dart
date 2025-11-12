@@ -1,0 +1,51 @@
+class AssignedPatientsModel {
+  String? firstName;
+  String? lastName;
+  String? doctorFirstName;
+  String? doctorLastName;
+  int? age;
+  String? gender;
+  String? email;
+  String? department;
+  String? help;
+  String? medical_record;
+  DateTime? date_time;
+  String? status;
+  String? image;
+
+  AssignedPatientsModel({
+    this.firstName,
+    this.lastName,
+    this.doctorFirstName,
+    this.doctorLastName,
+    this.age,
+    this.gender,
+    this.email,
+    this.department,
+    this.help,
+    this.medical_record,
+    this.date_time,
+    this.status,
+    this.image,
+  });
+
+  factory AssignedPatientsModel.frommJson(Map<String, dynamic> json) {
+    return AssignedPatientsModel(
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      doctorFirstName: json['doctorFirstName'],
+      doctorLastName: json['doctorLastName'],
+      age: json['age'],
+      gender: json['gender'],
+      email: json['email'],
+      department: json['department'],
+      help: json['help'],
+      medical_record: json['medical_record'],
+      date_time: DateTime.parse(json['date_time']),
+      status: json['status'],
+      image: json['image'],
+    );
+  }
+}
+
+

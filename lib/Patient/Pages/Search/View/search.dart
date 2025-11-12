@@ -1,3 +1,4 @@
+import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Patient/Pages/Search/Controller/search_controller.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,52 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController text_controller = TextEditingController();
   String query = "";
   String? selectedLocation;
-  String? selectedIllness;
+  String? selectedHospital;
+  String? selectedIllnessType;
+
+  // Get unique illness types from all hospitals
+  List<String> getIllnessTypes() {
+    Set<String> illnessSet = {};
+    for (var hospital in UserModel.hospitals) {
+      final illnessTypes = hospital['illnessTypes'] as List;
+      for (var illness in illnessTypes) {
+        illnessSet.add(illness.toString());
+      }
+    }
+    return illnessSet.toList()..sort();
+  }
+
+  // Get unique hospital names
+  List<String> getHospitalNames() {
+    return UserModel.hospitals
+        .map((h) => h['name'].toString())
+        .toList()
+      ..sort();
+  }
+
+  // Get unique locations
+  List<String> getLocations() {
+    Set<String> locationSet = {};
+    for (var hospital in UserModel.hospitals) {
+      final location = hospital['location'].toString();
+      // Extract country from location (e.g., "Germany - Berlin" -> "Germany")
+      final parts = location.split(' - ');
+      if (parts.isNotEmpty) {
+        locationSet.add(parts[0]);
+      }
+    }
+    return locationSet.toList()..sort();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final filteredDoctors = SearchUserController.searchDoctors(
+    final filteredHospitals = query.isEmpty && selectedLocation == null && selectedHospital == null && selectedIllnessType == null
+        ? <dynamic>[]
+        : SearchUserController.searchHospitals(
       query,
       selectedLocation,
-      selectedIllness,
+            selectedHospital,
+            selectedIllnessType,
     );
 
     return Scaffold(
@@ -50,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),
                       enabled: true,
-                      hintText: "Search for illness type...",
+                      hintText: "Search by illnesses, location, or hospitals...",
                       hintStyle: TextStyle(fontSize: 14),
                       isDense: true,
                       enabledBorder: OutlineInputBorder(
@@ -70,7 +110,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        query = value;
+                        query = value.trim();
                       });
                     },
                   ),
@@ -87,83 +127,131 @@ class _SearchPageState extends State<SearchPage> {
                       builder: (context) {
                         return StatefulBuilder(
                           builder: (context, setModalState) {
-                            return SizedBox(
-                              height: 20.h,
+                            return Container(
+                              padding: EdgeInsets.all(20),
+                              height: 40.h,
                               width: MediaQuery.of(context).size.width,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(
+                                    "Filters",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.DARK_GREEN,
+                                    ),
+                                  ),
+                                  SizedBox(height: 3.h),
+                                  // Type of Illness Filter
+                                  Text(
+                                    "A. Type of Illness",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 1.h),
+                                  DropdownButton<String>(
+                                    value: selectedIllnessType,
+                                    isExpanded: true,
+                                    hint: Text("Select illness type"),
+                                    items: getIllnessTypes()
+                                        .map((illness) => DropdownMenuItem(
+                                              value: illness,
+                                              child: Text(illness),
+                                            ))
+                                        .toList(),
+                                              onChanged: (value) {
+                                                setModalState(() {
+                                        selectedIllnessType = value;
+                                      });
+                                      setState(() {
+                                        selectedIllnessType = value;
+                                                });
+                                              },
+                                            ),
+                                  SizedBox(height: 2.h),
+                                  // Hospitals Filter
+                                  Text(
+                                    "B. Hospitals",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 1.h),
+                                            DropdownButton<String>(
+                                    value: selectedHospital,
+                                    isExpanded: true,
+                                    hint: Text("Select hospital"),
+                                    items: getHospitalNames()
+                                        .map((hospital) => DropdownMenuItem(
+                                              value: hospital,
+                                              child: Text(hospital),
+                                            ))
+                                        .toList(),
+                                    onChanged: (value) {
+                                      setModalState(() {
+                                        selectedHospital = value;
+                                      });
+                                      setState(() {
+                                        selectedHospital = value;
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  // Location Filter
+                                  Text(
+                                    "C. Location",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 1.h),
+                                  DropdownButton<String>(
+                                    value: selectedLocation,
+                                    isExpanded: true,
+                                    hint: Text("Select location"),
+                                    items: getLocations()
+                                        .map((location) => DropdownMenuItem(
+                                              value: location,
+                                              child: Text(location),
+                                            ))
+                                        .toList(),
+                                              onChanged: (value) {
+                                                setModalState(() {
+                                        selectedLocation = value;
+                                      });
+                                      setState(() {
+                                        selectedLocation = value;
+                                                });
+                                              },
+                                            ),
+                                  SizedBox(height: 2.h),
+                                  // Clear Filters Button
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      SizedBox(
-                                        height: 10.h,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            DropdownButton<String>(
-                                              value: selectedLocation,
-                                              hint: Text(
-                                                "Location",
-                                                style: TextStyle(fontSize: 14),
-                                              ),
-                                              items: [
-                                                DropdownMenuItem(
-                                                  value: "Germany",
-                                                  child: Text("Germany"),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "Italy",
-                                                  child: Text("Italy"),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "Iran",
-                                                  child: Text("Iran"),
-                                                ),
-                                              ],
-                                              onChanged: (value) {
-                                                setModalState(() {
-                                                  selectedLocation = value;
-                                                });
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 10.h,
-                                        margin: EdgeInsets.only(left: 50),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            DropdownButton<String>(
-                                              value: selectedIllness,
-                                              hint: Text(
-                                                "Illness",
-                                                style: TextStyle(fontSize: 14),
-                                              ),
-                                              items: [
-                                                DropdownMenuItem(
-                                                  value: "Cardiologist",
-                                                  child: Text("Cardiologist"),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "Radiologist",
-                                                  child: Text("Radiologist"),
-                                                ),
-                                                DropdownMenuItem(
-                                                  value: "Hematologist",
-                                                  child: Text("Hematologist"),
-                                                ),
-                                              ],
-                                              onChanged: (value) {
-                                                setModalState(() {
-                                                  selectedIllness = value;
-                                                });
-                                              },
-                                            ),
-                                          ],
+                                      TextButton(
+                                        onPressed: () {
+                                          setModalState(() {
+                                            selectedIllnessType = null;
+                                            selectedHospital = null;
+                                            selectedLocation = null;
+                                          });
+                                          setState(() {
+                                            selectedIllnessType = null;
+                                            selectedHospital = null;
+                                            selectedLocation = null;
+                                          });
+                                        },
+                                        child: Text(
+                                          "Clear Filters",
+                                          style: TextStyle(
+                                            color: AppColors.DARK_GREEN,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -185,38 +273,171 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ],
           ),
-          SizedBox(height: 5.h),
+          SizedBox(height: 3.h),
           Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: filteredDoctors.length,
-              itemBuilder: (context, index) {
-                final searched = filteredDoctors[index];
-                return searched.isNotEmpty
-                    ? ListTile(
-                        leading: ClipRRect(
-                          borderRadius: BorderRadiusGeometry.circular(25),
-                          child: Image.asset(
-                            "assets/img/doctor/${searched['image']}",
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
+            child: query.isEmpty && selectedLocation == null && selectedHospital == null && selectedIllnessType == null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          size: 60,
+                          color: Colors.grey[400],
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          "Start typing to search for hospitals",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
                           ),
                         ),
-                        title: Text(
-                          searched['name'],
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        subtitle: Text(
-                          searched['hospital'],
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        trailing: Text(
-                          searched['specialty'],
-                          style: TextStyle(fontSize: 11),
+                      ],
+                    ),
+                  )
+                : filteredHospitals.isEmpty
+                    ? Center(
+                        child: Text(
+                          "No hospitals found",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       )
-                    : Container();
+                    : ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        itemCount: filteredHospitals.length,
+              itemBuilder: (context, index) {
+                          final hospital = filteredHospitals[index];
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 3.h),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 238, 238, 238),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
+                                  ),
+                          child: Image.asset(
+                                    hospital['image'],
+                                    height: 20.h,
+                                    width: double.infinity,
+                            fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: 20.h,
+                                        color: AppColors.DARK_GREEN
+                                            .withOpacity(0.1),
+                                        child: Icon(
+                                          Icons.local_hospital,
+                                          size: 60,
+                                          color: AppColors.DARK_GREEN,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(15),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        hospital['name'],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      SizedBox(height: 0.5.h),
+                                      Text(
+                                        hospital['type'],
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.pin_drop, size: 18),
+                                          SizedBox(width: 2.w),
+                                          Expanded(
+                                            child: Text(
+                                              hospital['location'],
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 1.h),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.phone, size: 18),
+                                          SizedBox(width: 2.w),
+                                          Text(
+                                            hospital['phone'],
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        hospital['description'],
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.grey[700],
+                                        ),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 2.h),
+                                      Text(
+                                        "Services:",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      SizedBox(height: 1.h),
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: (hospital['services'] as List)
+                                            .map((service) => Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.DARK_GREEN
+                                                        .withOpacity(0.1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                  child: Text(
+                                                    service,
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      color: AppColors.DARK_GREEN,
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
               },
             ),
           ),
