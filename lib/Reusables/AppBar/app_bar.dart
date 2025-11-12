@@ -1,6 +1,7 @@
 import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Doctor/pages/Statistics/View/statistics.dart';
 import 'package:capstone/Patient/Pages/Appointments/View/appointments.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
@@ -186,6 +187,28 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                   ),
                   title: Text(
                     "Appointments",
+                    style: TextStyle(
+                      color: AppColors.DARK_GREEN,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: Statistics(),
+                      ),
+                    );
+                  },
+                  leading: Icon(
+                    Icons.calendar_month,
+                    color: AppColors.DARK_GREEN,
+                  ),
+                  title: Text(
+                    "Statistics",
                     style: TextStyle(
                       color: AppColors.DARK_GREEN,
                       fontWeight: FontWeight.bold,

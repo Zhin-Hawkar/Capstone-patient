@@ -1,4 +1,5 @@
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/test.dart';
 import 'package:capstone/Patient/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
@@ -31,13 +32,13 @@ class RouteController {
         );
         if (result.first.path == RoutesName.onboarding && isFirstDeviceOpen) {
           if (GlobalStorageService.storageService.getString(EnumValues.ROLE) ==
-              EnumValues.USER) {
+              EnumValues.PATIENT) {
             return MaterialPageRoute(builder: (_) => Home());
           } else if (GlobalStorageService.storageService.getString(
                 EnumValues.ROLE,
               ) ==
               EnumValues.DOCTOR) {
-            return MaterialPageRoute(builder: (_) => Test());
+            return MaterialPageRoute(builder: (_) => DoctorHome());
           }
         } else {
           return MaterialPageRoute(builder: (_) => OnBoardingPage());
