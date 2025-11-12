@@ -5,6 +5,7 @@ import 'package:capstone/Backend/PusherSocket/pusher_notification.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
+import 'package:capstone/Patient/Pages/Booking/View/booking_step_one.dart';
 import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
@@ -123,198 +124,7 @@ class _HomeState extends ConsumerState<Home> {
                 ),
               ],
             ),
-            SizedBox(height: 5.h),
-            Column(
-              children: [
-                SizedBox(
-                  height: 250,
-                  child: PageView(
-                    physics: NeverScrollableScrollPhysics(),
-                    onPageChanged: (value) {
-                      ref
-                          .watch(feedbackDotProvider.notifier)
-                          .incrementIndex(value);
-                    },
-                    controller: controller,
-                    children: [
-                      FeedbackPages(rating: 4),
-                      FeedbackPages(rating: 3),
-                      FeedbackPages(rating: 2),
-                      FeedbackPages(rating: 1),
-                      FeedbackPages(rating: 5),
-                    ],
-                  ),
-                ),
-
-                DotsIndicator(
-                  position: feedbackDot.toDouble(),
-                  dotsCount: 5,
-                  animate: true,
-                  animationDuration: Duration(seconds: 1),
-                  axis: Axis.horizontal,
-                  decorator: DotsDecorator(activeColor: AppColors.DARK_GREEN),
-                  mainAxisAlignment: MainAxisAlignment.center,
-                ),
-              ],
-            ),
-
-            SizedBox(height: 10.h),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 7.w),
-                      child: Text(
-                        "Suggested Doctors",
-                        style: TextStyle(
-                          color: AppColors.DARK_GREEN,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(right: 7.w),
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.fade,
-                              child: SearchPage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "see all",
-                          style: TextStyle(
-                            color: AppColors.DARK_GREEN,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 25.h,
-                        width: 25.w,
-                        child: ListView.builder(
-                          itemCount: 5,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.all(20),
-                              height: 25.h,
-                              width: 60.w,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 238, 238, 238),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(25),
-                                        child: Image.asset(
-                                          "assets/img/doctor/${UserModel.doctors[index]['image']}",
-                                          width: 80,
-                                          height: 80,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              top: 1.h,
-                                              bottom: 1.h,
-                                              left: 2.w,
-                                            ),
-
-                                            child: Text(
-                                              UserModel.doctors[index]['name'],
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['specialty'],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['degree'],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: const Color.fromARGB(255, 0, 0, 0),
-                                    thickness: 1,
-                                    indent: 10,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.local_hospital),
-                                        Text(
-                                          UserModel.doctors[index]['hospital'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 1.h),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.pin_drop),
-                                        Text(
-                                          UserModel.doctors[index]['location'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 3.h),
             Column(
               children: [
                 Row(
@@ -354,122 +164,213 @@ class _HomeState extends ConsumerState<Home> {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 25.h,
-                        width: 25.w,
-                        child: ListView.builder(
-                          itemCount: 5,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              margin: EdgeInsets.all(20),
-                              height: 25.h,
-                              width: 60.w,
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(255, 238, 238, 238),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(25),
-                                        child: Image.asset(
-                                          "assets/img/doctor/${UserModel.doctors[index]['image']}",
-                                          width: 80,
-                                          height: 80,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                              top: 1.h,
-                                              bottom: 1.h,
-                                              left: 2.w,
-                                            ),
-
-                                            child: Text(
-                                              UserModel.doctors[index]['name'],
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['specialty'],
-                                            ),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.only(left: 2.w),
-                                            child: Text(
-                                              UserModel
-                                                  .doctors[index]['degree'],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Divider(
-                                    color: const Color.fromARGB(255, 0, 0, 0),
-                                    thickness: 1,
-                                    indent: 10,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.local_hospital),
-                                        Text(
-                                          UserModel.doctors[index]['hospital'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 1.h),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.pin_drop),
-                                        Text(
-                                          UserModel.doctors[index]['location'],
-                                          style: TextStyle(fontSize: 11),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                SizedBox(height: 2.h),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: 6,
+                  padding: EdgeInsets.symmetric(horizontal: 5.w),
+                  itemBuilder: (context, index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 238, 238, 238),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                  ],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                            child: Image.asset(
+                              UserModel.hospitals[index]['image'],
+                              height: 12.h,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 12.h,
+                                  color: AppColors.DARK_GREEN.withOpacity(0.1),
+                                  child: Icon(
+                                    Icons.local_hospital,
+                                    size: 40,
+                                    color: AppColors.DARK_GREEN,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  UserModel.hospitals[index]['name'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 0.5.h),
+                                Text(
+                                  UserModel.hospitals[index]['type'],
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                SizedBox(height: 1.h),
+                                Row(
+                                  children: [
+                                    Icon(Icons.pin_drop, size: 14),
+                                    SizedBox(width: 0.5.w),
+                                    Expanded(
+                                      child: Text(
+                                        UserModel.hospitals[index]['location'],
+                                        style: TextStyle(fontSize: 10),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 0.5.h),
+                                Row(
+                                  children: [
+                                    Icon(Icons.phone, size: 14),
+                                    SizedBox(width: 0.5.w),
+                                    Expanded(
+                                      child: Text(
+                                        UserModel.hospitals[index]['phone'],
+                                        style: TextStyle(fontSize: 10),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
+            SizedBox(height: 5.h),
+            Column(
+              children: [
+                SizedBox(
+                  height: 250,
+                  child: PageView(
+                    physics: NeverScrollableScrollPhysics(),
+                    onPageChanged: (value) {
+                      ref
+                          .watch(feedbackDotProvider.notifier)
+                          .incrementIndex(value);
+                    },
+                    controller: controller,
+                    children: [
+                      FeedbackPages(rating: 4),
+                      FeedbackPages(rating: 3),
+                      FeedbackPages(rating: 2),
+                      FeedbackPages(rating: 1),
+                      FeedbackPages(rating: 5),
+                    ],
+                  ),
+                ),
+                DotsIndicator(
+                  position: feedbackDot.toDouble(),
+                  dotsCount: 5,
+                  animate: true,
+                  animationDuration: Duration(seconds: 1),
+                  axis: Axis.horizontal,
+                  decorator: DotsDecorator(activeColor: AppColors.DARK_GREEN),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                ),
+              ],
+            ),
+            SizedBox(height: 5.h),
+            // Booking Now Button
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 7.w),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.DARK_GREEN,
+                    AppColors.DARK_GREEN.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.DARK_GREEN.withOpacity(0.3),
+                    blurRadius: 15,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.fade,
+                        child: const BookingStepOnePage(),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 5.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        SizedBox(width: 2.w),
+                        Text(
+                          "Booking Now",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        SizedBox(width: 2.w),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 3.h),
           ],
         ),
       ),
