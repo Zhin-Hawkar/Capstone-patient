@@ -7,6 +7,8 @@ import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
 import 'package:capstone/Patient/Pages/Booking/View/booking_step_one.dart';
 import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
+import 'package:capstone/Patient/Pages/Hospital/Controller/hospital_controller.dart';
+import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
 import 'package:capstone/Patient/Pages/Hospital/View/hospital_profile_page.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
@@ -30,11 +32,13 @@ class Home extends ConsumerStatefulWidget {
 
 class _HomeState extends ConsumerState<Home> {
   PageController controller = PageController(initialPage: 0);
+  List<Hospital> hospitals = [];
   late Timer _timer;
   int _currentPage = 0;
   @override
   void initState() {
     super.initState();
+    fetchHospitals();
     if (GlobalStorageService.storageService
         .getString(EnumValues.ACCESS_TOKEN)
         .isNotEmpty) {
@@ -57,7 +61,16 @@ class _HomeState extends ConsumerState<Home> {
     });
   }
 
-  Future<void> refresh() async {}
+  Future<void> fetchHospitals() async {
+    List<Hospital> result = await HospitalController.getAllHospitals();
+    setState(() {
+      hospitals = result;
+    });
+  }
+
+  Future<void> refresh() async {
+    await fetchHospitals();
+  }
 
   void setupSocket() {
     NotificationService.init(context, channelName: "doctor-notification");
@@ -104,11 +117,11 @@ class _HomeState extends ConsumerState<Home> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: RefreshIndicator(
-          onRefresh: () {
-            return refresh();
-          },
+      body: RefreshIndicator(
+        onRefresh: () {
+          return refresh();
+        },
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Row(
@@ -185,7 +198,7 @@ class _HomeState extends ConsumerState<Home> {
                       mainAxisSpacing: 15,
                       childAspectRatio: 0.75,
                     ),
-                    itemCount: 6,
+                    itemCount: hospitals.length,
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     itemBuilder: (context, index) {
                       return GestureDetector(
@@ -194,7 +207,9 @@ class _HomeState extends ConsumerState<Home> {
                             context,
                             PageTransition(
                               type: PageTransitionType.fade,
-                              child: HospitalProfilePage(),
+                              child: HospitalProfilePage(
+                                hospital: hospitals[index],
+                              ),
                             ),
                           );
                         },
@@ -211,8 +226,8 @@ class _HomeState extends ConsumerState<Home> {
                                   topLeft: Radius.circular(20),
                                   topRight: Radius.circular(20),
                                 ),
-                                child: Image.asset(
-                                  UserModel.hospitals[index]['image'],
+                                child: Image.network(
+                                  hospitals[index].image ?? "",
                                   height: 12.h,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
@@ -237,7 +252,7 @@ class _HomeState extends ConsumerState<Home> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      UserModel.hospitals[index]['name'],
+                                      "${hospitals[index].hospitalName}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,
@@ -247,7 +262,7 @@ class _HomeState extends ConsumerState<Home> {
                                     ),
                                     SizedBox(height: 0.5.h),
                                     Text(
-                                      UserModel.hospitals[index]['type'],
+                                      "${hospitals[index].type}",
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: Colors.grey[600],
@@ -260,8 +275,7 @@ class _HomeState extends ConsumerState<Home> {
                                         SizedBox(width: 0.5.w),
                                         Expanded(
                                           child: Text(
-                                            UserModel
-                                                .hospitals[index]['location'],
+                                            "${hospitals[index].description}",
                                             style: TextStyle(fontSize: 10),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -276,7 +290,7 @@ class _HomeState extends ConsumerState<Home> {
                                         SizedBox(width: 0.5.w),
                                         Expanded(
                                           child: Text(
-                                            UserModel.hospitals[index]['phone'],
+                                            "${hospitals[index].phoneNumber}",
                                             style: TextStyle(fontSize: 10),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,

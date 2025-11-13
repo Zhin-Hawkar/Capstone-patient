@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 class Hospital {
-  String? id;
+  int? id;
   String? hospitalName;
   String? location;
   String? type;
@@ -8,8 +10,8 @@ class Hospital {
   int? workingHours;
   String? image;
   String? role;
-  Map<String, dynamic>? departments;
-  Map<String, dynamic>? services;
+  List<dynamic> departments;
+  List<dynamic> services;
 
   Hospital({
     this.id,
@@ -18,10 +20,10 @@ class Hospital {
     this.image,
     this.type,
     this.phoneNumber,
-    this.departments,
+    required this.departments,
     this.description,
     this.role,
-    this.services,
+    required this.services,
     this.workingHours,
   });
 
@@ -33,10 +35,10 @@ class Hospital {
       image: json['image'],
       type: json['type'],
       phoneNumber: json['phoneNumber'],
-      departments: json['departments'],
+      departments: jsonDecode(json['departments']),
       description: json['description'],
       role: json['role'],
-      services: json['services'],
+      services: jsonDecode(json['services']),
       workingHours: json['workingHours'],
     );
   }

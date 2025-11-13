@@ -1,6 +1,7 @@
 import 'package:capstone/Patient/Pages/Feedback/View/review_form_page.dart';
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class HospitalProfilePage extends StatelessWidget {
   final Hospital? hospital;
@@ -123,7 +124,7 @@ class HospitalProfilePage extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            "${hospital?.description}",
+                            "${hospital?.location}",
                             style: theme.textTheme.bodyMedium?.copyWith(
                               decoration: TextDecoration.underline,
                               decorationThickness: 1.5,
@@ -134,15 +135,48 @@ class HospitalProfilePage extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Icon(Icons.phone, size: 18),
+                        SizedBox(width: 2.w),
+                        Text(
+                          "${hospital?.phoneNumber}",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Icon(Icons.timer, size: 18),
+                        SizedBox(width: 2.w),
+                        Text(
+                          "${hospital?.workingHours}/7",
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
                     Text(
-                      "${hospital?.location}",
+                      "${hospital?.type} Hospital",
+                      style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+                    ),
+                    const SizedBox(height: 14),
+
+                    Text(
+                      "Description: ${hospital?.description}",
                       style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
                     ),
 
-                    const SizedBox(height: 26),
+                    const SizedBox(height: 60),
                     Center(
                       child: Text(
-                        'Charité Centers:',
+                        '${hospital?.hospitalName} Departments:',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -159,27 +193,70 @@ class HospitalProfilePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // for (final c in hospital.centers)
-                          //   Padding(
-                          //     padding: const EdgeInsets.symmetric(vertical: 10),
-                          //     child: Row(
-                          //       crossAxisAlignment: CrossAxisAlignment.start,
-                          //       children: [
-                          //         const Padding(
-                          //           padding: EdgeInsets.only(top: 8),
-                          //           child: Icon(Icons.circle, size: 8),
-                          //         ),
-                          //         const SizedBox(width: 14),
-                          //         Expanded(
-                          //           child: Text(
-                          //             c,
-                          //             style: theme.textTheme.titleMedium
-                          //                 ?.copyWith(height: 1.4),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
+                          for (final c in hospital!.departments)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child: Icon(Icons.circle, size: 8),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Text(
+                                      c,
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(height: 1.4),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                    Center(
+                      child: Text(
+                        '${hospital?.hospitalName} Services:',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: lightGreen,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (final c in hospital!.services)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child: Icon(Icons.circle, size: 8),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Text(
+                                      c,
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(height: 1.4),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                         ],
                       ),
                     ),
