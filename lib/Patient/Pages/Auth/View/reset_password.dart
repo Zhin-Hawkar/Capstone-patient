@@ -1,20 +1,27 @@
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Patient/Pages/Auth/Controller/reset_password_controller.dart';
+import 'package:capstone/Patient/Pages/Auth/Notifier/reset_password_notifier.dart';
+import 'package:capstone/Patient/Pages/LogIn/View/login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
-class ResetPasswordPage extends StatefulWidget {
+class ResetPasswordPage extends ConsumerStatefulWidget {
   const ResetPasswordPage({super.key, this.onPasswordSubmitted});
 
   final Future<bool> Function(String newPassword)? onPasswordSubmitted;
 
   @override
-  State<ResetPasswordPage> createState() => _ResetPasswordPageState();
+  ConsumerState<ResetPasswordPage> createState() => _ResetPasswordPageState();
 }
 
-class _ResetPasswordPageState extends State<ResetPasswordPage> {
+class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isSubmitting = false;
@@ -64,35 +71,38 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return value.length >= 8;
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(WidgetRef ref) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => _isSubmitting = true);
-
-    final newPassword = _passwordController.text.trim();
-    bool success = true;
-
-    if (widget.onPasswordSubmitted != null) {
-      success = await widget.onPasswordSubmitted!(newPassword);
-    }
-
-    if (mounted) {
+    ref
+        .watch(resetPasswordNotifierProvider.notifier)
+        .setNewPassword(_passwordController.text);
+    final result = await ResetPasswordController.resetPassword(ref);
+    if (result == 200) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Password sucessfuly reseted")));
+      Navigator.push(
+        context,
+        PageTransition(type: PageTransitionType.fade, child: LoginPage()),
+      );
       setState(() => _isSubmitting = false);
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password updated successfully.')),
-        );
-        Navigator.pop(context, true);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update password. Please try again.')),
-        );
-      }
+    } else {
+      setState(() => _isSubmitting = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Password reset failed")));
+      Navigator.push(
+        context,
+        PageTransition(type: PageTransitionType.fade, child: LoginPage()),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(resetPasswordNotifierProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reset Password'),
@@ -121,7 +131,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   controller: _passwordController,
                   cursorColor: AppColors.DARK_GREEN,
                   style: const TextStyle(color: Colors.black),
-                  decoration: _inputDecoration('New password', isPassword: true),
+                  decoration: _inputDecoration(
+                    'New password',
+                    isPassword: true,
+                  ),
                   obscureText: _obscurePassword,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -138,7 +151,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   controller: _confirmPasswordController,
                   cursorColor: AppColors.DARK_GREEN,
                   style: const TextStyle(color: Colors.black),
-                  decoration: _inputDecoration('Confirm password', isPassword: true),
+                  decoration: _inputDecoration(
+                    'Confirm password',
+                    isPassword: true,
+                  ),
                   obscureText: _obscureConfirmPassword,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -153,25 +169,40 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: _isSubmitting ? null : _submit,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.DARK_GREEN,
-                      backgroundColor: Colors.white,
-                      side: BorderSide(color: AppColors.DARK_GREEN),
-                      padding: EdgeInsets.symmetric(vertical: 2.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: _isSubmitting
-                        ? SizedBox(
-                            height: 2.h,
-                            width: 2.h,
-                            child: const CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Proceed'),
-                  ),
+                  child: _isSubmitting
+                      ? Transform.scale(
+                          scale: 1.6,
+                          child: Lottie.asset(
+                            "assets/json/Material wave loading.json",
+                            width: 100,
+                            height: 100,
+                          ),
+                        )
+                      : OutlinedButton(
+                          onPressed: _isSubmitting
+                              ? null
+                              : () {
+                                  _submit(ref);
+                                },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.DARK_GREEN,
+                            backgroundColor: Colors.white,
+                            side: BorderSide(color: AppColors.DARK_GREEN),
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: _isSubmitting
+                              ? SizedBox(
+                                  height: 2.h,
+                                  width: 2.h,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text('Proceed'),
+                        ),
                 ),
               ],
             ),

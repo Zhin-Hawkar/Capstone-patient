@@ -4,6 +4,8 @@ import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patient
 import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/test.dart';
 import 'package:capstone/Patient/Pages/Appointments/View/appointments.dart';
+import 'package:capstone/Patient/Pages/Auth/View/reset_page.dart';
+import 'package:capstone/Patient/Pages/Auth/View/reset_password.dart';
 import 'package:capstone/Patient/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
 import 'package:capstone/Patient/Pages/LogIn/Controller/sign_in_controller.dart';
@@ -16,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:sizer/sizer.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -263,18 +266,31 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.fade,
+                                      child: EnterEmmailPage(),
+                                    ),
+                                  );
+                                },
                                 style: TextButton.styleFrom(
                                   minimumSize: const Size(44, 44),
                                 ),
-                                child: Text(
-                                  'Forgot password?',
-                                  style: TextStyle(color: AppColors.DARK_GREEN),
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 4.h),
+                                  child: Text(
+                                    'Forgot password?',
+                                    style: TextStyle(
+                                      color: AppColors.WHITE_TEXT,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
 
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 10),
 
                             // Login button
                             isSignInBtnClicked

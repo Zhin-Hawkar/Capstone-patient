@@ -7,6 +7,7 @@ import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
 import 'package:capstone/Patient/Pages/Booking/View/booking_step_one.dart';
 import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
+import 'package:capstone/Patient/Pages/Hospital/View/hospital_profile_page.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
 import 'package:capstone/Patient/Pages/Search/View/search.dart';
@@ -187,96 +188,107 @@ class _HomeState extends ConsumerState<Home> {
                     itemCount: 6,
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     itemBuilder: (context, index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 238, 238, 238),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
-                              child: Image.asset(
-                                UserModel.hospitals[index]['image'],
-                                height: 12.h,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    height: 12.h,
-                                    color: AppColors.DARK_GREEN.withOpacity(
-                                      0.1,
-                                    ),
-                                    child: Icon(
-                                      Icons.local_hospital,
-                                      size: 40,
-                                      color: AppColors.DARK_GREEN,
-                                    ),
-                                  );
-                                },
-                              ),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.fade,
+                              child: HospitalProfilePage(),
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    UserModel.hospitals[index]['name'],
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: 0.5.h),
-                                  Text(
-                                    UserModel.hospitals[index]['type'],
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  SizedBox(height: 1.h),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.pin_drop, size: 14),
-                                      SizedBox(width: 0.5.w),
-                                      Expanded(
-                                        child: Text(
-                                          UserModel
-                                              .hospitals[index]['location'],
-                                          style: TextStyle(fontSize: 10),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 238, 238, 238),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                                child: Image.asset(
+                                  UserModel.hospitals[index]['image'],
+                                  height: 12.h,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 12.h,
+                                      color: AppColors.DARK_GREEN.withOpacity(
+                                        0.1,
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 0.5.h),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.phone, size: 14),
-                                      SizedBox(width: 0.5.w),
-                                      Expanded(
-                                        child: Text(
-                                          UserModel.hospitals[index]['phone'],
-                                          style: TextStyle(fontSize: 10),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                                      child: Icon(
+                                        Icons.local_hospital,
+                                        size: 40,
+                                        color: AppColors.DARK_GREEN,
                                       ),
-                                    ],
-                                  ),
-                                ],
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      UserModel.hospitals[index]['name'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: 0.5.h),
+                                    Text(
+                                      UserModel.hospitals[index]['type'],
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    SizedBox(height: 1.h),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.pin_drop, size: 14),
+                                        SizedBox(width: 0.5.w),
+                                        Expanded(
+                                          child: Text(
+                                            UserModel
+                                                .hospitals[index]['location'],
+                                            style: TextStyle(fontSize: 10),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 0.5.h),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.phone, size: 14),
+                                        SizedBox(width: 0.5.w),
+                                        Expanded(
+                                          child: Text(
+                                            UserModel.hospitals[index]['phone'],
+                                            style: TextStyle(fontSize: 10),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

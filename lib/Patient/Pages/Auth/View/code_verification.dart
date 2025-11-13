@@ -1,26 +1,27 @@
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Patient/Pages/Auth/Controller/reset_password_controller.dart';
+import 'package:capstone/Patient/Pages/Auth/Notifier/reset_password_notifier.dart';
+import 'package:capstone/Patient/Pages/Auth/View/reset_password.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
-class CodeVerificationPage extends StatefulWidget {
-  const CodeVerificationPage({
-    super.key,
-    required this.codeFromApi,
-    this.onVerified,
-  });
-
-  final String codeFromApi;
-  final VoidCallback? onVerified;
+class CodeVerificationPage extends ConsumerStatefulWidget {
+  const CodeVerificationPage({super.key});
 
   @override
-  State<CodeVerificationPage> createState() => _CodeVerificationPageState();
+  ConsumerState<CodeVerificationPage> createState() =>
+      _CodeVerificationPageState();
 }
 
-class _CodeVerificationPageState extends State<CodeVerificationPage> {
+class _CodeVerificationPageState extends ConsumerState<CodeVerificationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _codeController = TextEditingController();
   bool _obscureCode = false;
   String? _errorMessage;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -34,20 +35,33 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
     super.dispose();
   }
 
-  void _verifyCode() {
-    setState(() => _errorMessage = null);
-    if (_formKey.currentState?.validate() ?? false) {
-      if (_codeController.text.trim() == widget.codeFromApi.trim()) {
-        widget.onVerified?.call();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Code verified successfully.')),
-        );
-        Navigator.pop(context, true);
-      } else {
-        setState(() {
-          _errorMessage = 'Incorrect code. Please try again.';
-        });
-      }
+  void _verifyCode(int? resetCode) async {
+    setState(() {
+      _errorMessage = null;
+      isLoading = true;
+    });
+    final result = await ResetPasswordController.verifyCode(ref);
+    if (result == 200) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("code verified successfuly")));
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          child: ResetPasswordPage(),
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Code verification failed")));
     }
   }
 
@@ -107,7 +121,9 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                 decoration: BoxDecoration(
                   color: AppColors.DARK_GREEN.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.DARK_GREEN.withOpacity(0.4)),
+                  border: Border.all(
+                    color: AppColors.DARK_GREEN.withOpacity(0.4),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +138,7 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                     ),
                     SizedBox(height: 1.h),
                     Text(
-                      widget.codeFromApi,
+                      "${ref.watch(resetPasswordNotifierProvider).resetCode ?? "XXXX"}",
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
@@ -142,8 +158,14 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
                     TextFormField(
                       controller: _codeController,
                       cursorColor: AppColors.DARK_GREEN,
-                      style: const TextStyle(color: Colors.black, letterSpacing: 2),
-                      decoration: _inputDecoration('Enter code', hint: 'XXXXXX'),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        letterSpacing: 2,
+                      ),
+                      decoration: _inputDecoration(
+                        'Enter code',
+                        hint: 'XXXXXX',
+                      ),
                       keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -169,19 +191,32 @@ class _CodeVerificationPageState extends State<CodeVerificationPage> {
               const Spacer(),
               SizedBox(
                 width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: _verifyCode,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.DARK_GREEN,
-                    backgroundColor: Colors.white,
-                    side: BorderSide(color: AppColors.DARK_GREEN),
-                    padding: EdgeInsets.symmetric(vertical: 2.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text('Proceed'),
-                ),
+                child: isLoading
+                    ? Transform.scale(
+                        scale: 1.6,
+                        child: Lottie.asset(
+                          "assets/json/Material wave loading.json",
+                          width: 100,
+                          height: 100,
+                        ),
+                      )
+                    : OutlinedButton(
+                        onPressed: () {
+                          _verifyCode(
+                            ref.watch(resetPasswordNotifierProvider).resetCode,
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.DARK_GREEN,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(color: AppColors.DARK_GREEN),
+                          padding: EdgeInsets.symmetric(vertical: 2.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Proceed'),
+                      ),
               ),
             ],
           ),
