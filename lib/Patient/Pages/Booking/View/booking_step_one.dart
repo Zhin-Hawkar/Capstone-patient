@@ -1,18 +1,20 @@
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Patient/Pages/Booking/Notifier/send_appointment_notifier.dart';
 import 'package:capstone/Patient/Pages/Booking/View/booking_step_two.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
-class BookingStepOnePage extends StatefulWidget {
+class BookingStepOnePage extends ConsumerStatefulWidget {
   const BookingStepOnePage({super.key});
 
   @override
-  State<BookingStepOnePage> createState() => _BookingStepOnePageState();
+  ConsumerState<BookingStepOnePage> createState() => _BookingStepOnePageState();
 }
 
-class _BookingStepOnePageState extends State<BookingStepOnePage> {
+class _BookingStepOnePageState extends ConsumerState<BookingStepOnePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -33,20 +35,30 @@ class _BookingStepOnePageState extends State<BookingStepOnePage> {
 
   void _goToNextStep() {
     if (_formKey.currentState?.validate() ?? false) {
-      final bookingData = {
-        'firstName': _firstNameController.text.trim(),
-        'lastName': _lastNameController.text.trim(),
-        'age': _ageController.text.trim(),
-        'sex': _selectedSex,
-        'phone': '+964 ${_phoneController.text.trim()}',
-        'email': _emailController.text.trim(),
-      };
+      ref
+          .watch(sendAppointmentNotifierProvider.notifier)
+          .setFirstName(_firstNameController.text);
+      ref
+          .watch(sendAppointmentNotifierProvider.notifier)
+          .setLastName(_lastNameController.text);
+      ref
+          .watch(sendAppointmentNotifierProvider.notifier)
+          .setAge(int.parse(_ageController.text));
+      ref
+          .watch(sendAppointmentNotifierProvider.notifier)
+          .setGender(_selectedSex);
+      ref
+          .watch(sendAppointmentNotifierProvider.notifier)
+          .setEmail(_emailController.text);
+      ref
+          .watch(sendAppointmentNotifierProvider.notifier)
+          .setPhoneNumber(_phoneController.text);
 
       Navigator.push(
         context,
         PageTransition(
           type: PageTransitionType.rightToLeft,
-          child: BookingStepTwoPage(initialData: bookingData),
+          child: BookingStepTwoPage(),
         ),
       );
     }
@@ -156,9 +168,18 @@ class _BookingStepOnePageState extends State<BookingStepOnePage> {
                           iconEnabledColor: AppColors.DARK_GREEN,
                           dropdownColor: Colors.white,
                           items: const [
-                            DropdownMenuItem(value: 'Male', child: Text('Male')),
-                            DropdownMenuItem(value: 'Female', child: Text('Female')),
-                            DropdownMenuItem(value: 'Other', child: Text('Other')),
+                            DropdownMenuItem(
+                              value: 'Male',
+                              child: Text('Male'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Female',
+                              child: Text('Female'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Other',
+                              child: Text('Other'),
+                            ),
                           ],
                           onChanged: (value) {
                             setState(() {
@@ -177,10 +198,16 @@ class _BookingStepOnePageState extends State<BookingStepOnePage> {
                           controller: _phoneController,
                           cursorColor: AppColors.DARK_GREEN,
                           style: const TextStyle(color: Colors.black),
-                          decoration: _inputDecoration('Phone number', hint: '770 123 4567').copyWith(
-                            prefixText: '+964 ',
-                            prefixStyle: const TextStyle(color: Colors.black),
-                          ),
+                          decoration:
+                              _inputDecoration(
+                                'Phone number',
+                                hint: '770 123 4567',
+                              ).copyWith(
+                                prefixText: '+964 ',
+                                prefixStyle: const TextStyle(
+                                  color: Colors.black,
+                                ),
+                              ),
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -203,7 +230,10 @@ class _BookingStepOnePageState extends State<BookingStepOnePage> {
                           controller: _emailController,
                           cursorColor: AppColors.DARK_GREEN,
                           style: const TextStyle(color: Colors.black),
-                          decoration: _inputDecoration('Email', hint: 'avanahmed@gmail.com'),
+                          decoration: _inputDecoration(
+                            'Email',
+                            hint: 'avanahmed@gmail.com',
+                          ),
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.done,
                           validator: (value) {
@@ -237,7 +267,11 @@ class _BookingStepOnePageState extends State<BookingStepOnePage> {
                     ),
                     child: Text(
                       'Next',
-                      style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),

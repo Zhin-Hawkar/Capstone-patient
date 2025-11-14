@@ -13,8 +13,8 @@ class HttpUtil {
   HttpUtil._internal() {
     BaseOptions options = BaseOptions(
       baseUrl: EnumValues.HOST,
-      connectTimeout: const Duration(seconds: 60),
-      receiveTimeout: const Duration(seconds: 100),
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 20),
       headers: {},
       responseType: ResponseType.json,
     );

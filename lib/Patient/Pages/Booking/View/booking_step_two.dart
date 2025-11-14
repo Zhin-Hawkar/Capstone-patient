@@ -1,22 +1,27 @@
+import 'dart:io';
+
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
+import 'package:capstone/Patient/Pages/Booking/Controller/send_appointment_controller.dart';
+import 'package:capstone/Patient/Pages/Booking/Notifier/send_appointment_notifier.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
-class BookingStepTwoPage extends StatefulWidget {
-  const BookingStepTwoPage({super.key, required this.initialData});
-
-  final Map<String, dynamic> initialData;
+class BookingStepTwoPage extends ConsumerStatefulWidget {
+  const BookingStepTwoPage({super.key});
 
   @override
-  State<BookingStepTwoPage> createState() => _BookingStepTwoPageState();
+  ConsumerState<BookingStepTwoPage> createState() => _BookingStepTwoPageState();
 }
 
-class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
+class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
   final TextEditingController _illnessTypeController = TextEditingController();
   final TextEditingController _assistanceController = TextEditingController();
   DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
   String? _uploadedRecord;
+  File _imageFile = File("");
 
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
@@ -70,55 +75,21 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
     }
   }
 
-  Future<void> _pickTime() async {
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.DARK_GREEN,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-            timePickerTheme: TimePickerThemeData(
-              hourMinuteTextColor: AppColors.DARK_GREEN,
-              hourMinuteColor: AppColors.DARK_GREEN.withOpacity(0.1),
-              dialHandColor: AppColors.DARK_GREEN,
-              dialBackgroundColor: Colors.white,
-              entryModeIconColor: AppColors.DARK_GREEN,
-              helpTextStyle: TextStyle(color: AppColors.DARK_GREEN),
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.DARK_GREEN,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (pickedTime != null) {
+  void _mockUploadMedicalRecord() async {
+    List<PlatformFile>? files = await UploadFiles.pickAndUploadFiles();
+    if (files != null) {
+      for (int i = 0; i < files.length; i++) {
+        setState(() {
+          _imageFile = File(files.single.path!);
+        });
+      }
       setState(() {
-        _selectedTime = pickedTime;
+        _uploadedRecord = _imageFile.path;
       });
     }
   }
 
-  void _mockUploadMedicalRecord() {
-    setState(() {
-      _uploadedRecord = 'medical_record.pdf';
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Medical record selected (mock upload).'),
-      ),
-    );
-  }
-
-  void _submitBooking({required bool asGuest}) {
+  void _submitBooking() async {
     if (_illnessTypeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please provide an illness type.')),
@@ -127,46 +98,49 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
     }
     if (_assistanceController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please describe how the doctor can help you.')),
-      );
-      return;
-    }
-    if (_selectedDate == null || _selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a preferred date and time.')),
-      );
-      return;
-    }
-
-    final bookingSummary = {
-      ...widget.initialData,
-      'illnessType': _illnessTypeController.text.trim(),
-      'assistance': _assistanceController.text.trim(),
-      'medicalRecord': _uploadedRecord,
-      'preferredDate': _selectedDate?.toIso8601String(),
-      'preferredTime': _selectedTime?.format(context),
-      'asGuest': asGuest,
-    };
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Booking submitted ${asGuest ? 'as guest' : 'with sign in'}!\nWe will contact you soon.',
+        const SnackBar(
+          content: Text('Please describe how the doctor can help you.'),
         ),
-      ),
-    );
+      );
+      return;
+    }
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a preferred date and time.'),
+        ),
+      );
+      return;
+    }
 
-    Navigator.popUntil(context, (route) => route.isFirst);
+    ref
+        .watch(sendAppointmentNotifierProvider.notifier)
+        .setDepartment(_illnessTypeController.text);
+    ref
+        .watch(sendAppointmentNotifierProvider.notifier)
+        .setHelp(_assistanceController.text);
+    ref
+        .watch(sendAppointmentNotifierProvider.notifier)
+        .setMedicalRecord(_uploadedRecord);
+    ref
+        .watch(sendAppointmentNotifierProvider.notifier)
+        .setDateTime(_selectedDate);
+
+    final result = await SendAppointmentController.handleAppointment(ref);
+    if (result == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Booking submitted, doctors will respond you soon.'),
+        ),
+      );
+
+      Navigator.popUntil(context, (route) => route.isFirst);
+    }
   }
 
   String _formatSelectedDate() {
     if (_selectedDate == null) return 'Select date';
     return '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
-  }
-
-  String _formatSelectedTime() {
-    if (_selectedTime == null) return 'Select time';
-    return _selectedTime!.format(context);
   }
 
   @override
@@ -207,7 +181,7 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                         controller: _illnessTypeController,
                         cursorColor: AppColors.DARK_GREEN,
                         style: const TextStyle(color: Colors.black),
-                        decoration: _inputDecoration('Illness type'),
+                        decoration: _inputDecoration('Medical Department'),
                         textCapitalization: TextCapitalization.sentences,
                       ),
                       SizedBox(height: 2.h),
@@ -215,7 +189,9 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                         controller: _assistanceController,
                         cursorColor: AppColors.DARK_GREEN,
                         style: const TextStyle(color: Colors.black),
-                        decoration: _inputDecoration('How can the doctor help you?'),
+                        decoration: _inputDecoration(
+                          'How can the doctor help you?',
+                        ),
                         keyboardType: TextInputType.multiline,
                         maxLines: 5,
                         textCapitalization: TextCapitalization.sentences,
@@ -224,7 +200,7 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                       Text(
                         'Medical records (optional)',
                         style: TextStyle(
-                          fontSize: 11.sp,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.w600,
                           color: AppColors.DARK_GREEN,
                         ),
@@ -247,7 +223,7 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                       Text(
                         'Preferred appointment time',
                         style: TextStyle(
-                          fontSize: 11.sp,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.w600,
                           color: AppColors.DARK_GREEN,
                         ),
@@ -266,16 +242,6 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                             ),
                           ),
                           SizedBox(width: 3.w),
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: _pickTime,
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.DARK_GREEN,
-                                side: BorderSide(color: AppColors.DARK_GREEN),
-                              ),
-                              child: Text(_formatSelectedTime()),
-                            ),
-                          ),
                         ],
                       ),
                     ],
@@ -287,7 +253,7 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => _submitBooking(asGuest: false),
+                      onPressed: () => _submitBooking(),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.DARK_GREEN,
                         backgroundColor: Colors.white,
@@ -297,23 +263,7 @@ class _BookingStepTwoPageState extends State<BookingStepTwoPage> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text('Sign In to Submit'),
-                    ),
-                  ),
-                  SizedBox(width: 3.w),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => _submitBooking(asGuest: true),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.DARK_GREEN,
-                        backgroundColor: Colors.white,
-                        side: BorderSide(color: AppColors.DARK_GREEN),
-                        padding: EdgeInsets.symmetric(vertical: 1.8.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Submit as Guest'),
+                      child: const Text('Submit'),
                     ),
                   ),
                 ],
