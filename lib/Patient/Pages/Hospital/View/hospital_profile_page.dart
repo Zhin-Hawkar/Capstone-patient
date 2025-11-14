@@ -3,10 +3,15 @@ import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-class HospitalProfilePage extends StatelessWidget {
+class HospitalProfilePage extends StatefulWidget {
   final Hospital? hospital;
   const HospitalProfilePage({super.key, this.hospital});
 
+  @override
+  State<HospitalProfilePage> createState() => _HospitalProfilePageState();
+}
+
+class _HospitalProfilePageState extends State<HospitalProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -27,7 +32,7 @@ class HospitalProfilePage extends StatelessWidget {
             child: SizedBox(
               height: 260,
               child: Image.network(
-                "${hospital?.image}",
+                "${widget.hospital?.image}",
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => const Center(
                   child: Icon(
@@ -86,7 +91,7 @@ class HospitalProfilePage extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (_) =>
-                                    ReviewFormPage(hospital: hospital),
+                                    ReviewFormPage(hospital: widget.hospital),
                               ),
                             );
                           },
@@ -110,7 +115,7 @@ class HospitalProfilePage extends StatelessWidget {
 
                     const SizedBox(height: 6), // name sits higher
                     Text(
-                      "${hospital?.hospitalName}",
+                      "${widget.hospital?.hospitalName}",
                       style: theme.textTheme.headlineLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                         height: 1.05,
@@ -124,7 +129,7 @@ class HospitalProfilePage extends StatelessWidget {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            "${hospital?.location}",
+                            "${widget.hospital?.location}",
                             style: theme.textTheme.bodyMedium?.copyWith(
                               decoration: TextDecoration.underline,
                               decorationThickness: 1.5,
@@ -140,7 +145,7 @@ class HospitalProfilePage extends StatelessWidget {
                         Icon(Icons.phone, size: 18),
                         SizedBox(width: 2.w),
                         Text(
-                          "${hospital?.phoneNumber}",
+                          "${widget.hospital?.phoneNumber}",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             height: 1.6,
                           ),
@@ -153,7 +158,7 @@ class HospitalProfilePage extends StatelessWidget {
                         Icon(Icons.timer, size: 18),
                         SizedBox(width: 2.w),
                         Text(
-                          "${hospital?.workingHours}/7",
+                          "${widget.hospital?.workingHours}/7",
                           style: theme.textTheme.bodyMedium?.copyWith(
                             height: 1.6,
                           ),
@@ -163,20 +168,20 @@ class HospitalProfilePage extends StatelessWidget {
 
                     const SizedBox(height: 14),
                     Text(
-                      "${hospital?.type} Hospital",
+                      "${widget.hospital?.type} Hospital",
                       style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
                     ),
                     const SizedBox(height: 14),
 
                     Text(
-                      "Description: ${hospital?.description}",
+                      "Description: ${widget.hospital?.description}",
                       style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
                     ),
 
                     const SizedBox(height: 60),
                     Center(
                       child: Text(
-                        '${hospital?.hospitalName} Departments:',
+                        '${widget.hospital?.hospitalName} Departments:',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -193,7 +198,7 @@ class HospitalProfilePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for (final c in hospital!.departments)
+                          for (final c in widget.hospital!.departments)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Row(
@@ -220,7 +225,7 @@ class HospitalProfilePage extends StatelessWidget {
                     SizedBox(height: 5.h),
                     Center(
                       child: Text(
-                        '${hospital?.hospitalName} Services:',
+                        '${widget.hospital?.hospitalName} Services:',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
@@ -236,7 +241,7 @@ class HospitalProfilePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for (final c in hospital!.services)
+                          for (final c in widget.hospital!.services)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Row(

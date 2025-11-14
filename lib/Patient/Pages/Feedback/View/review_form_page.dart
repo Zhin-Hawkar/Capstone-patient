@@ -1,25 +1,31 @@
+import 'package:capstone/Patient/Pages/Feedback/Controller/feedback_controller.dart';
+import 'package:capstone/Patient/Pages/Feedback/Notifier/feedback_notifier.dart';
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sizer/sizer.dart';
 
-class ReviewFormPage extends StatefulWidget {
+class ReviewFormPage extends ConsumerStatefulWidget {
   final Hospital? hospital;
-  const ReviewFormPage({super.key,  this.hospital});
+  const ReviewFormPage({super.key, this.hospital});
 
   @override
-  State<ReviewFormPage> createState() => _ReviewFormPageState();
+  ConsumerState<ReviewFormPage> createState() => _ReviewFormPageState();
 }
 
-class _ReviewFormPageState extends State<ReviewFormPage> {
+class _ReviewFormPageState extends ConsumerState<ReviewFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final _name = TextEditingController();
-  final _doctor = TextEditingController();
   final _comments = TextEditingController();
-  int _rating = 4;
+  int _rating = 0;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.hospital?.id);
+  }
 
   @override
   void dispose() {
-    _name.dispose();
-    _doctor.dispose();
     _comments.dispose();
     super.dispose();
   }
@@ -62,7 +68,8 @@ class _ReviewFormPageState extends State<ReviewFormPage> {
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter, end: Alignment.bottomCenter,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [bgTop, bgBottom],
           ),
         ),
@@ -82,7 +89,9 @@ class _ReviewFormPageState extends State<ReviewFormPage> {
             Padding(
               padding: EdgeInsets.only(
                 top: MediaQuery.of(context).padding.top + 56,
-                left: 16, right: 16, bottom: 16,
+                left: 16,
+                right: 16,
+                bottom: 16,
               ),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -91,7 +100,13 @@ class _ReviewFormPageState extends State<ReviewFormPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(26),
-                    boxShadow: [BoxShadow(color: Colors.black12.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, 3))],
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12.withOpacity(0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   padding: const EdgeInsets.fromLTRB(20, 24, 20, 28),
                   child: Form(
@@ -102,45 +117,37 @@ class _ReviewFormPageState extends State<ReviewFormPage> {
                         Center(
                           child: Text(
                             'Write a Review',
-                            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 26),
+                        SizedBox(height: 15.h),
 
-                        Text('Name:', style: theme.textTheme.titleSmall),
-                        const SizedBox(height: 6),
-                        TextFormField(
-                          controller: _name,
-                          decoration: _roundedInput(hint: 'Your name', icon: Icons.person_outline),
-                          validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
-                        ),
-
-                        const SizedBox(height: 18),
-                        Text('Review About:', style: theme.textTheme.titleSmall),
-                        const SizedBox(height: 6),
-                        TextFormField(
-                          controller: _doctor,
-                          decoration: _roundedInput(hint: "Enter Doctor's Name", icon: Icons.badge_outlined),
-                        ),
-
-                        const SizedBox(height: 22),
                         Text(
                           'Share your experience in scaling',
-                          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         _StarRating(
                           value: _rating,
                           size: 32,
-                          onChanged: (v) => setState(() => _rating = v),
+                          onChanged: (v) {
+                            setState(() => _rating = v);
+                          },
                         ),
 
                         const SizedBox(height: 18),
                         TextFormField(
                           controller: _comments,
-                          minLines: 5, maxLines: 6,
+                          minLines: 5,
+                          maxLines: 6,
                           textInputAction: TextInputAction.newline,
-                          decoration: _roundedInput(hint: 'Add your comments...'),
+                          decoration: _roundedInput(
+                            hint: 'Add your comments...',
+                          ),
                         ),
 
                         const SizedBox(height: 26),
@@ -151,7 +158,9 @@ class _ReviewFormPageState extends State<ReviewFormPage> {
                               onPressed: () => Navigator.pop(context),
                               style: TextButton.styleFrom(
                                 foregroundColor: darkGreen,
-                                textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                                textStyle: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               child: const Text('Cancel'),
                             ),
@@ -160,19 +169,41 @@ class _ReviewFormPageState extends State<ReviewFormPage> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: darkGreen,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 28,
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                                 elevation: 2,
                               ),
-                              onPressed: () {
-                                if (_formKey.currentState?.validate() != true) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Review submitted!'),
-                                    behavior: SnackBarBehavior.floating,
-                                  ),
-                                );
-                                Navigator.pop(context);
+                              onPressed: () async {
+                                if (_formKey.currentState?.validate() != true) {
+                                  return;
+                                }
+                                ref
+                                    .watch(feedbackNotifierProvider.notifier)
+                                    .setHospitalId(widget.hospital?.id);
+                                ref
+                                    .watch(feedbackNotifierProvider.notifier)
+                                    .setRating(_rating);
+                                ref
+                                    .watch(feedbackNotifierProvider.notifier)
+                                    .setComment(_comments.text);
+                                final result =
+                                    await FeedbackController.handleFeedback(
+                                      ref,
+                                    );
+                                if (result == 200) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Review submitted!'),
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                }
                               },
                               child: const Text('SUBMIT'),
                             ),
@@ -216,7 +247,9 @@ class _StarRating extends StatelessWidget {
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
           iconSize: size,
-          onPressed: () => onChanged(idx),
+          onPressed: () {
+            onChanged(idx);
+          },
           icon: Icon(
             isFilled ? Icons.star_rounded : Icons.star_border_rounded,
             color: isFilled ? filledColor : emptyColor,

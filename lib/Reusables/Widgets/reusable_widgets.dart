@@ -1,5 +1,6 @@
 import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Patient/Pages/Feedback/Model/feedback_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating/flutter_rating.dart';
 import 'package:lottie/lottie.dart';
@@ -53,13 +54,11 @@ class OnboardingPages extends StatelessWidget {
 
 // ignore: must_be_immutable
 class FeedbackPages extends StatefulWidget {
-  double? rating;
-  String? name;
-  String? quote;
+  FeedbackResponseModel? feedbacks;
 
   LottieBuilder? lottie;
 
-  FeedbackPages({super.key, this.rating, this.name, this.quote, this.lottie});
+  FeedbackPages({super.key, this.lottie, this.feedbacks});
 
   @override
   State<FeedbackPages> createState() => _FeedbackPagesState();
@@ -83,12 +82,7 @@ class _FeedbackPagesState extends State<FeedbackPages> {
               Container(
                 margin: EdgeInsets.only(left: 6.w),
                 child: StarRating(
-                  rating: widget.rating ?? 0.0,
-                  onRatingChanged: (rating) {
-                    setState(() {
-                      widget.rating = rating;
-                    });
-                  },
+                  rating: widget.feedbacks?.rating?.toDouble() ?? 0.0,
                   starCount: 5,
                   size: 25,
                   color: Colors.amber,
@@ -109,9 +103,7 @@ class _FeedbackPagesState extends State<FeedbackPages> {
           SizedBox(height: 2.h),
           Container(
             margin: EdgeInsets.only(left: 6.w, right: 6.w),
-            child: Text(
-              "In this hospital I recieved what I needed, it was a great choice for cardiatic illnesses.",
-            ),
+            child: Text("${widget.feedbacks?.feedback}"),
           ),
           Container(
             margin: EdgeInsets.only(left: 6.w),
@@ -119,7 +111,7 @@ class _FeedbackPagesState extends State<FeedbackPages> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Hussien, patient",
+                  "${widget.feedbacks?.patientName}, patient",
                   style: TextStyle(
                     color: const Color.fromARGB(146, 35, 35, 35),
                   ),
@@ -132,15 +124,15 @@ class _FeedbackPagesState extends State<FeedbackPages> {
           ListTile(
             leading: ClipRRect(
               borderRadius: BorderRadiusGeometry.circular(45),
-              child: Image.asset(
-                "assets/img/doctor/${UserModel.doctors[0]['image']}",
+              child: Image.network(
+                "${widget.feedbacks?.hospitalImage}",
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
               ),
             ),
-            title: Text("Charité – Universitätsmedizin Berlin"),
-            subtitle: Text("Germany - Berlin"),
+            title: Text("${widget.feedbacks?.hospitalName}"),
+            subtitle: Text("${widget.feedbacks?.hospitalLocation}"),
           ),
         ],
       ),

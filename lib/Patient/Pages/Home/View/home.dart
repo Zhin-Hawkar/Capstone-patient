@@ -6,6 +6,8 @@ import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
 import 'package:capstone/Patient/Pages/Booking/View/booking_step_one.dart';
+import 'package:capstone/Patient/Pages/Feedback/Controller/feedback_controller.dart';
+import 'package:capstone/Patient/Pages/Feedback/Model/feedback_model.dart';
 import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
 import 'package:capstone/Patient/Pages/Hospital/Controller/hospital_controller.dart';
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
@@ -33,19 +35,21 @@ class Home extends ConsumerStatefulWidget {
 class _HomeState extends ConsumerState<Home> {
   PageController controller = PageController(initialPage: 0);
   List<Hospital> hospitals = [];
+  List<FeedbackResponseModel> feedbacks = [];
   late Timer _timer;
   int _currentPage = 0;
   @override
   void initState() {
     super.initState();
     fetchHospitals();
+    fetchFeedbacks();
     if (GlobalStorageService.storageService
         .getString(EnumValues.ACCESS_TOKEN)
         .isNotEmpty) {
       setupSocket();
     }
     _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < 4) {
+      if (_currentPage < (feedbacks.length)) {
         _currentPage++;
         ref.watch(feedbackDotProvider.notifier).incrementIndex(_currentPage);
       } else {
@@ -68,8 +72,17 @@ class _HomeState extends ConsumerState<Home> {
     });
   }
 
+  Future<void> fetchFeedbacks() async {
+    List<FeedbackResponseModel> result =
+        await FeedbackController.showAllFeedbacks();
+    setState(() {
+      feedbacks = result;
+    });
+  }
+
   Future<void> refresh() async {
     await fetchHospitals();
+    await fetchFeedbacks();
   }
 
   void setupSocket() {
@@ -323,11 +336,7 @@ class _HomeState extends ConsumerState<Home> {
                       },
                       controller: controller,
                       children: [
-                        FeedbackPages(rating: 4),
-                        FeedbackPages(rating: 3),
-                        FeedbackPages(rating: 2),
-                        FeedbackPages(rating: 1),
-                        FeedbackPages(rating: 5),
+                        for (final f in feedbacks) FeedbackPages(feedbacks: f),
                       ],
                     ),
                   ),
