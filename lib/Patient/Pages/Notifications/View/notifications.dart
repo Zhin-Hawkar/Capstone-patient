@@ -1,11 +1,13 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
+import 'package:capstone/Patient/Pages/Appointments/View/appointment_detail_page.dart';
 import 'package:capstone/Patient/Pages/Notifications/Controller/patient_notification.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 class Notifications extends StatefulWidget {
@@ -165,176 +167,28 @@ class _NotificationsState extends State<Notifications>
                                         },
                                       );
                                     },
-                                    child: ListTile(
-                                      leading: ClipRRect(
-                                        borderRadius:
-                                            BorderRadiusGeometry.circular(25),
-                                        child:
-                                            notifications[index].image == null
-                                            ? Icon(Icons.person)
-                                            : Image.network(
-                                                "${notifications[index].image}",
-                                                width: 50,
-                                                height: 50,
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 1.h),
-                                          Text(
-                                            '${notifications[index].department}',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                          SizedBox(
-                                            width: 18.w,
-                                            child: Divider(),
-                                          ),
-                                          Text(
-                                            '${notifications[index].gender}',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                      title: Text(
-                                        "${notifications[index].firstName} ${notifications[index].lastName}",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      trailing: Container(
-                                        decoration: BoxDecoration(
-                                          color:
-                                              "${notifications[index].status}" ==
-                                                  'pending'
-                                              ? Colors.amber
-                                              : "${notifications[index].status}" ==
-                                                    'rejected'
-                                              ? Colors.red
-                                              : "${notifications[index].status}" ==
-                                                    'accepted'
-                                              ? Colors.green
-                                              : Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        // Navigator.push(
+                                        //   context,
+                                        //   PageTransition(
+                                        //     type:
+                                        //         PageTransitionType.rightToLeft,
+                                        //     child: AppointmentDetailsPage(
+                                        //       acceptedAppointments:
+                                        //           notifications[index],
+                                        //     ),
+                                        //   ),
+                                        // );
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          left: 2.w,
+                                          right: 2.w,
+                                          top: 2.h,
                                         ),
-
-                                        width: 27.w,
-                                        child: Row(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadiusGeometry.circular(
-                                                    25,
-                                                  ),
-                                              child: Container(
-                                                color:
-                                                    "${notifications[index].status}" ==
-                                                        'pending'
-                                                    ? const Color.fromARGB(
-                                                        255,
-                                                        255,
-                                                        219,
-                                                        111,
-                                                      )
-                                                    : "${notifications[index].status}" ==
-                                                          'rejected'
-                                                    ? const Color.fromARGB(
-                                                        255,
-                                                        255,
-                                                        124,
-                                                        114,
-                                                      )
-                                                    : "${notifications[index].status}" ==
-                                                          'accepted'
-                                                    ? const Color.fromARGB(
-                                                        255,
-                                                        100,
-                                                        189,
-                                                        103,
-                                                      )
-                                                    : Colors.white,
-                                                width: 10.w,
-                                                child:
-                                                    "${notifications[index].status}" ==
-                                                        'pending'
-                                                    ? Transform.scale(
-                                                        scale: 0.9,
-                                                        child: Lottie.asset(
-                                                          "assets/json/clock time.json",
-                                                        ),
-                                                      )
-                                                    : "${notifications[index].status}" ==
-                                                          'rejected'
-                                                    ? Transform.scale(
-                                                        scale: 0.5,
-                                                        child: Lottie.asset(
-                                                          "assets/json/OCL Canceled.json",
-                                                        ),
-                                                      )
-                                                    : "${notifications[index].status}" ==
-                                                          'accepted'
-                                                    ? Transform.scale(
-                                                        scale: 0.8,
-                                                        child: Lottie.asset(
-                                                          "assets/json/Tick Pop.json",
-                                                        ),
-                                                      )
-                                                    : Container(),
-                                              ),
-                                            ),
-                                            SizedBox(width: 2.w),
-                                            "${notifications[index].status}" ==
-                                                    'pending'
-                                                ? Text(
-                                                    "Pending",
-                                                    style: TextStyle(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                            255,
-                                                            0,
-                                                            0,
-                                                            0,
-                                                          ),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  )
-                                                : "${notifications[index].status}" ==
-                                                      'rejected'
-                                                ? Text(
-                                                    "Rejected",
-                                                    style: TextStyle(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                            255,
-                                                            0,
-                                                            0,
-                                                            0,
-                                                          ),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  )
-                                                : "${notifications[index].status}" ==
-                                                      'accepted'
-                                                ? Text(
-                                                    "Accepted",
-                                                    style: TextStyle(
-                                                      color:
-                                                          const Color.fromARGB(
-                                                            255,
-                                                            0,
-                                                            0,
-                                                            0,
-                                                          ),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  )
-                                                : Container(),
-                                          ],
+                                        child: PatientCard(
+                                          patient: notifications[index],
                                         ),
                                       ),
                                     ),
@@ -363,11 +217,222 @@ class _NotificationsState extends State<Notifications>
                     ),
                   ],
                 ),
-                Center(child: Text("this week")),
-                Center(child: Text("earlier")),
+                Center(child: Text("no notification yet")),
+                Center(child: Text("no notification yet")),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class PatientCard extends StatefulWidget {
+  const PatientCard({super.key, required this.patient});
+
+  final DoctorNotification patient;
+
+  @override
+  State<PatientCard> createState() => _PatientCardState();
+}
+
+class _PatientCardState extends State<PatientCard> {
+  bool isBtnClicked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey[300]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(20),
+            child: SizedBox(width: 70, height: 70, child: Icon(Icons.person)),
+          ),
+          SizedBox(width: 4.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${widget.patient.firstName} ${widget.patient.lastName}",
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+
+                SizedBox(height: 1.5.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.local_hospital,
+                      size: 16.sp,
+                      color: AppColors.DARK_GREEN,
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        'Department: ${widget.patient.department}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 0.8.h),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule,
+                      size: 16.sp,
+                      color: AppColors.DARK_GREEN,
+                    ),
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        "next visit: ${widget.patient.date_time?.day}/${widget.patient.date_time?.month}/${widget.patient.date_time?.year}",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.2.h),
+              ],
+            ),
+          ),
+
+          isBtnClicked
+              ? Container(
+                  margin: EdgeInsets.only(top: 2.h, right: 3.w),
+                  child: CircularProgressIndicator(),
+                )
+              : Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: Text("Confirm Rejection"),
+                              content: Text(
+                                "Are you sure you want to reject Dr.${widget.patient.firstName} request?",
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      color: AppColors.DARK_GREEN,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                    setState(() {
+                                      isBtnClicked = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    "Reject",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
+                      ),
+                      child: Text(
+                        "reject",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: Text("Confirm Approval"),
+                              content: Text(
+                                "Are you sure you want to approve Dr.${widget.patient.firstName} request?",
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      color: AppColors.DARK_GREEN,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                    setState(() {
+                                      isBtnClicked = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    "Approve",
+                                    style: TextStyle(
+                                      color: AppColors.DARK_GREEN,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.green),
+                      ),
+                      child: Text(
+                        "approve",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
