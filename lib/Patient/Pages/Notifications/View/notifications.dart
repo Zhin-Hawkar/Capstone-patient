@@ -261,7 +261,13 @@ class _PatientCardState extends State<PatientCard> {
         children: [
           ClipRRect(
             borderRadius: BorderRadiusGeometry.circular(20),
-            child: SizedBox(width: 70, height: 70, child: Icon(Icons.person)),
+            child: SizedBox(
+              width: 70,
+              height: 70,
+              child: widget.patient.doctorImage == null
+                  ? Icon(Icons.person)
+                  : Image.network("${widget.patient.doctorImage}"),
+            ),
           ),
           SizedBox(width: 4.w),
           Expanded(
@@ -329,7 +335,9 @@ class _PatientCardState extends State<PatientCard> {
                 )
               : Container(
                   margin: EdgeInsets.only(top: 2.h),
-                  child: widget.patient.status == "pending"
+                  child:
+                      widget.patient.status == "pending" ||
+                          widget.patient.status == "accepted"
                       ? ElevatedButton(
                           onPressed: () {
                             showDialog(

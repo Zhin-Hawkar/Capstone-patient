@@ -179,10 +179,12 @@ class _AppointmentsState extends State<Appointments>
                                       leading: ClipRRect(
                                         borderRadius:
                                             BorderRadiusGeometry.circular(25),
-                                        child: appointments[index].image == null
+                                        child:
+                                            appointments[index].doctorImage ==
+                                                null
                                             ? Icon(Icons.person)
                                             : Image.network(
-                                                "${appointments[index].image}",
+                                                "${appointments[index].doctorImage}",
                                                 width: 50,
                                                 height: 50,
                                                 fit: BoxFit.cover,
@@ -526,7 +528,13 @@ class PatientCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadiusGeometry.circular(20),
-            child: SizedBox(width: 70, height: 70, child: Icon(Icons.person)),
+            child: SizedBox(
+              width: 70,
+              height: 70,
+              child: patient.doctorImage == null
+                  ? Icon(Icons.person)
+                  : Image.network("${patient.doctorImage}"),
+            ),
           ),
           SizedBox(width: 4.w),
           Expanded(

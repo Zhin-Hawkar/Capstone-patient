@@ -5,6 +5,7 @@ class DoctorNotification {
   int? yearsOfExperience;
   String? gender;
   String? description;
+  String? doctorImage;
   String? hospital;
   String? specialization;
   String? comment;
@@ -19,6 +20,7 @@ class DoctorNotification {
     this.firstName,
     this.lastName,
     this.age,
+    this.doctorImage,
     this.description,
     this.hospital,
     this.specialization,
@@ -40,6 +42,7 @@ class DoctorNotification {
       gender: json['gender'],
       description: json['description'],
       hospital: json['hospital'],
+      doctorImage: json['doctorImage'],
       specialization: json['specialization'],
       comment: json['comment'],
       qualification: json['qualification'],
