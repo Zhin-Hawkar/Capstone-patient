@@ -102,6 +102,14 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                         "Department: ${widget.acceptedAppointments.department}",
                       ),
                       SizedBox(height: 1.h),
+                      Text(
+                        "Hospital: ${widget.acceptedAppointments.hospitalName}",
+                      ),
+                      SizedBox(height: 1.h),
+                      Text(
+                        "Hospital Location: ${widget.acceptedAppointments.hospitalLocation}",
+                      ),
+                      SizedBox(height: 1.h),
                     ],
                   ),
                 ],

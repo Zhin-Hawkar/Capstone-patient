@@ -327,111 +327,141 @@ class _PatientCardState extends State<PatientCard> {
                   margin: EdgeInsets.only(top: 2.h, right: 3.w),
                   child: CircularProgressIndicator(),
                 )
-              : Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              title: Text("Confirm Rejection"),
-                              content: Text(
-                                "Are you sure you want to reject Dr.${widget.patient.firstName} request?",
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      color: AppColors.DARK_GREEN,
+              : Container(
+                  margin: EdgeInsets.only(top: 2.h),
+                  child: widget.patient.status == "pending"
+                      ? ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  title: Text("Confirm Approval"),
+                                  content: Text(
+                                    "Are you sure you want to approve Dr.${widget.patient.firstName} request?",
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                          color: AppColors.DARK_GREEN,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
-                                    setState(() {
-                                      isBtnClicked = true;
-                                    });
-                                  },
-                                  child: Text(
-                                    "Reject",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                        setState(() {
+                                          isBtnClicked = true;
+                                        });
+                                      },
+                                      child: Text(
+                                        "Approve",
+                                        style: TextStyle(
+                                          color: AppColors.DARK_GREEN,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.red),
-                      ),
-                      child: Text(
-                        "reject",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              title: Text("Confirm Approval"),
-                              content: Text(
-                                "Are you sure you want to approve Dr.${widget.patient.firstName} request?",
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all(
+                              Colors.green,
+                            ),
+                          ),
+                          child: Text(
+                            "approve",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      : widget.patient.status != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            color: "${widget.patient.status}" == 'rejected'
+                                ? Colors.red
+                                : "${widget.patient.status}" == 'accepted'
+                                ? Colors.green
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadiusGeometry.circular(25),
+                                child: Container(
+                                  color:
+                                      "${widget.patient.status}" == 'rejected'
+                                      ? const Color.fromARGB(255, 255, 124, 114)
+                                      : "${widget.patient.status}" == 'accepted'
+                                      ? const Color.fromARGB(255, 100, 189, 103)
+                                      : Colors.white,
+                                  width: 10.w,
+                                  child:
+                                      "${widget.patient.status}" == 'rejected'
+                                      ? Transform.scale(
+                                          scale: 0.5,
+                                          child: Lottie.asset(
+                                            "assets/json/OCL Canceled.json",
+                                          ),
+                                        )
+                                      : "${widget.patient.status}" == 'accepted'
+                                      ? Transform.scale(
+                                          scale: 0.8,
+                                          child: Lottie.asset(
+                                            "assets/json/Tick Pop.json",
+                                          ),
+                                        )
+                                      : Container(),
+                                ),
                               ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      color: AppColors.DARK_GREEN,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
-                                    setState(() {
-                                      isBtnClicked = true;
-                                    });
-                                  },
-                                  child: Text(
-                                    "Approve",
-                                    style: TextStyle(
-                                      color: AppColors.DARK_GREEN,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(Colors.green),
-                      ),
-                      child: Text(
-                        "approve",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+                              SizedBox(width: 2.w),
+                              "${widget.patient.status}" == 'rejected'
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        "rejected",
+                                        style: TextStyle(
+                                          color: const Color.fromARGB(
+                                            255,
+                                            255,
+                                            255,
+                                            255,
+                                          ),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : "${widget.patient.status}" == 'accepted'
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        "accepted",
+                                        style: TextStyle(
+                                          color: const Color.fromARGB(
+                                            255,
+                                            255,
+                                            255,
+                                            255,
+                                          ),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(),
+                            ],
+                          ),
+                        )
+                      : Container(),
                 ),
         ],
       ),

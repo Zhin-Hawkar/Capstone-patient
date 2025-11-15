@@ -3,6 +3,8 @@ class AssignedPatientsModel {
   String? lastName;
   String? doctorFirstName;
   String? doctorLastName;
+  String? hospitalName;
+  String? hospitalLocation;
   int? age;
   String? gender;
   String? email;
@@ -18,7 +20,9 @@ class AssignedPatientsModel {
     this.lastName,
     this.doctorFirstName,
     this.doctorLastName,
+    this.hospitalLocation,
     this.age,
+    this.hospitalName,
     this.gender,
     this.email,
     this.department,
@@ -38,6 +42,8 @@ class AssignedPatientsModel {
       age: json['age'],
       gender: json['gender'],
       email: json['email'],
+      hospitalName: json['hospitalName'],
+      hospitalLocation: json['hospitalLocation'],
       department: json['department'],
       help: json['help'],
       medical_record: json['medical_record'],

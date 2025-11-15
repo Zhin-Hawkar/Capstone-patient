@@ -318,9 +318,9 @@ class _AppointmentsState extends State<Appointments>
                                                       color:
                                                           const Color.fromARGB(
                                                             255,
-                                                            0,
-                                                            0,
-                                                            0,
+                                                            255,
+                                                            255,
+                                                            255,
                                                           ),
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -334,9 +334,9 @@ class _AppointmentsState extends State<Appointments>
                                                       color:
                                                           const Color.fromARGB(
                                                             255,
-                                                            0,
-                                                            0,
-                                                            0,
+                                                            255,
+                                                            255,
+                                                            255,
                                                           ),
                                                       fontWeight:
                                                           FontWeight.bold,
