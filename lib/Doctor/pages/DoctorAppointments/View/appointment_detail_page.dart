@@ -3,6 +3,7 @@ import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patien
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
+// ignore: must_be_immutable
 class AppointmentDetailsPage extends StatefulWidget {
   AssignedPatientsModel acceptedAppointments;
   AppointmentDetailsPage({super.key, required this.acceptedAppointments});
@@ -43,7 +44,7 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                   child: ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(25),
                     child: Image.network(
-                      "${widget.acceptedAppointments.doctorImage}",
+                      "${widget.acceptedAppointments.image}",
                       width: 100,
                       height: 100,
                       fit: BoxFit.cover,
@@ -51,6 +52,25 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                   ),
                 ),
                 SizedBox(width: 5.w),
+                Container(
+                  margin: EdgeInsets.only(top: 4.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Patient: ${widget.acceptedAppointments.firstName} ${widget.acceptedAppointments.lastName}",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 1.h),
+                      Text("Age: ${widget.acceptedAppointments.age}"),
+                      SizedBox(height: 1.h),
+                      Text("Gender: ${widget.acceptedAppointments.gender}"),
+                      SizedBox(height: 1.h),
+                      Text("email: ${widget.acceptedAppointments.email}"),
+                      SizedBox(height: 1.h),
+                    ],
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 4.h),

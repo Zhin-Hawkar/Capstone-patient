@@ -1,11 +1,13 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/controller/assigned_patients_controller.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
+import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/patient_profile_view_page.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 class AssignedPatients extends ConsumerStatefulWidget {
@@ -23,6 +25,10 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
     // TODO: implement initState
     super.initState();
     loadAppointments();
+  }
+
+  Future<void> refresh() async {
+    await loadAppointments();
   }
 
   Future<void> loadAppointments() async {
@@ -52,66 +58,84 @@ class _AssignedPatientsState extends ConsumerState<AssignedPatients> {
         children: [
           Expanded(
             child: appointments.isNotEmpty
-                ? ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: appointments.length,
-                    itemBuilder: (context, index) {
-                      return Dismissible(
-                        key: Key("${appointments[index].firstName}"),
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerLeft,
-                          padding: EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Icon(Icons.delete, color: Colors.white),
-                        ),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${appointments[index].firstName} dismissed',
-                              ),
-                            ),
-                          );
-                          setState(() {
-                            appointments.removeAt(index);
-                          });
-                        },
-                        confirmDismiss: (direction) async {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Confirm Delete"),
+                ? RefreshIndicator(
+                    onRefresh: () {
+                      return refresh();
+                    },
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: appointments.length,
+                      itemBuilder: (context, index) {
+                        return Dismissible(
+                          key: Key("${appointments[index].firstName}"),
+                          background: Container(
+                            color: Colors.red,
+                            alignment: Alignment.centerLeft,
+                            padding: EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Icon(Icons.delete, color: Colors.white),
+                          ),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
                                 content: Text(
-                                  "Are you sure you want to delete ${appointments[index].firstName}?",
+                                  '${appointments[index].firstName} dismissed',
                                 ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
-                                    child: Text("CANCEL"),
+                              ),
+                            );
+                            setState(() {
+                              appointments.removeAt(index);
+                            });
+                          },
+                          confirmDismiss: (direction) async {
+                            return await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Confirm Delete"),
+                                  content: Text(
+                                    "Are you sure you want to delete ${appointments[index].firstName}?",
                                   ),
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(true),
-                                    child: Text("DELETE"),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: Text("CANCEL"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(true),
+                                      child: Text("DELETE"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.fade,
+                                  child: PatientProfileViewPage(
+                                    patient: appointments[index],
                                   ),
-                                ],
+                                ),
                               );
                             },
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                            left: 2.w,
-                            right: 2.w,
-                            top: 2.h,
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                left: 2.w,
+                                right: 2.w,
+                                top: 2.h,
+                              ),
+                              child: PatientCard(patient: appointments[index]),
+                            ),
                           ),
-                          child: PatientCard(patient: appointments[index]),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   )
                 : isLoading
                 ? Center(

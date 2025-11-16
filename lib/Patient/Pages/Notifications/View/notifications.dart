@@ -1,11 +1,13 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
+import 'package:capstone/Doctor/pages/DoctorNotifications/Notifier/patient_notification_response.dart';
 import 'package:capstone/Patient/Pages/Appointments/View/appointment_detail_page.dart';
 import 'package:capstone/Patient/Pages/Notifications/Controller/patient_notification.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
@@ -228,20 +230,23 @@ class _NotificationsState extends State<Notifications>
   }
 }
 
-class PatientCard extends StatefulWidget {
+class PatientCard extends ConsumerStatefulWidget {
   const PatientCard({super.key, required this.patient});
 
   final DoctorNotification patient;
 
   @override
-  State<PatientCard> createState() => _PatientCardState();
+  ConsumerState<PatientCard> createState() => _PatientCardState();
 }
 
-class _PatientCardState extends State<PatientCard> {
+class _PatientCardState extends ConsumerState<PatientCard> {
   bool isBtnClicked = false;
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(
+      patientNotificationResponseNotifierProvider.notifier,
+    );
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
@@ -361,11 +366,33 @@ class _PatientCardState extends State<PatientCard> {
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         Navigator.of(context).pop(true);
                                         setState(() {
                                           isBtnClicked = true;
                                         });
+                                        state.setDoctorId(
+                                          widget.patient.doctorId,
+                                        );
+
+                                        final result =
+                                            await DoctorNotificationController.handleApprovedPatientResponse(
+                                              ref,
+                                            );
+                                        if (result == 200) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                "Request has been approved successfuly",
+                                              ),
+                                            ),
+                                          );
+                                          setState(() {
+                                            isBtnClicked = false;
+                                          });
+                                        }
                                       },
                                       child: Text(
                                         "Approve",

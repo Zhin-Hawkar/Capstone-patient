@@ -4,6 +4,7 @@ import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Backend/PusherSocket/pusher_notification.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/InternetChecker/Notifier/internet_checker_notifier.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
 import 'package:capstone/Patient/Pages/Booking/View/booking_step_one.dart';
 import 'package:capstone/Patient/Pages/Feedback/Controller/feedback_controller.dart';
@@ -351,36 +352,33 @@ class _HomeState extends ConsumerState<Home> {
                     ),
               SizedBox(height: 5.h),
               Column(
+                children: [
+                  SizedBox(
+                    height: 250,
+                    child: PageView(
+                      physics: NeverScrollableScrollPhysics(),
+                      onPageChanged: (value) {
+                        ref
+                            .watch(feedbackDotProvider.notifier)
+                            .incrementIndex(value);
+                      },
+                      controller: controller,
                       children: [
-                        SizedBox(
-                          height: 250,
-                          child: PageView(
-                            physics: NeverScrollableScrollPhysics(),
-                            onPageChanged: (value) {
-                              ref
-                                  .watch(feedbackDotProvider.notifier)
-                                  .incrementIndex(value);
-                            },
-                            controller: controller,
-                            children: [
-                              for (final f in feedbacks)
-                                FeedbackPages(feedbacks: f),
-                            ],
-                          ),
-                        ),
-                        DotsIndicator(
-                          position: feedbackDot.toDouble(),
-                          dotsCount: 5,
-                          animate: true,
-                          animationDuration: Duration(seconds: 1),
-                          axis: Axis.horizontal,
-                          decorator: DotsDecorator(
-                            activeColor: AppColors.DARK_GREEN,
-                          ),
-                          mainAxisAlignment: MainAxisAlignment.center,
-                        ),
+                        for (final f in feedbacks) FeedbackPages(feedbacks: f),
                       ],
                     ),
+                  ),
+                  DotsIndicator(
+                    position: feedbackDot.toDouble(),
+                    dotsCount: 5,
+                    animate: true,
+                    animationDuration: Duration(seconds: 1),
+                    axis: Axis.horizontal,
+                    decorator: DotsDecorator(activeColor: AppColors.DARK_GREEN),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                ],
+              ),
               SizedBox(height: 5.h),
               // Booking Now Button
               Container(

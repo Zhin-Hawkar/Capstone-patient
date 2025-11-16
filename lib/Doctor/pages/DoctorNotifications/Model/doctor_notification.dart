@@ -2,11 +2,15 @@ class DoctorNotification {
   String? firstName;
   String? lastName;
   int? age;
+  int? patientId;
+  int? doctorId;
   int? yearsOfExperience;
   String? gender;
   String? description;
   String? doctorImage;
   String? hospital;
+  String? help;
+  String? aiAnalysis;
   String? specialization;
   String? comment;
   Map<String, dynamic>? qualification;
@@ -19,7 +23,11 @@ class DoctorNotification {
   DoctorNotification({
     this.firstName,
     this.lastName,
+    this.patientId,
+    this.doctorId,
     this.age,
+    this.help,
+    this.aiAnalysis,
     this.doctorImage,
     this.description,
     this.hospital,
@@ -36,6 +44,8 @@ class DoctorNotification {
 
   factory DoctorNotification.frommJson(Map<String, dynamic> json) {
     return DoctorNotification(
+      patientId: json['patientId'],
+      doctorId: json['doctorId'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       age: json['age'],
@@ -43,6 +53,8 @@ class DoctorNotification {
       description: json['description'],
       hospital: json['hospital'],
       doctorImage: json['doctorImage'],
+      help: json['help'],
+      aiAnalysis: json['ai_analysis'],
       specialization: json['specialization'],
       comment: json['comment'],
       qualification: json['qualification'],
@@ -51,6 +63,32 @@ class DoctorNotification {
       date_time: DateTime.parse(json['date_time']),
       status: json['status'],
       image: json['image'],
+    );
+  }
+}
+
+class DoctorNotificationResponse {
+  String? comment;
+  int? patientId;
+
+  DoctorNotificationResponse({this.comment, this.patientId});
+
+  DoctorNotificationResponse copyWith({String? comment, int? patientId}) {
+    return DoctorNotificationResponse(
+      comment: comment ?? this.comment,
+      patientId: patientId ?? this.patientId,
+    );
+  }
+}
+
+class PatientNotificationResponse {
+  int? doctorId;
+
+  PatientNotificationResponse({this.doctorId});
+
+  PatientNotificationResponse copyWith({String? comment, int? doctorId}) {
+    return PatientNotificationResponse(
+      doctorId: doctorId ?? this.doctorId,
     );
   }
 }

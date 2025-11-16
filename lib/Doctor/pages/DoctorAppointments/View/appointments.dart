@@ -2,9 +2,11 @@ import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
 import 'package:capstone/Doctor/pages/DoctorAppointments/Controller/doctor_appointments.dart';
+import 'package:capstone/Patient/Pages/Appointments/View/appointment_detail_page.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorsAppointments extends StatefulWidget {
@@ -108,14 +110,28 @@ class _AppointmentsState extends State<DoctorsAppointments> {
                               },
                             );
                           },
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              left: 2.w,
-                              right: 2.w,
-                              top: 2.w,
-                            ),
-                            child: PatientCard(
-                              patient: acceptedAppointments[index],
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.fade,
+                                  child: AppointmentDetailsPage(
+                                    acceptedAppointments:
+                                        acceptedAppointments[index],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                left: 2.w,
+                                right: 2.w,
+                                top: 2.w,
+                              ),
+                              child: PatientCard(
+                                patient: acceptedAppointments[index],
+                              ),
                             ),
                           ),
                         );

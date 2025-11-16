@@ -2,10 +2,12 @@ import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
+import 'package:capstone/Doctor/pages/DoctorNotifications/View/notification_request_detail_page.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorNotifications extends StatefulWidget {
@@ -24,6 +26,10 @@ class _NotificationsState extends State<DoctorNotifications>
     super.initState();
     _tab_controller = TabController(length: 3, vsync: this);
     loadNotifications();
+  }
+
+  Future<void> refresh() async {
+    await loadNotifications();
   }
 
   Future<void> loadNotifications() async {
@@ -91,75 +97,99 @@ class _NotificationsState extends State<DoctorNotifications>
                   children: [
                     Expanded(
                       child: notifications.isNotEmpty
-                          ? ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: notifications.length,
-                              itemBuilder: (context, index) {
-                                return Dismissible(
-                                  key: Key("${notifications[index].firstName}"),
-                                  background: Container(
-                                    color: Colors.red,
-                                    alignment: Alignment.centerLeft,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 20.0,
+                          ? RefreshIndicator(
+                              onRefresh: () {
+                                return refresh();
+                              },
+                              child: ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                itemCount: notifications.length,
+                                itemBuilder: (context, index) {
+                                  return Dismissible(
+                                    key: Key(
+                                      "${notifications[index].firstName}",
                                     ),
-                                    child: Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  direction: DismissDirection.endToStart,
-                                  onDismissed: (direction) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          '${notifications[index].firstName} dismissed',
-                                        ),
+                                    background: Container(
+                                      color: Colors.red,
+                                      alignment: Alignment.centerLeft,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 20.0,
                                       ),
-                                    );
-                                    setState(() {
-                                      notifications.removeAt(index);
-                                    });
-                                  },
-                                  confirmDismiss: (direction) async {
-                                    return await showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("Confirm Delete"),
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    direction: DismissDirection.endToStart,
+                                    onDismissed: (direction) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
                                           content: Text(
-                                            "Are you sure you want to delete ${notifications[index].firstName}?",
+                                            '${notifications[index].firstName} dismissed',
                                           ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () => Navigator.of(
-                                                context,
-                                              ).pop(false),
-                                              child: Text("CANCEL"),
+                                        ),
+                                      );
+                                      setState(() {
+                                        notifications.removeAt(index);
+                                      });
+                                    },
+                                    confirmDismiss: (direction) async {
+                                      return await showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text("Confirm Delete"),
+                                            content: Text(
+                                              "Are you sure you want to delete ${notifications[index].firstName}?",
                                             ),
-                                            TextButton(
-                                              onPressed: () => Navigator.of(
-                                                context,
-                                              ).pop(true),
-                                              child: Text("DELETE"),
-                                            ),
-                                          ],
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.of(
+                                                  context,
+                                                ).pop(false),
+                                                child: Text("CANCEL"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.of(
+                                                  context,
+                                                ).pop(true),
+                                                child: Text("DELETE"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type:
+                                                PageTransitionType.rightToLeft,
+                                            child:
+                                                NotificationRequestDetailPage(
+                                                  detail: notifications[index],
+                                                ),
+                                          ),
                                         );
                                       },
-                                    );
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                      left: 2.w,
-                                      right: 2.w,
-                                      top: 2.h,
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                          left: 2.w,
+                                          right: 2.w,
+                                          top: 2.h,
+                                        ),
+                                        child: PatientCard(
+                                          patient: notifications[index],
+                                        ),
+                                      ),
                                     ),
-                                    child: PatientCard(
-                                      patient: notifications[index],
-                                    ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             )
                           : Container(
                               margin: EdgeInsetsDirectional.only(bottom: 30.h),

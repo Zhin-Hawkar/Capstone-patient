@@ -1,6 +1,9 @@
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patients.dart';
 import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
+import 'package:capstone/Doctor/pages/DoctorNotifications/View/notification_request_detail_page.dart';
+import 'package:capstone/Doctor/pages/DoctorNotifications/View/notifications.dart';
 import 'package:capstone/Doctor/pages/Statistics/View/statistics.dart';
+import 'package:capstone/InternetChecker/Controller/internet_checker_controller.dart';
 import 'package:capstone/Route/Controller/route_controller.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +13,7 @@ import 'package:sizer/sizer.dart';
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   await GlobalStorageService.init();
+  //InternetCheckerController.establishChecking();
   runApp(ProviderScope(child: const Capstone()));
 }
 
@@ -28,7 +32,7 @@ class Capstone extends StatelessWidget {
           initialRoute: "/",
           onGenerateRoute: (settings) =>
               RouteController.generateRouteSettings(settings),
-          //home: PatientProfileViewPage(),
+          //home: DoctorNotifications()
         );
       },
     );

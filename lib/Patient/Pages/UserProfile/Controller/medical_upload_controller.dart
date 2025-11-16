@@ -20,6 +20,14 @@ class MedicalRecordUploadController {
     return result;
   }
 
+  static Future<dynamic> retrieveRecordsToDoctor({int? patientId}) async {
+    final result = await HttpUtil().post(
+      "api/showmedicalrecordstodoctor",
+      data: {"patientId": patientId},
+    );
+    return result;
+  }
+
   static Future<dynamic> _uploadRecord({MedicalRecord? params}) async {
     FormData formData = FormData.fromMap({
       "fileName": params!.medicalRecord!.split('/').last,
