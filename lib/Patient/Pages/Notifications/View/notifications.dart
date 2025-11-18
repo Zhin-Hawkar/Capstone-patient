@@ -380,15 +380,7 @@ class _PatientCardState extends ConsumerState<PatientCard> {
                                               ref,
                                             );
                                         if (result == 200) {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                "Request has been approved successfuly",
-                                              ),
-                                            ),
-                                          );
+                                    
                                           setState(() {
                                             isBtnClicked = false;
                                           });

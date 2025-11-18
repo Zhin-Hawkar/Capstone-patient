@@ -450,7 +450,7 @@ class _AppointmentsState extends State<Appointments>
                                           PageTransition(
                                             type:
                                                 PageTransitionType.rightToLeft,
-                                            child: AppointmentDetailsPage(
+                                            child: PatientAppointmentDetailsPage(
                                               acceptedAppointments:
                                                   acceptedAppointments[index],
                                             ),

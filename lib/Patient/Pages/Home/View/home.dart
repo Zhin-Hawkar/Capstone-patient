@@ -50,8 +50,8 @@ class _HomeState extends ConsumerState<Home> {
         .isNotEmpty) {
       setupSocket();
     }
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < (feedbacks.length)) {
+    _timer = Timer.periodic(Duration(seconds: 4), (Timer timer) {
+      if (_currentPage < 4) {
         _currentPage++;
         ref.watch(feedbackDotProvider.notifier).incrementIndex(_currentPage);
       } else {

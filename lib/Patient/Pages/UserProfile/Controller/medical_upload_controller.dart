@@ -1,5 +1,6 @@
 import 'package:capstone/Backend/Model/medical_record.dart';
 import 'package:capstone/Backend/Util/http_util.dart';
+import 'package:capstone/Patient/Pages/UserProfile/Notifier/document_uplaod_notifier%20copy.dart';
 import 'package:capstone/Patient/Pages/UserProfile/Notifier/medical_uplaod_notifier.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,17 @@ class MedicalRecordUploadController {
       ..fileName = record.fileName
       ..medicalRecord = record.medicalRecord;
     final result = await _uploadRecord(params: medicalRecord);
+    print(result);
+    return result;
+  }
+
+  static Future<dynamic> uploadMedicalDocument(WidgetRef ref) async {
+    final record = ref.watch(documentUplaodNotifierProvider);
+    final medicalRecord = MedicalDocument()
+      ..patientId = record.patientId
+      ..fileName = record.fileName
+      ..medicalRecord = record.medicalRecord;
+    final result = await _uploadDocument(params: medicalRecord);
     print(result);
     return result;
   }
@@ -39,6 +51,29 @@ class MedicalRecordUploadController {
     });
     final result = await HttpUtil().post(
       "api/uploadmedicalrecord",
+      data: formData,
+      options: Options(
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+    return result;
+  }
+
+  static Future<dynamic> _uploadDocument({MedicalDocument? params}) async {
+    FormData formData = FormData.fromMap({
+      "patientId": params?.patientId,
+      "fileName": params!.medicalRecord!.split('/').last,
+      if (params.medicalRecord != null && params.medicalRecord!.isNotEmpty)
+        "medicalRecord": await MultipartFile.fromFile(
+          params.medicalRecord!,
+          filename: params.medicalRecord!.split('/').last,
+        ),
+    });
+    final result = await HttpUtil().post(
+      "api/uploadmedicaldocument",
       data: formData,
       options: Options(
         headers: {

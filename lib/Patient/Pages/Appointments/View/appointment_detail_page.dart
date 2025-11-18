@@ -3,15 +3,15 @@ import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patien
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-class AppointmentDetailsPage extends StatefulWidget {
+class PatientAppointmentDetailsPage extends StatefulWidget {
   AssignedPatientsModel acceptedAppointments;
-  AppointmentDetailsPage({super.key, required this.acceptedAppointments});
+  PatientAppointmentDetailsPage({super.key, required this.acceptedAppointments});
 
   @override
-  State<AppointmentDetailsPage> createState() => _AppointmentDetailsPageState();
+  State<PatientAppointmentDetailsPage> createState() => _AppointmentDetailsPageState();
 }
 
-class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
+class _AppointmentDetailsPageState extends State<PatientAppointmentDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

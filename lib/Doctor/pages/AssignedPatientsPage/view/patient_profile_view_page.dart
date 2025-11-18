@@ -1,20 +1,48 @@
+import 'dart:async';
+
 import 'package:capstone/Backend/Model/medical_record.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
+import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/FileManipulation/UploadFiles/view_file.dart';
 import 'package:capstone/Patient/Pages/UserProfile/Controller/medical_upload_controller.dart';
+import 'package:capstone/Patient/Pages/UserProfile/Notifier/document_uplaod_notifier%20copy.dart';
+import 'package:capstone/Patient/Pages/UserProfile/Notifier/medical_uplaod_notifier.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 // ignore: must_be_immutable
-class PatientProfileViewPage extends StatelessWidget {
+class PatientProfileViewPage extends ConsumerStatefulWidget {
   AssignedPatientsModel patient;
   PatientProfileViewPage({super.key, required this.patient});
 
   @override
+  ConsumerState<PatientProfileViewPage> createState() =>
+      _PatientProfileViewPageState();
+}
+
+class _PatientProfileViewPageState
+    extends ConsumerState<PatientProfileViewPage> {
+  bool isUploaded = false;
+  List<PlatformFile> filesSaved = [];
+  final PageController _pageController = PageController();
+  Timer time = Timer(Duration.zero, () {});
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    time.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final medicalDocument = ref.watch(documentUplaodNotifierProvider.notifier);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -26,10 +54,205 @@ class PatientProfileViewPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          _PatientHeader(patient: patient),
+          _PatientHeader(patient: widget.patient),
           SizedBox(height: 20),
-          _MedicalRecords(patientId: patient.patientId),
+          _MedicalRecords(patientId: widget.patient.patientId),
         ],
+      ),
+      floatingActionButton: SizedBox(
+        height: 70,
+        width: 70,
+        child: FloatingActionButton(
+          onPressed: () {
+            showModalBottomSheet(
+              showDragHandle: true,
+              backgroundColor: AppColors.WHITE_BACKGROUND,
+              context: context,
+              builder: (context) {
+                return StatefulBuilder(
+                  builder: (context, setModalState) {
+                    return PageView(
+                      physics: NeverScrollableScrollPhysics(),
+                      controller: _pageController,
+                      children: [
+                        SizedBox(
+                          height: 50.h,
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                width: 70.w,
+                                height: 15.h,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                      AppColors.DARK_GREEN,
+                                    ),
+                                    side: WidgetStatePropertyAll(BorderSide()),
+                                  ),
+                                  onPressed: () async {
+                                    List<PlatformFile>? files =
+                                        await UploadFiles.pickAndUploadFiles();
+                                    if (files != null) {
+                                      for (int i = 0; i < files.length; i++) {
+                                        setModalState(() {
+                                          filesSaved.add(files[i]);
+                                        });
+                                        medicalDocument.setPatientId(
+                                          widget.patient.patientId!.toInt(),
+                                        );
+                                        medicalDocument.setFileName(
+                                          filesSaved[i].name,
+                                        );
+                                        medicalDocument.setMedicalRecord(
+                                          filesSaved[i].path!,
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.upload_file,
+                                        color: Colors.white,
+                                        size: 65,
+                                      ),
+                                      Text(
+                                        "Upload pdf format",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 5.h),
+                              Expanded(
+                                child: SizedBox(
+                                  width: 50.w,
+                                  height: 50.h,
+                                  child: ListView.builder(
+                                    itemCount: filesSaved.length,
+                                    itemBuilder: (context, index) {
+                                      return Text(filesSaved[index].name);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(bottom: 50),
+                                child: filesSaved.isEmpty
+                                    ? ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              WidgetStatePropertyAll(
+                                                const Color.fromARGB(
+                                                  69,
+                                                  76,
+                                                  175,
+                                                  79,
+                                                ),
+                                              ),
+                                        ),
+                                        onPressed: () {},
+                                        child: Text(
+                                          "upload",
+                                          style: TextStyle(
+                                            color: const Color.fromARGB(
+                                              195,
+                                              255,
+                                              255,
+                                              255,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              WidgetStatePropertyAll(
+                                                AppColors.DARK_GREEN,
+                                              ),
+                                        ),
+                                        onPressed: () async {
+                                          _pageController.nextPage(
+                                            duration: Duration(
+                                              milliseconds: 300,
+                                            ),
+                                            curve: Curves.easeInCirc,
+                                          );
+                                          await MedicalRecordUploadController.uploadMedicalDocument(
+                                            ref,
+                                          );
+                                          setModalState(() {
+                                            filesSaved.clear();
+                                          });
+                                        },
+                                        child: Text(
+                                          "upload",
+                                          style: TextStyle(
+                                            color: AppColors.WHITE_TEXT,
+                                          ),
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        StatefulBuilder(
+                          builder: (clockContext, setClockState) {
+                            time = Timer.periodic(Duration(seconds: 2), (
+                              timer,
+                            ) {
+                              if (clockContext.mounted) {
+                                if (timer.tick == 1) {
+                                  setClockState(() {
+                                    isUploaded = true;
+                                  });
+                                } else if (timer.tick == 2) {
+                                  Navigator.pop(context);
+
+                                  time.cancel();
+                                }
+                              }
+                            });
+                            return isUploaded
+                                ? Transform.scale(
+                                    scale: 0.8,
+                                    child: Lottie.asset(
+                                      "assets/json/Done Animation.json",
+                                      width: 70,
+                                      height: 70,
+                                    ),
+                                  )
+                                : Transform.scale(
+                                    scale: 0.8,
+                                    child: Lottie.asset(
+                                      "assets/json/Material wave loading.json",
+                                      width: 70,
+                                      height: 70,
+                                    ),
+                                  );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+          },
+          backgroundColor: AppColors.DARK_GREEN,
+          shape: CircleBorder(),
+          child: Transform.scale(
+            scale: 0.9,
+            child: Lottie.asset("assets/json/Update.json"),
+          ),
+        ),
       ),
     );
   }

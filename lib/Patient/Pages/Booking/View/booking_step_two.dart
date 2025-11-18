@@ -21,6 +21,7 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
   final TextEditingController _assistanceController = TextEditingController();
   DateTime? _selectedDate;
   String? _uploadedRecord;
+  String? _selectedDepartment;
   File _imageFile = File("");
 
   InputDecoration _inputDecoration(String label) {
@@ -90,7 +91,7 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
   }
 
   void _submitBooking() async {
-    if (_illnessTypeController.text.trim().isEmpty) {
+    if (_selectedDepartment.toString().trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please provide an illness type.')),
       );
@@ -115,7 +116,7 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
 
     ref
         .watch(sendAppointmentNotifierProvider.notifier)
-        .setDepartment(_illnessTypeController.text);
+        .setDepartment(_selectedDepartment);
     ref
         .watch(sendAppointmentNotifierProvider.notifier)
         .setHelp(_assistanceController.text);
@@ -168,21 +169,45 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Medical details",
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.DARK_GREEN,
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      TextField(
-                        controller: _illnessTypeController,
-                        cursorColor: AppColors.DARK_GREEN,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: _inputDecoration('Medical Department'),
-                        textCapitalization: TextCapitalization.sentences,
+                      // Text(
+                      //   "Medical details",
+                      //   style: TextStyle(
+                      //     fontSize: 18.sp,
+                      //     fontWeight: FontWeight.bold,
+                      //     color: AppColors.DARK_GREEN,
+                      //   ),
+                      // ),
+                      // SizedBox(height: 2.h),
+                      // TextField(
+                      //   controller: _illnessTypeController,
+                      //   cursorColor: AppColors.DARK_GREEN,
+                      //   style: const TextStyle(color: Colors.black),
+                      //   decoration: _inputDecoration('Medical Department'),
+                      //   textCapitalization: TextCapitalization.sentences,
+                      // ),
+                      DropdownButtonFormField<String>(
+                        value: _selectedDepartment,
+                        decoration: _inputDecoration('Departmemnt'),
+                        iconEnabledColor: AppColors.DARK_GREEN,
+                        dropdownColor: Colors.white,
+                        items: const [
+                          DropdownMenuItem(value: 'GIT', child: Text('GIT')),
+                          DropdownMenuItem(
+                            value: 'Cardiology',
+                            child: Text('Cardiology'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedDepartment = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select your sex';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: 2.h),
                       TextField(

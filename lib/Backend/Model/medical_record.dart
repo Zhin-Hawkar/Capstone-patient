@@ -20,3 +20,31 @@ class MedicalRecord {
     );
   }
 }
+
+class MedicalDocument {
+  int? patientId;
+  String? fileName;
+  String? medicalRecord;
+
+  MedicalDocument({this.patientId, this.fileName, this.medicalRecord});
+
+  factory MedicalDocument.fromJson(Map<String, dynamic> json) {
+    return MedicalDocument(
+      patientId: json['patientId'],
+      fileName: json['fileName'],
+      medicalRecord: json['medicalRecord'],
+    );
+  }
+
+  MedicalDocument copyWith({
+    int? patientId,
+    String? fileName,
+    String? medicalRecord,
+  }) {
+    return MedicalDocument(
+      patientId: patientId ?? this.patientId,
+      fileName: fileName ?? this.fileName,
+      medicalRecord: medicalRecord ?? this.medicalRecord,
+    );
+  }
+}
