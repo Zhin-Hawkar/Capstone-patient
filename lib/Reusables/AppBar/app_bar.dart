@@ -155,6 +155,19 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                 ),
                 ListTile(
                   onTap: () {
+                    if (GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "please login first to see notifications",
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
@@ -177,6 +190,19 @@ class _CustomDrawerState extends ConsumerState<CustomDrawer> {
                 ),
                 ListTile(
                   onTap: () {
+                    if (GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "please login first to see appointments",
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
@@ -303,6 +329,19 @@ class _CustomDoctorDrawer extends ConsumerState<CustomDoctorDrawer> {
                 ),
                 ListTile(
                   onTap: () {
+                    if (GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "please login first to see notifications",
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
@@ -325,6 +364,17 @@ class _CustomDoctorDrawer extends ConsumerState<CustomDoctorDrawer> {
                 ),
                 ListTile(
                   onTap: () {
+                    if (GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("please login first to see patients"),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
@@ -347,6 +397,19 @@ class _CustomDoctorDrawer extends ConsumerState<CustomDoctorDrawer> {
                 ),
                 ListTile(
                   onTap: () {
+                    if (GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "please login first to see appointments",
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
@@ -369,6 +432,17 @@ class _CustomDoctorDrawer extends ConsumerState<CustomDoctorDrawer> {
                 ),
                 ListTile(
                   onTap: () {
+                    if (GlobalStorageService.storageService
+                        .getString(EnumValues.ACCESS_TOKEN)
+                        .isEmpty) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("please login first to see statistics"),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushReplacement(
                       context,
                       PageTransition(
