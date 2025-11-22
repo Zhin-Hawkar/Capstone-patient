@@ -3,18 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 @Riverpod(keepAlive: false)
-class EditProfileNotifier extends StateNotifier<Profile> {
-  EditProfileNotifier() : super(Profile());
+class EditDoctorNotifier extends StateNotifier<Doctor> {
+  EditDoctorNotifier() : super(Doctor());
+
   void setFirstName(String firstName) {
     state = state.copyWith(firstName: firstName);
   }
 
   void setLastName(String lastName) {
     state = state.copyWith(lastName: lastName);
-  }
-
-  void setEmail(String email) {
-    state = state.copyWith(email: email);
   }
 
   void setLocation(String location) {
@@ -32,8 +29,27 @@ class EditProfileNotifier extends StateNotifier<Profile> {
   void setImage(String image) {
     state = state.copyWith(image: image);
   }
+
+  void setSpecialization(String specialization) {
+    state = state.copyWith(specialization: specialization);
+  }
+
+  // void setQualification(List<String> qualification) {
+  //   state = state.copyWith(qualification: qualification);
+  // }
+
+  // void setYearsOfExperience(int yearsofexperience) {
+  //   state = state.copyWith(yearsOfExperience: yearsofexperience);
+  // }
+  void setLicenseId(int licenseId) {
+    state = state.copyWith(licenseId: licenseId);
+  }
+
+  void setDepartment(String department) {
+    state = state.copyWith(department: department);
+  }
 }
 
-var editProfileProvider = StateNotifierProvider<EditProfileNotifier, Profile>(
-  (ref) => EditProfileNotifier(),
+var editDoctorProvider = StateNotifierProvider<EditDoctorNotifier, Doctor>(
+  (ref) => EditDoctorNotifier(),
 );

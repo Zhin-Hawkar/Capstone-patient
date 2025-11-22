@@ -56,18 +56,55 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> {
         ),
         IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.fade,
-                child:
-                    GlobalStorageService.storageService
-                        .getString(EnumValues.ACCESS_TOKEN)
-                        .isEmpty
-                    ? LoginPage()
-                    : UserProfile(),
-              ),
-            );
+            if (GlobalStorageService.storageService
+                .getString(EnumValues.ACCESS_TOKEN)
+                .isEmpty) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: Text("not logged in"),
+                    content: Text(
+                      "inorder to view your profile you must be logged in, we redirect you to authorize yourself.",
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: AppColors.DARK_GREEN),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.fade,
+                              child: LoginPage(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "login",
+                          style: TextStyle(color: AppColors.DARK_GREEN),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: UserProfile(),
+                ),
+              );
+            }
           },
           icon:
               profileState.profile?.image == null ||

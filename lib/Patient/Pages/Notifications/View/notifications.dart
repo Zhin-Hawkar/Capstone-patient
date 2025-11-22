@@ -232,7 +232,6 @@ class _NotificationsState extends State<Notifications>
 
 class PatientCard extends ConsumerStatefulWidget {
   const PatientCard({super.key, required this.patient});
-
   final DoctorNotification patient;
 
   @override
@@ -241,6 +240,7 @@ class PatientCard extends ConsumerStatefulWidget {
 
 class _PatientCardState extends ConsumerState<PatientCard> {
   bool isBtnClicked = false;
+  bool isApproved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -342,7 +342,8 @@ class _PatientCardState extends ConsumerState<PatientCard> {
                   margin: EdgeInsets.only(top: 2.h),
                   child:
                       widget.patient.status == "pending" ||
-                          widget.patient.status == "accepted"
+                          widget.patient.status == "accepted" &&
+                              isApproved == false
                       ? ElevatedButton(
                           onPressed: () {
                             showDialog(
@@ -376,14 +377,15 @@ class _PatientCardState extends ConsumerState<PatientCard> {
                                         );
 
                                         final result =
-                                            await DoctorNotificationController.handleApprovedPatientResponse(
+                                            await PatientNotificationController.handleApprovedPatientResponse(
                                               ref,
                                             );
                                         if (result == 200) {
-                                    
                                           setState(() {
                                             isBtnClicked = false;
+                                            isApproved = true;
                                           });
+                                          setState(() => {});
                                         }
                                       },
                                       child: Text(

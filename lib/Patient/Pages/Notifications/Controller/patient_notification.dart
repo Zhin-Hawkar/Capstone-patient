@@ -1,5 +1,6 @@
 import 'package:capstone/Backend/Util/http_util.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
+import 'package:capstone/Doctor/pages/DoctorNotifications/Notifier/patient_notification_response.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PatientNotificationController {
@@ -11,6 +12,29 @@ class PatientNotificationController {
         .toList();
     print(notifications);
     return appointments;
+  }
+
+  static Future<dynamic> handleApprovedPatientResponse(WidgetRef ref) async {
+    final state = ref.watch(patientNotificationResponseNotifierProvider);
+    PatientNotificationResponse response = PatientNotificationResponse()
+      ..doctorId = state.doctorId;
+    print("Approving:");
+    print(response.doctorId);
+    Map<String, dynamic> notifications = await _sendApprovedPatientResponse(
+      response: response,
+    );
+    final result = notifications['code'];
+    return result;
+  }
+
+   static _sendApprovedPatientResponse({
+    PatientNotificationResponse? response,
+  }) async {
+    var result = await HttpUtil().post(
+      "api/acceptdoctorrequest",
+      data: {"doctorId": response?.doctorId},
+    );
+    return result;
   }
 
   static _sendPatientNotifyRequest() async {

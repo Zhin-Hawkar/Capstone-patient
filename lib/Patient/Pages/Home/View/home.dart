@@ -260,25 +260,29 @@ class _HomeState extends ConsumerState<Home> {
                                         topLeft: Radius.circular(20),
                                         topRight: Radius.circular(20),
                                       ),
-                                      child: Image.network(
-                                        hospitals[index].image ?? "",
-                                        height: 12.h,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                              return Container(
-                                                height: 12.h,
-                                                color: AppColors.DARK_GREEN
-                                                    .withOpacity(0.1),
-                                                child: Icon(
-                                                  Icons.local_hospital,
-                                                  size: 40,
-                                                  color: AppColors.DARK_GREEN,
-                                                ),
-                                              );
-                                            },
-                                      ),
+                                      child: hospitals[index].image == null
+                                          ? Icon(Icons.warehouse)
+                                          : Image.network(
+                                              hospitals[index].image ?? "",
+                                              height: 12.h,
+                                              width: double.infinity,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                    return Container(
+                                                      height: 12.h,
+                                                      color: AppColors
+                                                          .DARK_GREEN
+                                                          .withOpacity(0.1),
+                                                      child: Icon(
+                                                        Icons.local_hospital,
+                                                        size: 40,
+                                                        color: AppColors
+                                                            .DARK_GREEN,
+                                                      ),
+                                                    );
+                                                  },
+                                            ),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.all(10),
@@ -405,6 +409,16 @@ class _HomeState extends ConsumerState<Home> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
+                      if (GlobalStorageService.storageService
+                          .getString(EnumValues.ACCESS_TOKEN)
+                          .isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("please login to book appointments."),
+                          ),
+                        );
+                        return;
+                      }
                       Navigator.push(
                         context,
                         PageTransition(

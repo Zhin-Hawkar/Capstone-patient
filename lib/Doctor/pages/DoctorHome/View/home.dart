@@ -30,17 +30,24 @@ class _DoctorHomeState extends ConsumerState<DoctorHome> {
   List<AssignedPatientsModel> appointments = [];
   StatisticsModel? statistics = StatisticsModel();
   bool isLoading = false;
+  List<dynamic> socketresult = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     loadAppointments();
     loadStatistics();
+    if (GlobalStorageService.storageService
+        .getString(EnumValues.ACCESS_TOKEN)
+        .isNotEmpty) {
+      setupSocket();
+    }
   }
 
   Future<void> refresh() async {
     await loadAppointments();
     await loadStatistics();
+    setupSocket();
   }
 
   Future<void> loadStatistics() async {
@@ -52,6 +59,10 @@ class _DoctorHomeState extends ConsumerState<DoctorHome> {
       statistics = result;
       isLoading = false;
     });
+  }
+
+  void setupSocket() {
+    NotificationService.init(context, channelName: "doctor");
   }
 
   Future<dynamic> getStatistics() async {
@@ -74,6 +85,17 @@ class _DoctorHomeState extends ConsumerState<DoctorHome> {
     List<AssignedPatientsModel> result =
         await AssignedPatientsController.handleAcceptedAppointments();
     return result;
+  }
+
+  @override
+  void dispose() {
+    if (GlobalStorageService.storageService
+        .getString(EnumValues.ACCESS_TOKEN)
+        .isNotEmpty) {
+      NotificationService.disconnect(channelName: "doctor");
+    }
+
+    super.dispose();
   }
 
   @override

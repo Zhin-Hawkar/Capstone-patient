@@ -49,8 +49,8 @@ class SignInController {
         );
         if (result['user']['role'] == EnumValues.DOCTOR) {
           Doctor doctor = Doctor()
-            ..firstName = result['user']['first_name']
-            ..lastName = result['user']['last_name']
+            ..firstName = result['user']['firstName']
+            ..lastName = result['user']['lastName']
             ..specialization = result['user']['specialization']
             ..qualification = result['user']['qualification']
             ..hospital = result['user']['hospital']

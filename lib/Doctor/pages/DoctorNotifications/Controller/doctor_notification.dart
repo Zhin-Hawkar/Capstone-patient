@@ -45,18 +45,6 @@ class DoctorNotificationController {
     return result;
   }
 
-  static Future<dynamic> handleApprovedPatientResponse(WidgetRef ref) async {
-    final state = ref.watch(patientNotificationResponseNotifierProvider);
-    PatientNotificationResponse response = PatientNotificationResponse()
-      ..doctorId = state.doctorId;
-    print("Approving:");
-    print(response.doctorId);
-    Map<String, dynamic> notifications = await _sendApprovedPatientResponse(
-      response: response,
-    );
-    final result = notifications['code'];
-    return result;
-  }
 
   static _sendDoctorNotifyRequest() async {
     var result = await HttpUtil().get("api/sendpatientnotification");
@@ -73,15 +61,6 @@ class DoctorNotificationController {
     return result;
   }
 
-  static _sendApprovedPatientResponse({
-    PatientNotificationResponse? response,
-  }) async {
-    var result = await HttpUtil().post(
-      "api/acceptdoctorrequest",
-      data: {"doctorId": response?.doctorId},
-    );
-    return result;
-  }
 
   static _sendRejectedDoctorResponse({
     DoctorNotificationResponse? response,

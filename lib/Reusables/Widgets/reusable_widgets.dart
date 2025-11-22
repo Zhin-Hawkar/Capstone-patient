@@ -124,12 +124,14 @@ class _FeedbackPagesState extends State<FeedbackPages> {
           ListTile(
             leading: ClipRRect(
               borderRadius: BorderRadiusGeometry.circular(45),
-              child: Image.network(
-                "${widget.feedbacks?.hospitalImage}",
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),
+              child: widget.feedbacks?.hospitalImage == null
+                  ? Icon(Icons.warehouse)
+                  : Image.network(
+                      "${widget.feedbacks?.hospitalImage}",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
             ),
             title: Text("${widget.feedbacks?.hospitalName}"),
             subtitle: Text("${widget.feedbacks?.hospitalLocation}"),

@@ -7,7 +7,10 @@ class NotificationService {
   static final PusherChannelsFlutter _pusher =
       PusherChannelsFlutter.getInstance();
 
-  static Future<void> init(BuildContext context, {String? channelName}) async {
+  static Future<dynamic> init(
+    BuildContext context, {
+    String? channelName,
+  }) async {
     await _pusher.init(
       apiKey: "116c3f6587071defa627",
       cluster: "mt1",
@@ -19,9 +22,14 @@ class NotificationService {
       },
       onEvent: (event) {
         print("Event received: ${event.eventName} Data: ${event.data}");
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("New notification")));
+
+        final data = event.data;
+
+        if (data.isNotEmpty) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("New notification")));
+        }
       },
     );
 

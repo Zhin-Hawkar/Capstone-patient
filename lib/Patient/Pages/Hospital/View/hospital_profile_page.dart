@@ -1,5 +1,7 @@
+import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/Feedback/View/review_form_page.dart';
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
+import 'package:capstone/SharedResources/global_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -87,6 +89,16 @@ class _HospitalProfilePageState extends State<HospitalProfilePage> {
                         const Spacer(),
                         ElevatedButton.icon(
                           onPressed: () {
+                            if (GlobalStorageService.storageService
+                                .getString(EnumValues.ACCESS_TOKEN)
+                                .isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("please login to add review"),
+                                ),
+                              );
+                              return;
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
