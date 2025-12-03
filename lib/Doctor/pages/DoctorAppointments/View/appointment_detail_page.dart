@@ -1,6 +1,9 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
+import 'package:capstone/FileManipulation/UploadFiles/view_file.dart';
+import 'package:capstone/Patient/Pages/Appointments/Controller/appointments_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 // ignore: must_be_immutable
@@ -13,6 +16,23 @@ class AppointmentDetailsPage extends StatefulWidget {
 }
 
 class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
+  String documentUrl = "";
+  void showDoctorLegalDocument() async {
+    String result = await AppointmentController.handleDoctorLegalDocument(
+      widget.acceptedAppointments.patientId,
+    );
+    setState(() {
+      documentUrl = result;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    showDoctorLegalDocument();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,12 +63,14 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                   margin: EdgeInsets.only(left: 5.w, top: 5.h),
                   child: ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(25),
-                    child: Image.network(
-                      "${widget.acceptedAppointments.image}",
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
+                    child: widget.acceptedAppointments.image != null
+                        ? Image.network(
+                            "${widget.acceptedAppointments.image}",
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          )
+                        : Icon(Icons.person_2),
                   ),
                 ),
                 SizedBox(width: 5.w),
@@ -202,6 +224,51 @@ class _AppointmentDetailsPageState extends State<AppointmentDetailsPage> {
                         style: TextStyle(fontSize: 16),
                       ),
                     ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 4.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 5.w),
+                  child: Text(
+                    "Legal Agreement",
+                    style: TextStyle(color: AppColors.DARK_GREEN, fontSize: 20),
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 5.w, top: 3.h, bottom: 5.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.fade,
+                          child: FileViewer(pdfUrl: documentUrl),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.DARK_GREEN,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      width: 120,
+                      height: 120,
+                      child: Icon(
+                        Icons.file_copy,
+                        color: AppColors.WHITE_BACKGROUND,
+                        size: 60,
+                      ),
+                    ),
                   ),
                 ],
               ),

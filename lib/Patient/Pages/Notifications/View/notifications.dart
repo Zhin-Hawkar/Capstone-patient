@@ -1,9 +1,13 @@
 import 'package:capstone/Constants/colors.dart';
+import 'package:capstone/Doctor/pages/DoctorAppointments/View/appointment_detail_page.dart';
+import 'package:capstone/Doctor/pages/DoctorEditProfile/View/doctor_edit_profile_page.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Notifier/patient_notification_response.dart';
+import 'package:capstone/Doctor/pages/DoctorProfile/View/doctor_profile_view_page.dart';
 import 'package:capstone/Patient/Pages/Appointments/View/appointment_detail_page.dart';
 import 'package:capstone/Patient/Pages/Notifications/Controller/patient_notification.dart';
+import 'package:capstone/Patient/Pages/Notifications/View/doctor_profile_view_page.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:flutter/material.dart';
@@ -171,17 +175,17 @@ class _NotificationsState extends State<Notifications>
                                     },
                                     child: GestureDetector(
                                       onTap: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   PageTransition(
-                                        //     type:
-                                        //         PageTransitionType.rightToLeft,
-                                        //     child: AppointmentDetailsPage(
-                                        //       acceptedAppointments:
-                                        //           notifications[index],
-                                        //     ),
-                                        //   ),
-                                        // );
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type:
+                                                PageTransitionType.rightToLeft,
+                                            child:
+                                                DoctorNotificationProfileViewPage(
+                                                  doctor: notifications[index],
+                                                ),
+                                          ),
+                                        );
                                       },
                                       child: Container(
                                         margin: EdgeInsets.only(
@@ -312,14 +316,14 @@ class _PatientCardState extends ConsumerState<PatientCard> {
                 Row(
                   children: [
                     Icon(
-                      Icons.schedule,
+                      Icons.comment,
                       size: 16.sp,
                       color: AppColors.DARK_GREEN,
                     ),
                     SizedBox(width: 2.w),
                     Expanded(
                       child: Text(
-                        "next visit: ${widget.patient.date_time?.day}/${widget.patient.date_time?.month}/${widget.patient.date_time?.year}",
+                        "${widget.patient.comment}",
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: Colors.grey[600],

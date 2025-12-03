@@ -34,13 +34,18 @@ class EditDoctorNotifier extends StateNotifier<Doctor> {
     state = state.copyWith(specialization: specialization);
   }
 
-  // void setQualification(List<String> qualification) {
-  //   state = state.copyWith(qualification: qualification);
-  // }
+  void setEmail(String email) {
+    state = state.copyWith(email: email);
+  }
 
-  // void setYearsOfExperience(int yearsofexperience) {
-  //   state = state.copyWith(yearsOfExperience: yearsofexperience);
-  // }
+  void setQualification(String qualification) {
+    state = state.copyWith(qualification: qualification);
+  }
+
+  void setYearsOfExperience(int yearsofexperience) {
+    state = state.copyWith(yearsOfExperience: yearsofexperience);
+  }
+
   void setLicenseId(int licenseId) {
     state = state.copyWith(licenseId: licenseId);
   }

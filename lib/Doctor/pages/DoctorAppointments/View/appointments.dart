@@ -182,12 +182,14 @@ class PatientCard extends StatelessWidget {
             child: SizedBox(
               width: 70,
               height: 70,
-              child: Image.network(
-                "${patient.image}",
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-              ),
+              child: patient.image != null
+                  ? Image.network(
+                      "${patient.image}",
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                    )
+                  : Icon(Icons.person_2),
             ),
           ),
           SizedBox(width: 4.w),

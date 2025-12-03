@@ -7,22 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class SendAppointmentController {
   static Future<dynamic> handleAppointment(WidgetRef ref) async {
     final state = ref.watch(sendAppointmentNotifierProvider);
-    print(state.firstName);
-    print(state.lastName);
-    print(state.age);
-    print(state.phoneNumber);
     print(state.date_time);
-    print(state.gender);
-    print(state.email);
     print(state.department);
     print(state.medical_record);
     print(state.help);
     SendAppointmentModel appointment = SendAppointmentModel()
-      ..firstName = state.firstName
-      ..lastName = state.lastName
-      ..age = state.age
-      ..gender = state.gender
-      ..email = state.email
       ..department = state.department
       ..help = state.help
       ..date_time = state.date_time
@@ -40,11 +29,6 @@ class SendAppointmentController {
     SendAppointmentModel? appointment,
   }) async {
     FormData formData = FormData.fromMap({
-      "firstName": appointment?.firstName,
-      "lastName": appointment?.lastName,
-      "age": appointment?.age,
-      "gender": appointment?.gender,
-      "email": appointment?.email,
       "department": appointment?.department,
       "help": appointment?.help,
       "date_time": appointment?.date_time?.toIso8601String(),

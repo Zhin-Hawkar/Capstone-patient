@@ -5,6 +5,7 @@ import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patient
 import 'package:capstone/Doctor/pages/DoctorAppointments/View/appointments.dart';
 import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/View/notifications.dart';
+import 'package:capstone/Doctor/pages/DoctorProfile/View/doctor_profile_view_page.dart';
 import 'package:capstone/Doctor/pages/Statistics/View/statistics.dart';
 import 'package:capstone/Patient/Pages/Appointments/View/appointments.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
@@ -117,6 +118,115 @@ class _CustomAppBarState extends ConsumerState<CustomAppBar> {
                     height: 50,
                     child: Image.network(
                       "${profileState.profile!.image}",
+                      width: 40,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class CustomDoctorAppBar extends ConsumerStatefulWidget
+    implements PreferredSizeWidget {
+  String? title;
+
+  CustomDoctorAppBar({super.key, this.title});
+
+  @override
+  ConsumerState<CustomDoctorAppBar> createState() => _CustomDoctorAppBarState();
+
+  @override
+  Size get preferredSize => Size(100.w, 7.h);
+}
+
+class _CustomDoctorAppBarState extends ConsumerState<CustomDoctorAppBar> {
+  @override
+  Widget build(BuildContext context) {
+    final profileState = ref.watch(signInNotifierProvider);
+    return AppBar(
+      title: Text(widget.title.toString()),
+      centerTitle: true,
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.fade,
+                child: SearchPage(),
+              ),
+            );
+          },
+          icon: Icon(Icons.search),
+        ),
+        IconButton(
+          onPressed: () {
+            if (GlobalStorageService.storageService
+                .getString(EnumValues.ACCESS_TOKEN)
+                .isEmpty) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: Text("not logged in"),
+                    content: Text(
+                      "inorder to view your profile you must be logged in, we redirect you to authorize yourself.",
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: AppColors.DARK_GREEN),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.fade,
+                              child: LoginPage(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "login",
+                          style: TextStyle(color: AppColors.DARK_GREEN),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.fade,
+                  child: DoctorProfileViewPage(doctor: profileState),
+                ),
+              );
+            }
+          },
+          icon:
+              profileState.doctor?.image == null ||
+                  profileState.doctor!.image == "null"
+              ? Icon(Icons.person)
+              : ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(25),
+                  child: SizedBox(
+                    width: 40,
+                    height: 50,
+                    child: Image.network(
+                      "${profileState.doctor!.image}",
                       width: 40,
                       height: 50,
                       fit: BoxFit.cover,

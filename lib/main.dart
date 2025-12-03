@@ -35,7 +35,7 @@ class Capstone extends StatelessWidget {
           initialRoute: "/",
           onGenerateRoute: (settings) =>
               RouteController.generateRouteSettings(settings),
-          // home: DoctorProfileView(),
+          // home: DoctorProfileViewPage(),
         );
       },
     );

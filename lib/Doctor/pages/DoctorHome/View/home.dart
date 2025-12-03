@@ -102,7 +102,7 @@ class _DoctorHomeState extends ConsumerState<DoctorHome> {
   Widget build(BuildContext context) {
     final doctor = ref.watch(signInNotifierProvider);
     return Scaffold(
-      appBar: CustomAppBar(title: "Doctor Dashboard"),
+      appBar: CustomDoctorAppBar(title: "Doctor Dashboard"),
       drawer: CustomDoctorDrawer(),
       backgroundColor: AppColors.WHITE_BACKGROUND,
       body: RefreshIndicator(
@@ -305,12 +305,14 @@ class PatientCard extends StatelessWidget {
             child: SizedBox(
               width: 70,
               height: 70,
-              child: Image.network(
-                "${patient.image}",
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-              ),
+              child: patient.image != null
+                  ? Image.network(
+                      "${patient.image}",
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                    )
+                  : Icon(Icons.person_2),
             ),
           ),
           SizedBox(width: 4.w),

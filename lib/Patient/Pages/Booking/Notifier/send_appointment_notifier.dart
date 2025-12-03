@@ -6,30 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 class SendAppointmentNotifier extends StateNotifier<SendAppointmentModel> {
   SendAppointmentNotifier() : super(SendAppointmentModel());
 
-  void setFirstName(String? firstName) {
-    state = state.copyWith(firstName: firstName);
-  }
-
-  void setLastName(String? lastName) {
-    state = state.copyWith(lastName: lastName);
-  }
-
-  void setAge(int? age) {
-    state = state.copyWith(age: age);
-  }
-
-  void setGender(String? gender) {
-    state = state.copyWith(gender: gender);
-  }
-
-  void setEmail(String? email) {
-    state = state.copyWith(email: email);
-  }
-
-  void setPhoneNumber(String? phoneNumber) {
-    state = state.copyWith(phoneNumber: phoneNumber);
-  }
-
   void setDepartment(String? department) {
     state = state.copyWith(department: department);
   }

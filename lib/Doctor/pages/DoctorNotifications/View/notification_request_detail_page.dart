@@ -385,9 +385,7 @@ class _PatientAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initials =
-        '${detail.firstName ?? ''}'
-        '${detail.lastName ?? ''}';
+    final initials = detail.firstName ?? '';
     return Column(
       children: [
         CircleAvatar(

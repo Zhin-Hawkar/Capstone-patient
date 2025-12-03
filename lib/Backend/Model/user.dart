@@ -156,6 +156,7 @@ class Doctor {
   String? hospital;
   String? department;
   int? licenseId;
+  int? yearsOfExperience;
   int? age;
   String? image;
   String? role;
@@ -174,6 +175,7 @@ class Doctor {
     this.licenseId,
     this.image,
     this.role,
+    this.yearsOfExperience,
     this.email,
     this.age,
     this.location,
@@ -185,8 +187,8 @@ class Doctor {
     final user = json['doctor'] ?? json;
     return Doctor(
       code: json['code'],
-      firstName: user['first_name']?.toString(),
-      lastName: user['last_name']?.toString(),
+      firstName: user['firstName']?.toString(),
+      lastName: user['lastName']?.toString(),
       specialization: user['specialization']?.toString(),
       qualification: user['qualification']?.toString(),
       hospital: user['hospital']?.toString(),
@@ -196,6 +198,11 @@ class Doctor {
           : (user['licenseId'] is int
                 ? user['licenseId']
                 : int.tryParse(user['licenseId'].toString())),
+      yearsOfExperience: user['yearsofexperience'] == null
+          ? null
+          : (user['yearsofexperience'] is int
+                ? user['yearsofexperience']
+                : int.tryParse(user['yearsofexperience'].toString())),
       email: user['email']?.toString(),
       role: user['role']?.toString(),
       location: user['location']?.toString(),
@@ -227,6 +234,7 @@ class Doctor {
     String? hospital,
     String? department,
     int? licenseId,
+    int? yearsOfExperience,
     String? image,
     String? email,
     int? age,
@@ -237,6 +245,7 @@ class Doctor {
     return Doctor(
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
+      yearsOfExperience: yearsOfExperience ?? this.yearsOfExperience,
       specialization: specialization ?? this.specialization,
       qualification: qualification ?? this.qualification,
       hospital: hospital ?? this.hospital,

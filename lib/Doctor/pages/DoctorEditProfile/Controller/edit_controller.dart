@@ -1,30 +1,41 @@
 import 'package:capstone/Backend/Model/user.dart';
 import 'package:capstone/Backend/Util/http_util.dart';
+import 'package:capstone/Doctor/pages/DoctorEditProfile/Notifier/edit_notifier.dart';
 import 'package:capstone/Patient/Pages/EditProfile/Notifier/edit_notifier.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EditProfileController {
-  Future<Map<String, dynamic>> handleProfileEdit(
+class EditDoctorController {
+  static Future<Map<String, dynamic>> handleDoctorEdit(
     BuildContext context,
     WidgetRef ref,
   ) async {
-    final state = ref.watch(editProfileProvider);
+    final state = ref.watch(editDoctorProvider);
 
-    final profileRequest = Profile()
+    final profileRequest = Doctor()
       ..firstName = state.firstName
       ..lastName = state.lastName
       ..age = state.age
       ..location = state.location
       ..description = state.description
+      ..email = state.email
       ..image = state.image
-      ..email = state.email;
-
+      ..department = state.department
+      ..specialization = state.specialization
+      ..yearsOfExperience = state.yearsOfExperience
+      ..licenseId = state.licenseId
+      ..qualification = state.qualification;
+    print(profileRequest.age);
+    print(profileRequest.department);
+    print(profileRequest.description);
+    print(profileRequest.email);
+    print(profileRequest.firstName);
+    print(profileRequest.location);
     try {
-      final result = await _editProfile(params: profileRequest);
-      print(result['user']['image']);
+      final result = await _editDoctor(params: profileRequest);
+      print(result['doctor']['firstName']);
       if (result == null || result['code'] == null) {
         throw Exception("Invalid response from server");
       }
@@ -42,8 +53,8 @@ class EditProfileController {
         return result;
       }
 
-      final updatedProfile = Profile.fromJson(result);
-      ref.read(signInNotifierProvider.notifier).setProfile(updatedProfile);
+      final updatedProfile = Doctor.fromJson(result);
+      ref.read(signInNotifierProvider.notifier).setDoctor(updatedProfile);
 
       return result;
     } catch (e) {
@@ -51,22 +62,27 @@ class EditProfileController {
     }
   }
 
-  static Future<dynamic> _editProfile({Profile? params}) async {
+  static Future<dynamic> _editDoctor({Doctor? params}) async {
     FormData formData = FormData.fromMap({
-      "first_name": params!.firstName,
-      "last_name": params.lastName,
-      "email": params.email,
-      "age": params.age,
-      "location": params.location,
-      "description": params.description,
-      if (params.image != null && params.image!.isNotEmpty)
-        "image": await MultipartFile.fromFile(
+      "firstName": params?.firstName,
+      "lastName": params?.lastName,
+      "age": params?.age,
+      "location": params?.location,
+      "email": params?.email,
+      "description": params?.description,
+      "specialization": params?.specialization,
+      "qualification": params?.qualification,
+      "licenseId": params?.licenseId,
+      "yearsofexperience": params?.yearsOfExperience,
+      "department": params?.department,
+      if (params?.image != null && params!.image!.isNotEmpty)
+        "doctorImage": await MultipartFile.fromFile(
           params.image!,
           filename: params.image!.split('/').last,
         ),
     });
     final result = await HttpUtil().post(
-      "api/edituserprofile",
+      "api/editdoctorprofile",
       data: formData,
       options: Options(
         headers: {

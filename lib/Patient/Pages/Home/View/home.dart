@@ -6,7 +6,7 @@ import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/InternetChecker/Notifier/internet_checker_notifier.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
-import 'package:capstone/Patient/Pages/Booking/View/booking_step_one.dart';
+import 'package:capstone/Patient/Pages/Booking/View/booking_step_two.dart';
 import 'package:capstone/Patient/Pages/Feedback/Controller/feedback_controller.dart';
 import 'package:capstone/Patient/Pages/Feedback/Model/feedback_model.dart';
 import 'package:capstone/Patient/Pages/Home/Notifier/feedback_dot.dart';
@@ -314,7 +314,7 @@ class _HomeState extends ConsumerState<Home> {
                                               SizedBox(width: 0.5.w),
                                               Expanded(
                                                 child: Text(
-                                                  "${hospitals[index].description}",
+                                                  "${hospitals[index].location}",
                                                   style: TextStyle(
                                                     fontSize: 10,
                                                   ),
@@ -423,7 +423,7 @@ class _HomeState extends ConsumerState<Home> {
                         context,
                         PageTransition(
                           type: PageTransitionType.fade,
-                          child: const BookingStepOnePage(),
+                          child: const BookingStepTwoPage(),
                         ),
                       );
                     },

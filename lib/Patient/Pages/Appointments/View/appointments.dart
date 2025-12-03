@@ -53,6 +53,7 @@ class _AppointmentsState extends State<Appointments>
     });
   }
 
+
   void showPatientAcceptedAppointments() async {
     setState(() {
       isLoading = true;

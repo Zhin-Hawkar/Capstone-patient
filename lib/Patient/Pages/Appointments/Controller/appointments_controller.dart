@@ -24,6 +24,21 @@ class AppointmentController {
     return appointments;
   }
 
+  static Future<String> handlePatientLegalDocument(int? id) async {
+    Map<String, dynamic> results = await _showPatientLegalDocument(id);
+
+    final result = results["legal_document"];
+    final document = result["url"];
+    return document;
+  }
+
+  static Future<String> handleDoctorLegalDocument(int? id) async {
+    Map<String, dynamic> results = await _showDoctorLegalDocument(id);
+    final result = results["legal_document"];
+    final document = result["url"];
+    return document;
+  }
+
   static _showAppointments() async {
     final result = await HttpUtil().post("api/showappointments");
     return result;
@@ -32,6 +47,22 @@ class AppointmentController {
   static _showPatientAcceptedAppointments() async {
     final patientAcceptedAppointments = await HttpUtil().post(
       "api/showpatientacceptedappointments",
+    );
+    return patientAcceptedAppointments;
+  }
+
+  static _showPatientLegalDocument(int? id) async {
+    final patientAcceptedAppointments = await HttpUtil().post(
+      "api/showpatientlegaldocument",
+      data: {"doctorId": id},
+    );
+    return patientAcceptedAppointments;
+  }
+
+  static _showDoctorLegalDocument(int? id) async {
+    final patientAcceptedAppointments = await HttpUtil().post(
+      "api/showdoctorlegaldocument",
+      data: {"patientId": id},
     );
     return patientAcceptedAppointments;
   }

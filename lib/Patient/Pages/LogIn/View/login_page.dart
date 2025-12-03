@@ -291,8 +291,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
 
                             const SizedBox(height: 10),
-
-                            // Login button
                             isSignInBtnClicked
                                 ? Transform.scale(
                                     scale: 1.6,

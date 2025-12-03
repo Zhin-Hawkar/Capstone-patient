@@ -170,9 +170,9 @@ class _UserProfileState extends ConsumerState<UserProfile>
                                 fontSize: 20,
                               ),
                             ),
-                            profileState.profile!.age != 0
+                            profileState.profile?.age != 0
                                 ? Text(
-                                    "${profileState.profile!.age}",
+                                    "${profileState.profile?.age ?? 0}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
@@ -192,9 +192,9 @@ class _UserProfileState extends ConsumerState<UserProfile>
                               size: 30,
                               color: Colors.white,
                             ),
-                            profileState.profile!.location != "null"
+                            profileState.profile?.location != "null"
                                 ? Text(
-                                    "${profileState.profile!.location}",
+                                    "${profileState.profile?.location ?? "null"}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
@@ -209,9 +209,9 @@ class _UserProfileState extends ConsumerState<UserProfile>
                 ),
 
                 SizedBox(height: 5.h),
-                profileState.profile!.description != "null"
+                profileState.profile?.description != "null"
                     ? ReadMoreText(
-                        "${profileState.profile!.description}",
+                        "${profileState.profile?.description ?? "null"}",
                         trimMode: TrimMode.Line,
                         trimLines: 2,
                         colorClickableText: AppColors.DARK_GREEN,

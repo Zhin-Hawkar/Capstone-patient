@@ -1,4 +1,6 @@
 import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
+import 'package:capstone/Patient/Pages/Appointments/Controller/appointments_controller.dart';
 import 'package:capstone/Patient/Pages/Feedback/View/review_form_page.dart';
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
@@ -14,6 +16,23 @@ class HospitalProfilePage extends StatefulWidget {
 }
 
 class _HospitalProfilePageState extends State<HospitalProfilePage> {
+  List<AssignedPatientsModel> acceptedAppointments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    showPatientAcceptedAppointments();
+  }
+
+  void showPatientAcceptedAppointments() async {
+    List<AssignedPatientsModel> result =
+        await AppointmentController.handlePatientAcceptedAppointments();
+
+    setState(() {
+      acceptedAppointments = result;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -95,6 +114,16 @@ class _HospitalProfilePageState extends State<HospitalProfilePage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text("please login to add review"),
+                                ),
+                              );
+                              return;
+                            }
+                            if (acceptedAppointments[0].status != "completed") {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "You still haven't got any services yet",
+                                  ),
                                 ),
                               );
                               return;

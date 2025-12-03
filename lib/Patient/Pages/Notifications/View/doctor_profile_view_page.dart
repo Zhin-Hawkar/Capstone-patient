@@ -2,19 +2,20 @@ import 'dart:io';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorEditProfile/View/doctor_edit_profile_page.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
-import 'package:capstone/Patient/Pages/LogIn/Model/sign_in_model.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class DoctorProfileViewPage extends StatefulWidget {
-  SignInState doctor;
-  DoctorProfileViewPage({super.key, required this.doctor});
+class DoctorNotificationProfileViewPage extends StatefulWidget {
+  DoctorNotification doctor;
+  DoctorNotificationProfileViewPage({super.key, required this.doctor});
 
   @override
-  State<DoctorProfileViewPage> createState() => _DoctorProfileViewPageState();
+  State<DoctorNotificationProfileViewPage> createState() =>
+      _DoctorNotificationProfileViewPageState();
 }
 
-class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
+class _DoctorNotificationProfileViewPageState
+    extends State<DoctorNotificationProfileViewPage> {
   late Map<String, String> _profileData;
 
   @override
@@ -57,14 +58,8 @@ class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
 
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
-      appBar: AppBar(
-        title: const Text('Doctor Profile'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: _navigateToEdit,
-            tooltip: 'Edit Profile',
-          ),
+      appBar: AppBar(title: const Text('Doctor Profile'), actions: [
+        
         ],
       ),
       body: ListView(
@@ -72,10 +67,10 @@ class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
         children: [
           Column(
             children: [
-              _DoctorAvatar(imageUrl: widget.doctor.doctor?.image),
+              _DoctorAvatar(imageUrl: widget.doctor.doctorImage),
               const SizedBox(height: 12),
               Text(
-                'Dr. ${widget.doctor.doctor?.firstName} ${widget.doctor.doctor?.lastName}',
+                'Dr. ${widget.doctor.firstName} ${widget.doctor.lastName}',
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -91,17 +86,17 @@ class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
               children: [
                 _InfoRow(
                   label: 'First name',
-                  value: widget.doctor.doctor?.firstName ?? '',
+                  value: widget.doctor.firstName ?? '',
                 ),
                 _InfoRow(
                   label: 'Last name',
-                  value: widget.doctor.doctor?.lastName ?? '',
+                  value: widget.doctor.lastName ?? '',
                 ),
                 _InfoRow(
                   label: 'Location',
-                  value: widget.doctor.doctor?.hospital ?? '',
+                  value: widget.doctor.hospital ?? '',
                 ),
-                _InfoRow(label: 'Age', value: widget.doctor.doctor?.age),
+                _InfoRow(label: 'Age', value: widget.doctor.age ?? ''),
               ],
             ),
           ),
@@ -113,19 +108,16 @@ class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
               children: [
                 _InfoRow(
                   label: 'Specialization',
-                  value: widget.doctor.doctor?.specialization ?? '',
+                  value: widget.doctor.specialization ?? '',
                 ),
                 _InfoRow(
                   label: 'Department',
-                  value: widget.doctor.doctor?.department ?? '',
+                  value: widget.doctor.department ?? '',
                 ),
+                _InfoRow(label: 'Gender', value: widget.doctor.gender ?? ''),
                 _InfoRow(
-                  label: 'License number',
-                  value: widget.doctor.doctor?.licenseId ?? '',
-                ),
-                _InfoRow(
-                  label: 'Email',
-                  value: widget.doctor.doctor?.email ?? '',
+                  label: 'Years of experience',
+                  value: widget.doctor.yearsOfExperience ?? '',
                 ),
               ],
             ),
@@ -133,7 +125,7 @@ class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
           const SizedBox(height: 20),
           _DetailSection(
             title: 'Qualifications',
-            child: Text(widget.doctor.doctor?.qualification as String)
+            child: Text("${widget.doctor.qualification}"),
           ),
           const SizedBox(height: 20),
           _DetailSection(
@@ -169,7 +161,7 @@ class _DoctorProfileViewPageState extends State<DoctorProfileViewPage> {
           _DetailSection(
             title: 'Description',
             child: Text(
-              widget.doctor.doctor?.description ?? '',
+              widget.doctor.description ?? '',
               style: const TextStyle(fontSize: 15, height: 1.4),
             ),
           ),
@@ -229,7 +221,7 @@ class _InfoRow extends StatelessWidget {
         children: [
           Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
           const Spacer(),
-          Text("${value}"),
+          Text(value.toString()),
         ],
       ),
     );
@@ -243,8 +235,6 @@ class _DoctorAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final url = imageUrl ?? Icon(Icons.person);
-
     return ClipOval(
       child: Container(
         width: 92,
@@ -252,7 +242,7 @@ class _DoctorAvatar extends StatelessWidget {
         color: const Color(0xFFEEF4FF),
         child: imageUrl != null
             ? Image.network(
-                "${imageUrl}",
+                "$imageUrl",
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => const Icon(
                   Icons.person,

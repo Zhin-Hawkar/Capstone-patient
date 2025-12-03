@@ -1,5 +1,6 @@
 class AssignedPatientsModel {
   int? patientId;
+  int? doctorId;
   String? firstName;
   String? lastName;
   String? doctorFirstName;
@@ -19,6 +20,7 @@ class AssignedPatientsModel {
 
   AssignedPatientsModel({
     this.patientId,
+    this.doctorId,
     this.firstName,
     this.lastName,
     this.doctorFirstName,
@@ -40,6 +42,7 @@ class AssignedPatientsModel {
   factory AssignedPatientsModel.frommJson(Map<String, dynamic> json) {
     return AssignedPatientsModel(
       patientId: json['patientId'],
+      doctorId: json['doctorId'],
       firstName: json['firstName'],
       lastName: json['lastName'],
       doctorFirstName: json['doctorFirstName'],

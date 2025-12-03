@@ -4,9 +4,12 @@ import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/Patient/Pages/Booking/Controller/send_appointment_controller.dart';
 import 'package:capstone/Patient/Pages/Booking/Notifier/send_appointment_notifier.dart';
+import 'package:capstone/Patient/Pages/Home/View/home.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 
 class BookingStepTwoPage extends ConsumerStatefulWidget {
@@ -20,6 +23,7 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
   final TextEditingController _illnessTypeController = TextEditingController();
   final TextEditingController _assistanceController = TextEditingController();
   DateTime? _selectedDate;
+  bool isSubmited = false;
   String? _uploadedRecord;
   String? _selectedDepartment;
   File _imageFile = File("");
@@ -113,7 +117,9 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
       );
       return;
     }
-
+    setState(() {
+      isSubmited = true;
+    });
     ref
         .watch(sendAppointmentNotifierProvider.notifier)
         .setDepartment(_selectedDepartment);
@@ -134,8 +140,13 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
           content: Text('Booking submitted, doctors will respond you soon.'),
         ),
       );
-
-      Navigator.popUntil(context, (route) => route.isFirst);
+      setState(() {
+        isSubmited = false;
+      });
+      Navigator.push(
+        context,
+        PageTransition(type: PageTransitionType.rightToLeft, child: Home()),
+      );
     }
   }
 
@@ -274,25 +285,34 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
                 ),
               ),
               SizedBox(height: 2.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => _submitBooking(),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.DARK_GREEN,
-                        backgroundColor: Colors.white,
-                        side: BorderSide(color: AppColors.DARK_GREEN),
-                        padding: EdgeInsets.symmetric(vertical: 1.8.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+              isSubmited
+                  ? Transform.scale(
+                      scale: 1.6,
+                      child: Lottie.asset(
+                        "assets/json/Material wave loading.json",
+                        width: 100,
+                        height: 100,
                       ),
-                      child: const Text('Submit'),
+                    )
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => _submitBooking(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.DARK_GREEN,
+                              backgroundColor: Colors.white,
+                              side: BorderSide(color: AppColors.DARK_GREEN),
+                              padding: EdgeInsets.symmetric(vertical: 1.8.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Submit'),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
