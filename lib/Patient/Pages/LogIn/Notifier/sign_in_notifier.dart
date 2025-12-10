@@ -32,7 +32,6 @@ class SignInNotifier extends StateNotifier<SignInState> {
     profile.image = user.image;
     profile.role = user.role;
     state = state.copyWith(profile: profile);
-    print(profile.firstName);
     GlobalStorageService.storageService.setString(
       EnumValues.USER_PROFILE,
       jsonEncode({

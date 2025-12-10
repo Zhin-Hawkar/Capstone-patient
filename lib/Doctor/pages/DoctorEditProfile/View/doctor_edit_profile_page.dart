@@ -3,10 +3,7 @@ import 'dart:io';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorEditProfile/Controller/edit_controller.dart';
 import 'package:capstone/Doctor/pages/DoctorEditProfile/Notifier/edit_notifier.dart';
-import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
-import 'package:capstone/Patient/Pages/EditProfile/Controller/edit_controller.dart';
-import 'package:capstone/Patient/Pages/LogIn/Model/sign_in_model.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 
 class DoctorEditProfilePage extends ConsumerStatefulWidget {
-  DoctorEditProfilePage({super.key});
+  const DoctorEditProfilePage({super.key});
 
   @override
   ConsumerState<DoctorEditProfilePage> createState() =>

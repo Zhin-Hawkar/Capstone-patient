@@ -9,7 +9,6 @@ class DoctorAppointmentController {
     List<AssignedPatientsModel> appointments = result
         .map((e) => AssignedPatientsModel.frommJson(e))
         .toList();
-    print("Accepted patient appointments ${appointments}");
     return appointments;
   }
 

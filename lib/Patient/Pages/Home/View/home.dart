@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Backend/PusherSocket/pusher_notification.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
-import 'package:capstone/InternetChecker/Notifier/internet_checker_notifier.dart';
 import 'package:capstone/Patient/Pages/AiChat/View/ai_chat.dart';
 import 'package:capstone/Patient/Pages/Booking/View/booking_step_two.dart';
 import 'package:capstone/Patient/Pages/Feedback/Controller/feedback_controller.dart';
@@ -14,7 +12,6 @@ import 'package:capstone/Patient/Pages/Hospital/Controller/hospital_controller.d
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
 import 'package:capstone/Patient/Pages/Hospital/View/hospital_profile_page.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
-import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
 import 'package:capstone/Patient/Pages/Search/View/search.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';

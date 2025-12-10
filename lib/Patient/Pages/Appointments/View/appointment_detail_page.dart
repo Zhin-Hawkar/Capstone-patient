@@ -46,7 +46,7 @@ class _AppointmentDetailsPageState
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
                   margin: EdgeInsets.only(left: 5.w),
@@ -56,6 +56,68 @@ class _AppointmentDetailsPageState
                       color: AppColors.DARK_GREEN,
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(right: 5.w),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(Colors.red),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            title: Text("Confirm Appointment Ending"),
+                            content: Text(
+                              "Are you sure you want to end appointment with Dr. ${widget.acceptedAppointments.doctorFirstName}?",
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(color: AppColors.DARK_GREEN),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  final result =
+                                      await AppointmentController.endAppointment(
+                                        widget.acceptedAppointments.doctorId,
+                                      );
+                                  if (result == 200) {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "Appointment ended suceessfuly",
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  "Yes",
+                                  style: TextStyle(color: AppColors.DARK_GREEN),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Text(
+                      "end appointment",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/Patient/Pages/EditProfile/Controller/edit_controller.dart';

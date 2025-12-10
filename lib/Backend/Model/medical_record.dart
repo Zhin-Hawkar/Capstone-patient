@@ -2,14 +2,16 @@ class MedicalRecord {
   int? id;
   String? fileName;
   String? medicalRecord;
+  String? privacy;
 
-  MedicalRecord({this.id, this.fileName, this.medicalRecord});
+  MedicalRecord({this.id, this.fileName, this.medicalRecord, this.privacy});
 
   factory MedicalRecord.fromJson(Map<String, dynamic> json) {
     return MedicalRecord(
       id: json['id'],
       fileName: json['fileName'],
       medicalRecord: json['medicalRecord'],
+      privacy: json['privacy'],
     );
   }
 

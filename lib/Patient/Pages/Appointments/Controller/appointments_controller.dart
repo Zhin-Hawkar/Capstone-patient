@@ -9,7 +9,6 @@ class AppointmentController {
     List<AssignedPatientsModel> appointments = result
         .map((e) => AssignedPatientsModel.frommJson(e))
         .toList();
-    print("Accepted patient appointments ${appointments}");
     return appointments;
   }
 
@@ -20,7 +19,6 @@ class AppointmentController {
     List<AssignedPatientsModel> appointments = result
         .map((e) => AssignedPatientsModel.frommJson(e))
         .toList();
-    print("requested appointments ${appointments}");
     return appointments;
   }
 
@@ -65,5 +63,12 @@ class AppointmentController {
       data: {"patientId": id},
     );
     return patientAcceptedAppointments;
+  }
+  static endAppointment(int? id) async {
+    final result = await HttpUtil().post(
+      "api/endappointment",
+      data: {"doctorId": id},
+    );
+    return result["code"];
   }
 }

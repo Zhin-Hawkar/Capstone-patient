@@ -24,7 +24,6 @@ class EditProfileController {
 
     try {
       final result = await _editProfile(params: profileRequest);
-      print(result['user']['image']);
       if (result == null || result['code'] == null) {
         throw Exception("Invalid response from server");
       }

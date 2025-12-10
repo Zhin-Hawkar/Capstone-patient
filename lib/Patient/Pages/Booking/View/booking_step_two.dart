@@ -27,7 +27,7 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
   String? _uploadedRecord;
   String? _selectedDepartment;
   File _imageFile = File("");
-
+  List<dynamic> departments = [];
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
@@ -46,6 +46,13 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
     _illnessTypeController.dispose();
     _assistanceController.dispose();
     super.dispose();
+  }
+
+  Future<void> getDepartment() async {
+    final result = await SendAppointmentController.getDepartments();
+    setState(() {
+      departments = result;
+    });
   }
 
   Future<void> _pickDate() async {
@@ -156,6 +163,13 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDepartment();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -180,34 +194,14 @@ class _BookingStepTwoPageState extends ConsumerState<BookingStepTwoPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Text(
-                      //   "Medical details",
-                      //   style: TextStyle(
-                      //     fontSize: 18.sp,
-                      //     fontWeight: FontWeight.bold,
-                      //     color: AppColors.DARK_GREEN,
-                      //   ),
-                      // ),
-                      // SizedBox(height: 2.h),
-                      // TextField(
-                      //   controller: _illnessTypeController,
-                      //   cursorColor: AppColors.DARK_GREEN,
-                      //   style: const TextStyle(color: Colors.black),
-                      //   decoration: _inputDecoration('Medical Department'),
-                      //   textCapitalization: TextCapitalization.sentences,
-                      // ),
                       DropdownButtonFormField<String>(
                         value: _selectedDepartment,
                         decoration: _inputDecoration('Departmemnt'),
                         iconEnabledColor: AppColors.DARK_GREEN,
                         dropdownColor: Colors.white,
-                        items: const [
-                          DropdownMenuItem(value: 'GIT', child: Text('GIT')),
-                          DropdownMenuItem(
-                            value: 'Cardiology',
-                            child: Text('Cardiology'),
-                          ),
-                        ],
+                        items: departments.map((e) {
+                          return DropdownMenuItem(value: '$e', child: Text(e));
+                        }).toList(),
                         onChanged: (value) {
                           setState(() {
                             _selectedDepartment = value;

@@ -1,12 +1,7 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
-import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patients.dart';
 import 'package:capstone/Doctor/pages/DoctorHome/View/home.dart';
-import 'package:capstone/Doctor/test.dart';
-import 'package:capstone/Patient/Pages/Appointments/View/appointments.dart';
 import 'package:capstone/Patient/Pages/Auth/View/reset_page.dart';
-import 'package:capstone/Patient/Pages/Auth/View/reset_password.dart';
-import 'package:capstone/Patient/Pages/FileUpload/View/file_upload.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
 import 'package:capstone/Patient/Pages/LogIn/Controller/sign_in_controller.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
@@ -92,7 +87,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         .watch(signInNotifierProvider.notifier)
         .setPassword(passwordController.text);
     var result = await SignInController().handleSignIn(context, ref);
-    print("${result.token} from log in page");
     if (result.code == 200 &&
         GlobalStorageService.storageService
             .getString(EnumValues.ACCESS_TOKEN)

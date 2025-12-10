@@ -7,7 +7,6 @@ import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/FileManipulation/UploadFiles/view_file.dart';
 import 'package:capstone/Patient/Pages/UserProfile/Controller/medical_upload_controller.dart';
 import 'package:capstone/Patient/Pages/UserProfile/Notifier/document_uplaod_notifier%20copy.dart';
-import 'package:capstone/Patient/Pages/UserProfile/Notifier/medical_uplaod_notifier.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

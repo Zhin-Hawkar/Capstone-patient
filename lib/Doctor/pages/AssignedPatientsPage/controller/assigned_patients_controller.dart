@@ -8,7 +8,6 @@ class AssignedPatientsController {
     List<AssignedPatientsModel> appointments = result
         .map((e) => AssignedPatientsModel.frommJson(e))
         .toList();
-    print(result);
     return appointments;
   }
 

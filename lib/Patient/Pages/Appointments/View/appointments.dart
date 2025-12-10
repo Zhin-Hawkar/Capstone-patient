@@ -1,6 +1,4 @@
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
-import 'package:capstone/Doctor/pages/AssignedPatientsPage/controller/assigned_patients_controller.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
 import 'package:capstone/Patient/Pages/Appointments/Controller/appointments_controller.dart';
 import 'package:capstone/Patient/Pages/Appointments/View/appointment_detail_page.dart';

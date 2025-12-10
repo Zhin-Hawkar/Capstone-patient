@@ -1,11 +1,6 @@
 import 'package:capstone/Constants/colors.dart';
-import 'package:capstone/Doctor/pages/DoctorAppointments/View/appointment_detail_page.dart';
-import 'package:capstone/Doctor/pages/DoctorEditProfile/View/doctor_edit_profile_page.dart';
-import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Notifier/patient_notification_response.dart';
-import 'package:capstone/Doctor/pages/DoctorProfile/View/doctor_profile_view_page.dart';
-import 'package:capstone/Patient/Pages/Appointments/View/appointment_detail_page.dart';
 import 'package:capstone/Patient/Pages/Notifications/Controller/patient_notification.dart';
 import 'package:capstone/Patient/Pages/Notifications/View/doctor_profile_view_page.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';

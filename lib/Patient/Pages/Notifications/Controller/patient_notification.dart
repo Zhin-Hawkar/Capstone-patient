@@ -10,7 +10,6 @@ class PatientNotificationController {
     List<DoctorNotification> appointments = result
         .map((e) => DoctorNotification.frommJson(e))
         .toList();
-    print(notifications);
     return appointments;
   }
 
@@ -18,8 +17,6 @@ class PatientNotificationController {
     final state = ref.watch(patientNotificationResponseNotifierProvider);
     PatientNotificationResponse response = PatientNotificationResponse()
       ..doctorId = state.doctorId;
-    print("Approving:");
-    print(response.doctorId);
     Map<String, dynamic> notifications = await _sendApprovedPatientResponse(
       response: response,
     );

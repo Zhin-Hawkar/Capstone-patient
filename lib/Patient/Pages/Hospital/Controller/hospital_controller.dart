@@ -5,7 +5,6 @@ class HospitalController {
  static Future<dynamic> getAllHospitals() async {
     List<dynamic> result = await _fetchHospitals();
     List<Hospital> hospitals = result.map((e) => Hospital.fromJson(e)).toList();
-    print(hospitals);
     return hospitals;
   }
 

@@ -12,7 +12,6 @@ class MedicalRecordUploadController {
       ..fileName = record.fileName
       ..medicalRecord = record.medicalRecord;
     final result = await _uploadRecord(params: medicalRecord);
-    print(result);
     return result;
   }
 
@@ -23,7 +22,6 @@ class MedicalRecordUploadController {
       ..fileName = record.fileName
       ..medicalRecord = record.medicalRecord;
     final result = await _uploadDocument(params: medicalRecord);
-    print(result);
     return result;
   }
 
@@ -97,7 +95,33 @@ class MedicalRecordUploadController {
         },
       ),
     );
-    print(result);
     return result;
+  }
+
+  static Future<dynamic> editPrivacy({
+    int? id,
+    int? doctorId,
+    String? url,
+    String? fileName,
+    String? privacy,
+  }) async {
+    FormData formData = FormData.fromMap({
+      'id': id,
+      "doctorId": doctorId,
+      "fileName": fileName,
+      "url": url,
+      "privacy": privacy,
+    });
+    final result = await HttpUtil().post(
+      "api/editprivacy",
+      data: formData,
+      options: Options(
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+    return result["code"];
   }
 }

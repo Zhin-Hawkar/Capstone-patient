@@ -5,8 +5,6 @@ class StatisticsController {
   static Future<StatisticsModel> handleStatistics() async {
     Map<String, dynamic> result = await getStatistics();
     StatisticsModel statistics = StatisticsModel.fromJson(result);
-    print(statistics.patients);
-    print(statistics.requests);
     return statistics;
   }
 

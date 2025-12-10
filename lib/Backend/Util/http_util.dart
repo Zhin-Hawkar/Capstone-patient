@@ -33,8 +33,7 @@ class HttpUtil {
           return handler.next(response);
         },
         onError: (DioException e, handler) {
-          ErrorEntity eInfo = createErrorEntity(e);
-          print(eInfo);
+          createErrorEntity(e);
         },
       ),
     );

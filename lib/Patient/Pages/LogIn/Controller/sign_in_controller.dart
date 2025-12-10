@@ -20,24 +20,19 @@ class SignInController {
 
     try {
       var result = await _logIn(params: loginRequestEntity);
-      print(result);
       if (result['code'] == 200 && result['token'] != null) {
         if (result['user']['role'] == EnumValues.DOCTOR) {
           GlobalStorageService.storageService.setDoctorId(
             EnumValues.DOCTORID,
             result['user']['id'],
           );
-          print(
-            "Doctor Id: ${GlobalStorageService.storageService.getInt(EnumValues.DOCTORID)}",
-          );
+       
         } else if (result['user']['role'] == EnumValues.PATIENT) {
           GlobalStorageService.storageService.setPatientId(
             EnumValues.PATIENTID,
             result['user']['id'],
           );
-          print(
-            "Patient Id: ${GlobalStorageService.storageService.getInt(EnumValues.PATIENTID)}",
-          );
+      
         }
         GlobalStorageService.storageService.setString(
           EnumValues.ACCESS_TOKEN,
@@ -75,9 +70,7 @@ class SignInController {
             ..role = result['user']['role'];
           ref.watch(signInNotifierProvider.notifier).setProfile(profile);
         }
-        print(
-          "from local cache: ${GlobalStorageService.storageService.getString(EnumValues.USER_PROFILE)}",
-        );
+  
       } else if (result['code'] != 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

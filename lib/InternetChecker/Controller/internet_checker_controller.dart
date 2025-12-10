@@ -13,7 +13,6 @@ class InternetCheckerController {
         .listen((event) {
           switch (event) {
             case InternetStatus.connected:
-              print(event);
               ref
                   .read(internetCheckerNotifierProvider.notifier)
                   .setConnection(true);
@@ -22,7 +21,6 @@ class InternetCheckerController {
               ref
                   .read(internetCheckerNotifierProvider.notifier)
                   .setConnection(false);
-              print(event);
               break;
           }
         });

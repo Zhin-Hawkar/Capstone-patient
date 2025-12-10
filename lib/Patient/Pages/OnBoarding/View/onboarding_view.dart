@@ -1,7 +1,6 @@
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Patient/Pages/Home/View/home.dart';
-import 'package:capstone/Patient/Pages/LogIn/View/login_page.dart';
 import 'package:capstone/Patient/Pages/OnBoarding/Notifier/dots_indicator_notifier.dart';
 import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:capstone/Reusables/Widgets/reusable_widgets.dart';

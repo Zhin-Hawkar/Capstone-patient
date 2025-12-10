@@ -7,10 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class SendAppointmentController {
   static Future<dynamic> handleAppointment(WidgetRef ref) async {
     final state = ref.watch(sendAppointmentNotifierProvider);
-    print(state.date_time);
-    print(state.department);
-    print(state.medical_record);
-    print(state.help);
+   
     SendAppointmentModel appointment = SendAppointmentModel()
       ..department = state.department
       ..help = state.help
@@ -21,7 +18,6 @@ class SendAppointmentController {
 
       return result;
     } catch (e) {
-      print(e);
     }
   }
 
@@ -46,7 +42,15 @@ class SendAppointmentController {
       options: Options(headers: {'Accept': 'application/json'}),
     );
 
-    print(result);
     return result["code"];
+  }
+
+  static Future<dynamic> getDepartments() async {
+    final result = await HttpUtil().get(
+      "api/getuniquevalues",
+      options: Options(headers: {'Accept': 'application/json'}),
+    );
+
+    return result["data"];
   }
 }

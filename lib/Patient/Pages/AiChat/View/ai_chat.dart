@@ -13,7 +13,6 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pretty_animated_text/pretty_animated_text.dart';
 import 'package:sizer/sizer.dart';
-import 'package:intl/intl.dart';
 
 class AiChat extends ConsumerStatefulWidget {
   const AiChat({super.key});

@@ -2,7 +2,6 @@ import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/DoctorNotifications/Notifier/doctor_notification_response%20copy.dart';
-import 'package:capstone/Doctor/pages/DoctorNotifications/Notifier/patient_notification_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

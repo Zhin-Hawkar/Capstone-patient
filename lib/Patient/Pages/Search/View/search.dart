@@ -1,4 +1,3 @@
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Patient/Pages/Hospital/Controller/hospital_controller.dart';
 import 'package:capstone/Patient/Pages/Hospital/Model/hospital.dart';
@@ -9,19 +8,18 @@ import 'package:page_transition/page_transition.dart';
 import 'package:sizer/sizer.dart';
 import 'package:ultimate_flutter_icons/flutter_icons.dart';
 
-// ignore: must_be_immutable
 class SearchPage extends StatefulWidget {
-  SearchPage({super.key});
+  const SearchPage({super.key});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  // ignore: non_constant_identifier_names
-  TextEditingController text_controller = TextEditingController();
+  TextEditingController textController = TextEditingController();
   String query = "";
   String? selectedLocation;
+  String? selectedDepartment;
 
   List<Hospital> hospitals = [];
 
@@ -32,36 +30,38 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  // Get unique locations
   List<String> getLocations() {
-    Set<String> locationSet = {};
-    for (var hospital in hospitals) {
-      final location = hospital.location;
-      // Extract country from location (e.g., "Germany - Berlin" -> "Germany")
+    return hospitals
+        .map((h) => h.location ?? "")
+        .where((x) => x.isNotEmpty)
+        .toSet()
+        .toList();
+  }
 
-      if (location!.isNotEmpty) {
-        locationSet.add(location);
+  List<String> getDepartments() {
+    Set<String> deptSet = {};
+    for (var hospital in hospitals) {
+      for (var dept in hospital.departments) {
+        deptSet.add(dept);
       }
     }
-    return locationSet.toList()..sort();
+    return deptSet.toList();
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchHospitals();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredHospitals = query.isEmpty && selectedLocation == null
-        ? <dynamic>[]
-        : SearchUserController.searchHospitals(
-            query,
-            selectedLocation,
-            hospitals,
-          );
+    final filteredHospitals = SearchUserController.searchHospitals(
+      query,
+      selectedLocation,
+      selectedDepartment,
+      hospitals,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.WHITE_BACKGROUND,
@@ -77,34 +77,25 @@ class _SearchPageState extends State<SearchPage> {
                     cursorColor: AppColors.DARK_GREEN,
                     cursorHeight: 2.h,
                     cursorOpacityAnimates: true,
-
                     autofocus: true,
                     onTapOutside: (event) {
                       FocusScope.of(context).unfocus();
                     },
-                    controller: text_controller,
-                    style: TextStyle(color: Colors.black),
-                    strutStyle: StrutStyle(fontSize: 14),
+                    controller: textController,
+                    style: const TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),
-                      enabled: true,
                       hintText:
                           "Search by illnesses, location, or hospitals...",
-                      hintStyle: TextStyle(fontSize: 14),
+                      hintStyle: const TextStyle(fontSize: 14),
                       isDense: true,
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: AppColors.DARK_GREEN,
-                          style: BorderStyle.solid,
-                        ),
+                        borderSide: BorderSide(color: AppColors.DARK_GREEN),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: AppColors.DARK_GREEN,
-                          style: BorderStyle.solid,
-                        ),
+                        borderSide: BorderSide(color: AppColors.DARK_GREEN),
                       ),
                     ),
                     onChanged: (value) {
@@ -127,9 +118,8 @@ class _SearchPageState extends State<SearchPage> {
                         return StatefulBuilder(
                           builder: (context, setModalState) {
                             return Container(
-                              padding: EdgeInsets.all(20),
-                              height: 40.h,
-                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.all(20),
+                              height: 50.h,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -141,53 +131,68 @@ class _SearchPageState extends State<SearchPage> {
                                       color: AppColors.DARK_GREEN,
                                     ),
                                   ),
-
-                                  // Type of Illness Filter
-                                  SizedBox(height: 1.h),
+                                  SizedBox(height: 2.h),
 
                                   DropdownButton<String>(
                                     value: selectedLocation,
                                     isExpanded: true,
-                                    hint: Text("Select location"),
-                                    items: getLocations()
-                                        .map(
-                                          (location) => DropdownMenuItem(
-                                            value: location,
-                                            child: Text(location),
-                                          ),
-                                        )
-                                        .toList(),
+                                    hint: const Text("Select location"),
+                                    items: getLocations().map((loc) {
+                                      return DropdownMenuItem(
+                                        value: loc,
+                                        child: Text(loc),
+                                      );
+                                    }).toList(),
                                     onChanged: (value) {
-                                      setModalState(() {
-                                        selectedLocation = value;
-                                      });
-                                      setState(() {
-                                        selectedLocation = value;
-                                      });
+                                      setModalState(
+                                        () => selectedLocation = value,
+                                      );
+                                      setState(() => selectedLocation = value);
                                     },
                                   ),
                                   SizedBox(height: 2.h),
-                                  // Clear Filters Button
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          setModalState(() {
-                                            selectedLocation = null;
-                                          });
-                                          setState(() {
-                                            selectedLocation = null;
-                                          });
-                                        },
-                                        child: Text(
-                                          "Clear Filter",
-                                          style: TextStyle(
-                                            color: AppColors.DARK_GREEN,
-                                          ),
+
+                                  DropdownButton<String>(
+                                    value: selectedDepartment,
+                                    isExpanded: true,
+                                    hint: const Text("Select department"),
+                                    items: getDepartments().map((dept) {
+                                      return DropdownMenuItem(
+                                        value: dept,
+                                        child: Text(dept),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setModalState(
+                                        () => selectedDepartment = value,
+                                      );
+                                      setState(
+                                        () => selectedDepartment = value,
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(height: 2.h),
+
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      onPressed: () {
+                                        setModalState(() {
+                                          selectedLocation = null;
+                                          selectedDepartment = null;
+                                        });
+                                        setState(() {
+                                          selectedLocation = null;
+                                          selectedDepartment = null;
+                                        });
+                                      },
+                                      child: Text(
+                                        "Clear Filter",
+                                        style: TextStyle(
+                                          color: AppColors.DARK_GREEN,
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -207,28 +212,16 @@ class _SearchPageState extends State<SearchPage> {
             ],
           ),
           SizedBox(height: 3.h),
+
           Expanded(
-            child: query.isEmpty && selectedLocation == null
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search, size: 60, color: Colors.grey[400]),
-                        SizedBox(height: 2.h),
-                        Text(
-                          "Start typing to search for hospitals",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : filteredHospitals.isEmpty
+            child: filteredHospitals.isEmpty
                 ? Center(
                     child: Text(
-                      "No hospitals found",
+                      query.isEmpty &&
+                              selectedLocation == null &&
+                              selectedDepartment == null
+                          ? "Start typing to search for hospitals"
+                          : "No hospitals found",
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   )
@@ -236,15 +229,14 @@ class _SearchPageState extends State<SearchPage> {
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     itemCount: filteredHospitals.length,
                     itemBuilder: (context, index) {
+                      final hospital = filteredHospitals[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             PageTransition(
                               type: PageTransitionType.fade,
-                              child: HospitalProfilePage(
-                                hospital: hospitals[index],
-                              ),
+                              child: HospitalProfilePage(hospital: hospital),
                             ),
                           );
                         },
@@ -258,12 +250,12 @@ class _SearchPageState extends State<SearchPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(20),
                                   topRight: Radius.circular(20),
                                 ),
                                 child: Image.network(
-                                  "${hospitals[index].image}",
+                                  hospital.image ?? "",
                                   height: 20.h,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
@@ -283,20 +275,20 @@ class _SearchPageState extends State<SearchPage> {
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.all(15),
+                                padding: const EdgeInsets.all(15),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${hospitals[index].hospitalName}",
-                                      style: TextStyle(
+                                      hospital.hospitalName ?? "",
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       ),
                                     ),
-                                    SizedBox(height: 0.5.h),
+                                    SizedBox(height: 1.h),
                                     Text(
-                                      "${hospitals[index].departments}",
+                                      hospital.departments.join(", "),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey[600],
@@ -305,12 +297,14 @@ class _SearchPageState extends State<SearchPage> {
                                     SizedBox(height: 2.h),
                                     Row(
                                       children: [
-                                        Icon(Icons.pin_drop, size: 18),
+                                        const Icon(Icons.pin_drop, size: 18),
                                         SizedBox(width: 2.w),
                                         Expanded(
                                           child: Text(
-                                            "${hospitals[index].location}",
-                                            style: TextStyle(fontSize: 14),
+                                            hospital.location ?? "",
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -318,17 +312,17 @@ class _SearchPageState extends State<SearchPage> {
                                     SizedBox(height: 1.h),
                                     Row(
                                       children: [
-                                        Icon(Icons.phone, size: 18),
+                                        const Icon(Icons.phone, size: 18),
                                         SizedBox(width: 2.w),
                                         Text(
-                                          "${hospitals[index].phoneNumber}",
-                                          style: TextStyle(fontSize: 14),
+                                          hospital.phoneNumber ?? "",
+                                          style: const TextStyle(fontSize: 14),
                                         ),
                                       ],
                                     ),
                                     SizedBox(height: 2.h),
                                     Text(
-                                      "${hospitals[index].description}",
+                                      hospital.description ?? "",
                                       style: TextStyle(
                                         fontSize: 13,
                                         color: Colors.grey[700],
@@ -337,7 +331,7 @@ class _SearchPageState extends State<SearchPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(height: 2.h),
-                                    Text(
+                                    const Text(
                                       "Services:",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -348,29 +342,30 @@ class _SearchPageState extends State<SearchPage> {
                                     Wrap(
                                       spacing: 8,
                                       runSpacing: 8,
-                                      children: (hospitals[index].services)
-                                          .map(
-                                            (service) => Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 6,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: AppColors.DARK_GREEN
-                                                    .withOpacity(0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: Text(
-                                                service,
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: AppColors.DARK_GREEN,
-                                                ),
-                                              ),
+                                      children: hospital.services.map((
+                                        service,
+                                      ) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.DARK_GREEN
+                                                .withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
                                             ),
-                                          )
-                                          .toList(),
+                                          ),
+                                          child: Text(
+                                            service,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: AppColors.DARK_GREEN,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
                                     ),
                                   ],
                                 ),

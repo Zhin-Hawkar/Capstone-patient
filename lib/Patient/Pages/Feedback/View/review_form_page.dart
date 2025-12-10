@@ -21,7 +21,6 @@ class _ReviewFormPageState extends ConsumerState<ReviewFormPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.hospital?.id);
   }
 
   @override

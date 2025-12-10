@@ -1,4 +1,3 @@
-import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 

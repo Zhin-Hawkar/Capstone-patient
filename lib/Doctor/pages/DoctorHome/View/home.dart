@@ -1,18 +1,14 @@
-import 'dart:convert';
 
 import 'package:capstone/Backend/PusherSocket/pusher_notification.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/controller/assigned_patients_controller.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/patient_profile_view_page.dart';
-import 'package:capstone/Doctor/pages/DoctorNotifications/Controller/doctor_notification.dart';
-import 'package:capstone/Doctor/pages/DoctorNotifications/Model/doctor_notification.dart';
 import 'package:capstone/Doctor/pages/Statistics/Controller/statistics_controller.dart';
 import 'package:capstone/Doctor/pages/Statistics/Model/statistics_model.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Reusables/AppBar/app_bar.dart';
 import 'package:capstone/SharedResources/global_storage_service.dart';
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

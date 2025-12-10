@@ -1,5 +1,4 @@
 import 'package:capstone/Backend/Util/http_util.dart';
-import 'package:capstone/Doctor/pages/DoctorHome/Notifier/feedback_dot.dart';
 import 'package:capstone/Patient/Pages/Feedback/Model/feedback_model.dart';
 import 'package:capstone/Patient/Pages/Feedback/Notifier/feedback_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,11 +10,8 @@ class FeedbackController {
       ..hospitalId = state.hospitalId
       ..rating = state.rating
       ..comment = state.comment;
-    print(feedback.comment);
-    print(feedback.rating);
-    print(feedback.hospitalId);
+   
     final result = await _sendFeedback(feedback: feedback);
-    print(result);
     return result["code"];
   }
 

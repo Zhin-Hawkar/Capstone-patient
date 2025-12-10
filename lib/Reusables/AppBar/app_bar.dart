@@ -1,4 +1,3 @@
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
 import 'package:capstone/Constants/enum.dart';
 import 'package:capstone/Doctor/pages/AssignedPatientsPage/view/assigned_patients.dart';

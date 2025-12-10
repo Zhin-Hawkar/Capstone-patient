@@ -1,7 +1,6 @@
 import 'package:capstone/Backend/Model/user.dart';
 import 'package:capstone/Backend/Util/http_util.dart';
 import 'package:capstone/Doctor/pages/DoctorEditProfile/Notifier/edit_notifier.dart';
-import 'package:capstone/Patient/Pages/EditProfile/Notifier/edit_notifier.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +26,9 @@ class EditDoctorController {
       ..yearsOfExperience = state.yearsOfExperience
       ..licenseId = state.licenseId
       ..qualification = state.qualification;
-    print(profileRequest.age);
-    print(profileRequest.department);
-    print(profileRequest.description);
-    print(profileRequest.email);
-    print(profileRequest.firstName);
-    print(profileRequest.location);
+   
     try {
       final result = await _editDoctor(params: profileRequest);
-      print(result['doctor']['firstName']);
       if (result == null || result['code'] == null) {
         throw Exception("Invalid response from server");
       }

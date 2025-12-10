@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'package:capstone/Backend/Model/medical_record.dart';
-import 'package:capstone/Backend/Model/user_model.dart';
 import 'package:capstone/Constants/colors.dart';
-import 'package:capstone/Constants/enum.dart';
+import 'package:capstone/Doctor/pages/AssignedPatientsPage/model/assigned_patients_model.dart';
 import 'package:capstone/FileManipulation/UploadFiles/upload_files.dart';
 import 'package:capstone/FileManipulation/UploadFiles/view_file.dart';
+import 'package:capstone/Patient/Pages/Appointments/Controller/appointments_controller.dart';
 import 'package:capstone/Patient/Pages/EditProfile/View/edit_profile.dart';
 import 'package:capstone/Patient/Pages/LogIn/Notifier/sign_in_notifier.dart';
 import 'package:capstone/Patient/Pages/UserProfile/Controller/medical_upload_controller.dart';
 import 'package:capstone/Patient/Pages/UserProfile/Notifier/medical_uplaod_notifier.dart';
-import 'package:capstone/Reusables/Buttons/buttons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,13 +31,24 @@ class _UserProfileState extends ConsumerState<UserProfile>
   bool isDeleteLoading = false;
   List<PlatformFile> filesSaved = [];
   List<MedicalRecord> records = [];
+  List<AssignedPatientsModel> acceptedAppointments = [];
   // ignore: non_constant_identifier_names
   late TabController _tab_controller;
   final PageController _pageController = PageController();
+  final PageController _eidtPrivacyPageController = PageController();
   Timer time = Timer(Duration.zero, () {});
 
   Future<void> refresh() async {
     returnMedicalRecords();
+  }
+
+  void showPatientAcceptedAppointments() async {
+    List<AssignedPatientsModel> result =
+        await AppointmentController.handlePatientAcceptedAppointments();
+
+    setState(() {
+      acceptedAppointments = result;
+    });
   }
 
   Future<void> returnMedicalRecords() async {
@@ -63,6 +73,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
     super.initState();
     _tab_controller = TabController(length: 1, vsync: this);
     returnMedicalRecords();
+    showPatientAcceptedAppointments();
   }
 
   @override
@@ -194,7 +205,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
                             ),
                             profileState.profile?.location != "null"
                                 ? Text(
-                                    "${profileState.profile?.location ?? "null"}",
+                                    profileState.profile?.location ?? "null",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 20,
@@ -211,7 +222,7 @@ class _UserProfileState extends ConsumerState<UserProfile>
                 SizedBox(height: 5.h),
                 profileState.profile?.description != "null"
                     ? ReadMoreText(
-                        "${profileState.profile?.description ?? "null"}",
+                        profileState.profile?.description ?? "null",
                         trimMode: TrimMode.Line,
                         trimLines: 2,
                         colorClickableText: AppColors.DARK_GREEN,
@@ -266,87 +277,228 @@ class _UserProfileState extends ConsumerState<UserProfile>
                                               return StatefulBuilder(
                                                 builder: (context, setModalState2) {
                                                   return SizedBox(
-                                                    height: 15.h,
+                                                    height: 25.h,
                                                     width: MediaQuery.of(
                                                       context,
                                                     ).size.width,
-                                                    child: ListTile(
-                                                      leading: Icon(
-                                                        Icons.delete,
-                                                        color: Colors.red,
-                                                      ),
-                                                      title: Text(
-                                                        "delete record",
-                                                      ),
-                                                      onTap: () {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext context) {
-                                                            return isDeleteLoading
-                                                                ? CircularProgressIndicator()
-                                                                : AlertDialog(
-                                                                    title: Text(
-                                                                      "Confirm Delete",
-                                                                    ),
-                                                                    content: Text(
-                                                                      "are you sure you want to delete ${records[index].fileName}?",
-                                                                    ),
-                                                                    actions: <Widget>[
-                                                                      TextButton(
-                                                                        onPressed: () => Navigator.of(
-                                                                          context,
-                                                                        ).pop(false),
-                                                                        child: Text(
-                                                                          "CANCEL",
-                                                                          style: TextStyle(
-                                                                            color:
-                                                                                AppColors.DARK_GREEN,
-                                                                          ),
+                                                    child: SingleChildScrollView(
+                                                      child: Column(
+                                                        children: [
+                                                          SizedBox(
+                                                            height: 150,
+                                                            child: PageView(
+                                                              physics:
+                                                                  NeverScrollableScrollPhysics(),
+                                                              controller:
+                                                                  _eidtPrivacyPageController,
+                                                              children: [
+                                                                ListTile(
+                                                                  leading: Icon(
+                                                                    Icons.edit,
+                                                                    color:
+                                                                        const Color.fromARGB(
+                                                                          255,
+                                                                          0,
+                                                                          0,
+                                                                          0,
                                                                         ),
+                                                                  ),
+                                                                  title: Text(
+                                                                    "Edit privacy",
+                                                                  ),
+                                                                  onTap: () {
+                                                                    _eidtPrivacyPageController.nextPage(
+                                                                      duration: Duration(
+                                                                        milliseconds:
+                                                                            300,
                                                                       ),
-                                                                      TextButton(
-                                                                        onPressed: () async {
-                                                                          setState(
-                                                                            () {
-                                                                              isDeleteLoading = true;
+                                                                      curve: Curves
+                                                                          .easeInCirc,
+                                                                    );
+                                                                  },
+                                                                ),
+                                                                SingleChildScrollView(
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        children: [
+                                                                          IconButton(
+                                                                            onPressed: () {
+                                                                              _eidtPrivacyPageController.animateToPage(
+                                                                                0,
+                                                                                duration: Duration(
+                                                                                  milliseconds: 300,
+                                                                                ),
+                                                                                curve: Curves.easeInCirc,
+                                                                              );
                                                                             },
-                                                                          );
-                                                                          final result = await MedicalRecordUploadController.deleteRecord(
-                                                                            id: int.parse(
-                                                                              records[index].id.toString(),
+                                                                            icon: Icon(
+                                                                              Icons.arrow_back,
                                                                             ),
-                                                                          );
-                                                                          if (result['code'] ==
-                                                                              200) {
-                                                                            Navigator.of(
-                                                                              context,
-                                                                            ).pop(
-                                                                              true,
-                                                                            );
-                                                                            Navigator.of(
-                                                                              context,
-                                                                            ).pop(
-                                                                              true,
-                                                                            );
-                                                                            refresh();
-                                                                            setState(() {
-                                                                              isDeleteLoading = false;
-                                                                            });
-                                                                          }
-                                                                        },
-                                                                        child: Text(
-                                                                          "DELETE",
-                                                                          style: TextStyle(
-                                                                            color:
-                                                                                Colors.red,
                                                                           ),
-                                                                        ),
+                                                                        ],
+                                                                      ),
+
+                                                                      ListView.builder(
+                                                                        shrinkWrap:
+                                                                            true,
+                                                                        physics:
+                                                                            NeverScrollableScrollPhysics(),
+                                                                        itemCount:
+                                                                            acceptedAppointments.length,
+                                                                        itemBuilder:
+                                                                            (
+                                                                              context,
+                                                                              i,
+                                                                            ) {
+                                                                              final doctor = acceptedAppointments[i];
+
+                                                                              return ListTile(
+                                                                                leading: Icon(
+                                                                                  Icons.person,
+                                                                                ),
+                                                                                title: Text(
+                                                                                  "${doctor.doctorFirstName}",
+                                                                                ),
+                                                                                trailing: Switch(
+                                                                                  value:
+                                                                                      records[index].privacy ==
+                                                                                      "public",
+                                                                                  onChanged:
+                                                                                      (
+                                                                                        newValue,
+                                                                                      ) async {
+                                                                                        String privacy = newValue
+                                                                                            ? "public"
+                                                                                            : "private";
+                                                                                        setModalState2(
+                                                                                          () {
+                                                                                            records[index].privacy = privacy;
+                                                                                          },
+                                                                                        );
+
+                                                                                        final result = await MedicalRecordUploadController.editPrivacy(
+                                                                                          id: records[index].id,
+                                                                                          url: records[index].medicalRecord,
+                                                                                          fileName: records[index].fileName,
+                                                                                          privacy: privacy,
+                                                                                          doctorId: doctor.doctorId,
+                                                                                        );
+
+                                                                                        if (result ==
+                                                                                            200) {
+                                                                                          Navigator.pop(
+                                                                                            // ignore: use_build_context_synchronously
+                                                                                            context,
+                                                                                          );
+                                                                                          refresh();
+                                                                                        }
+                                                                                      },
+                                                                                ),
+                                                                              );
+                                                                            },
                                                                       ),
                                                                     ],
-                                                                  );
-                                                          },
-                                                        );
-                                                      },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          ListTile(
+                                                            leading: Icon(
+                                                              Icons.delete,
+                                                              color: Colors.red,
+                                                            ),
+                                                            title: Text(
+                                                              "Delete record",
+                                                            ),
+                                                            onTap: () {
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (
+                                                                      BuildContext
+                                                                      context,
+                                                                    ) {
+                                                                      return isDeleteLoading
+                                                                          ? CircularProgressIndicator()
+                                                                          : AlertDialog(
+                                                                              title: Text(
+                                                                                "Confirm Delete",
+                                                                              ),
+                                                                              content: Text(
+                                                                                "are you sure you want to delete ${records[index].fileName}?",
+                                                                              ),
+                                                                              actions:
+                                                                                  <
+                                                                                    Widget
+                                                                                  >[
+                                                                                    TextButton(
+                                                                                      onPressed: () =>
+                                                                                          Navigator.of(
+                                                                                            context,
+                                                                                          ).pop(
+                                                                                            false,
+                                                                                          ),
+                                                                                      child: Text(
+                                                                                        "CANCEL",
+                                                                                        style: TextStyle(
+                                                                                          color: AppColors.DARK_GREEN,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    TextButton(
+                                                                                      onPressed: () async {
+                                                                                        setState(
+                                                                                          () {
+                                                                                            isDeleteLoading = true;
+                                                                                          },
+                                                                                        );
+                                                                                        final result = await MedicalRecordUploadController.deleteRecord(
+                                                                                          id: int.parse(
+                                                                                            records[index].id.toString(),
+                                                                                          ),
+                                                                                        );
+                                                                                        if (result['code'] ==
+                                                                                            200) {
+                                                                                          Navigator.of(
+                                                                                            // ignore: use_build_context_synchronously
+                                                                                            context,
+                                                                                          ).pop(
+                                                                                            true,
+                                                                                          );
+                                                                                          Navigator.of(
+                                                                                            // ignore: use_build_context_synchronously
+                                                                                            context,
+                                                                                          ).pop(
+                                                                                            true,
+                                                                                          );
+                                                                                          refresh();
+                                                                                          setState(
+                                                                                            () {
+                                                                                              isDeleteLoading = false;
+                                                                                            },
+                                                                                          );
+                                                                                        }
+                                                                                      },
+                                                                                      child: Text(
+                                                                                        "DELETE",
+                                                                                        style: TextStyle(
+                                                                                          color: Colors.red,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                            );
+                                                                    },
+                                                              );
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   );
                                                 },
@@ -376,10 +528,50 @@ class _UserProfileState extends ConsumerState<UserProfile>
                                           ),
                                           width: 120,
                                           height: 120,
-                                          child: Icon(
-                                            Icons.file_copy,
-                                            color: AppColors.WHITE_BACKGROUND,
-                                            size: 60,
+                                          child: Stack(
+                                            children: [
+                                              records[index].privacy ==
+                                                      "private"
+                                                  ? Container(
+                                                      margin: EdgeInsets.only(
+                                                        top: 10,
+                                                        right: 10,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.lock,
+                                                            color: AppColors
+                                                                .WHITE_BACKGROUND,
+                                                            size: 25,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Container(),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.file_copy,
+                                                        color: AppColors
+                                                            .WHITE_BACKGROUND,
+                                                        size: 60,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
